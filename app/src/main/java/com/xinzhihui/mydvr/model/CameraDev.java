@@ -4,8 +4,8 @@ import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
-import android.os.Handler;
 
+import com.xinzhihui.mydvr.AppConfig;
 import com.xinzhihui.mydvr.listener.CameraStatusListener;
 
 import java.io.File;
@@ -20,17 +20,17 @@ public abstract class CameraDev {
     public CameraStatusListener statusListener;
 
     private Camera camera;
+    private MediaRecorder mediaRecorder;
 
     private boolean isPreviewing = false;
     private boolean isRecording = false;
 
-    private Handler handler;
 
     /**
      * 打开摄像头
      * @return Camera对象
      */
-    public Camera open(Handler handler){
+    public Camera open(){
         if (camera!=null) {
             camera.release();
             camera = null;
@@ -40,7 +40,6 @@ public abstract class CameraDev {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        this.handler = handler;
         return camera;
     }
 
@@ -78,11 +77,18 @@ public abstract class CameraDev {
 
     /**
      * 开始录像
-     * @param mediaRecorder
-     * @param file
+     * @param
      */
-    public void startRecord(MediaRecorder mediaRecorder, File file){
-        CamcorderProfile camcorderProfile = CamcorderProfile.get(CamcorderProfile.QUALITY_LOW);
+    public void startRecord(final int profileType){
+        mediaRecorder = new MediaRecorder();
+        File file = new File(AppConfig.FRONT_VIDEO_PATH + System.currentTimeMillis() + ".mp4");
+        CamcorderProfile camcorderProfile = null;
+        if (profileType == 1) {
+            camcorderProfile = CamcorderProfile.get(CamcorderProfile.QUALITY_720P);
+        }else if (profileType == 2) {
+            camcorderProfile = CamcorderProfile.get(CamcorderProfile.QUALITY_TIME_LAPSE_HIGH);
+        }
+
         camera.unlock();
 
         mediaRecorder.reset();
@@ -91,10 +97,31 @@ public abstract class CameraDev {
 
         mediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA); //前置
         mediaRecorder.setOutputFormat(camcorderProfile.fileFormat); //先设置输出格式
-        mediaRecorder.setVideoEncoder(camcorderProfile.videoCodec); //后设置视频编码格式
-        mediaRecorder.setVideoSize(480, 320);
         mediaRecorder.setVideoFrameRate(camcorderProfile.videoFrameRate);
+
+        mediaRecorder.setVideoSize(camcorderProfile.videoFrameWidth, camcorderProfile.videoFrameHeight);
+
+        mediaRecorder.setVideoEncodingBitRate(camcorderProfile.videoBitRate);
+
+        mediaRecorder.setVideoEncoder(camcorderProfile.videoCodec); //后设置视频编码格式
+
         mediaRecorder.setOutputFile(file.getAbsolutePath());
+
+        mediaRecorder.setMaxDuration(AppConfig.MAX_DURATION);
+
+        mediaRecorder.setOnInfoListener(new MediaRecorder.OnInfoListener() {
+            @Override
+            public void onInfo(MediaRecorder mr, int what, int extra) {
+                switch (what) {
+                    case MediaRecorder.MEDIA_RECORDER_INFO_MAX_DURATION_REACHED:
+                        stopRecord();
+                        startRecord(profileType);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
 
         try {
             mediaRecorder.prepare();
@@ -111,13 +138,15 @@ public abstract class CameraDev {
 
     /**
      * 停止录像
-     * @param mediaRecorder
+     * @param
      */
-    public void stopRecord(MediaRecorder mediaRecorder){
+    public void stopRecord(){
+        mediaRecorder.setOnInfoListener(null);
         mediaRecorder.stop();
-        mediaRecorder.release();
+//        mediaRecorder.release();
 
         setRecording(false);
+        statusListener.onStopRecord();
     }
 
     public void setPreviewing(boolean previewing) {

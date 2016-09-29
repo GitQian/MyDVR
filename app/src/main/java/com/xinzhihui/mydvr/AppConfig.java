@@ -1,5 +1,7 @@
 package com.xinzhihui.mydvr;
 
+import com.xinzhihui.mydvr.utils.SDCardUtils;
+
 /**
  * Created by Administrator on 2016/9/28.
  */
@@ -28,9 +30,13 @@ public class AppConfig {
 
 
     //文件路径
-    public static final String FRONT_VIDEO_PATH = "DVR/front";
-    public static final String BEHIND_VIDEO_PATH = "DVR/behind";
-    public static final String LEFT_VIDEO_PATH = "DVR/left";
-    public static final String RIGHT_VIDEO_PATH = "DVR/right";
+    public static final String DVR_PATH = SDCardUtils.getSDCardPath() + "DVR";
+    public static final String FRONT_VIDEO_PATH = SDCardUtils.getSDCardPath() + "DVR/front/";
+    public static final String BEHIND_VIDEO_PATH = SDCardUtils.getSDCardPath() + "DVR/behind/";
+    public static final String LEFT_VIDEO_PATH = SDCardUtils.getSDCardPath() + "DVR/left/";
+    public static final String RIGHT_VIDEO_PATH = SDCardUtils.getSDCardPath() + "DVR/right/";
+
+    //录制时长
+    public static final int MAX_DURATION = 1*60*1000;
 
 }
