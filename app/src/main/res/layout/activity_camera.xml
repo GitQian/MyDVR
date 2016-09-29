@@ -8,7 +8,13 @@
     <TextureView
         android:id="@+id/ttv_camera"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="240dp" />
+
+    <TextureView
+        android:id="@+id/ttv_camera_front"
+        android:layout_width="match_parent"
+        android:layout_height="240dp"
+        android:layout_below="@id/ttv_camera"/>
 
     <Button
         android:id="@+id/btn_record"

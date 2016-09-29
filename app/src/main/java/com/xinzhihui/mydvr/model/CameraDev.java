@@ -31,7 +31,15 @@ public abstract class CameraDev {
      * @return Camera对象
      */
     public Camera open(Handler handler){
-        camera = Camera.open(cameraid);
+        if (camera!=null) {
+            camera.release();
+            camera = null;
+        }
+        try {
+            camera = Camera.open(cameraid);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         this.handler = handler;
         return camera;
     }
@@ -43,6 +51,11 @@ public abstract class CameraDev {
     public void startPreview(SurfaceTexture surface){
         if (camera != null) {
             try {
+                Camera.Parameters parameters = camera.getParameters();
+                parameters.setPreviewSize(480, 320);
+
+                camera.setParameters(parameters);
+
                 camera.setPreviewTexture(surface);
                 camera.startPreview();
                 setPreviewing(true);
@@ -58,6 +71,7 @@ public abstract class CameraDev {
     public void stopPreview(){
         camera.stopPreview();
         camera.release();
+        camera = null;
 
         setPreviewing(false);
     }
@@ -68,7 +82,7 @@ public abstract class CameraDev {
      * @param file
      */
     public void startRecord(MediaRecorder mediaRecorder, File file){
-        CamcorderProfile camcorderProfile = CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH);
+        CamcorderProfile camcorderProfile = CamcorderProfile.get(CamcorderProfile.QUALITY_LOW);
         camera.unlock();
 
         mediaRecorder.reset();
@@ -78,7 +92,7 @@ public abstract class CameraDev {
         mediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA); //前置
         mediaRecorder.setOutputFormat(camcorderProfile.fileFormat); //先设置输出格式
         mediaRecorder.setVideoEncoder(camcorderProfile.videoCodec); //后设置视频编码格式
-        mediaRecorder.setVideoSize(1920, 1080);
+        mediaRecorder.setVideoSize(480, 320);
         mediaRecorder.setVideoFrameRate(camcorderProfile.videoFrameRate);
         mediaRecorder.setOutputFile(file.getAbsolutePath());
 
@@ -91,7 +105,7 @@ public abstract class CameraDev {
         mediaRecorder.start();
 
         setRecording(true);
-        handler.sendEmptyMessage(1);
+//        handler.sendEmptyMessage(1);
         statusListener.onStartRecord();
     }
 
