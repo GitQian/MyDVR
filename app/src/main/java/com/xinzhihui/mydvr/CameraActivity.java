@@ -30,16 +30,22 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     private TextureView mCameraTtv;
     private TextureView mCameraFrontTtv;
 
-    private Button mRecordFrontStartBtn;
-    private Button mRecordFrontStopBtn;
     private ImageView recImg;
+    private AnimationDrawable animRec;
+
     private RelativeLayout frontRll;
     private RelativeLayout behindRll;
-    private Button mSwitchBtn;
 
     private int curCamera;
     private static final int FRONT_CAMERA = 1;
     private static final int BEHIND_CAMERA = 2;
+    private static final int ALL_CAMERA = 3;
+
+    private CameraDev curCameraDev;
+
+    private Button mRecordStartBtn;
+    private Button mRecordStopBtn;
+    private Button mRecordSwitchBtn;
 
     CameraFactory factory = new CameraFactory();
 
@@ -62,6 +68,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
             public void onStartRecord() {
                 Toast.makeText(CameraActivity.this, "正在录制" , Toast.LENGTH_LONG).show();
                 recImg.setVisibility(View.VISIBLE);
+                animRec.start();
             }
 
             @Override
@@ -72,6 +79,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
             @Override
             public void onStopRecord() {
                 Toast.makeText(CameraActivity.this, "停止录制" , Toast.LENGTH_LONG).show();
+                animRec.stop();
                 recImg.setVisibility(View.GONE);
             }
         });
@@ -101,28 +109,32 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         mCameraTtv.setSurfaceTextureListener(dvrSurfaceTextureFrontListener);
         mCameraFrontTtv.setSurfaceTextureListener(dvrSurfaceTextureBehindListener);
 
-        mRecordFrontStartBtn.setOnClickListener(this);
-        mRecordFrontStopBtn.setOnClickListener(this);
-
         frontRll.setOnClickListener(this);
-        mSwitchBtn.setOnClickListener(this);
+        behindRll.setOnClickListener(this);
+
+        mRecordStartBtn.setOnClickListener(this);
+        mRecordStopBtn.setOnClickListener(this);
+        mRecordSwitchBtn.setOnClickListener(this);
     }
 
     private void initView(){
         mCameraTtv = (TextureView) findViewById(R.id.ttv_camera_front);
         mCameraFrontTtv = (TextureView) findViewById(R.id.ttv_camera_behind);
-        mRecordFrontStartBtn = (Button) findViewById(R.id.btn_record_front_start);
-        mRecordFrontStopBtn = (Button) findViewById(R.id.btn_record_front_stop);
         recImg = (ImageView) findViewById(R.id.img_record_rec);
+        animRec = (AnimationDrawable) recImg.getBackground();
+
         frontRll = (RelativeLayout) findViewById(R.id.rll_front);
         behindRll = (RelativeLayout) findViewById(R.id.rll_behind);
-        mSwitchBtn = (Button) findViewById(R.id.btn_switch_shuanglu);
+
+        mRecordStartBtn = (Button) findViewById(R.id.btn_record_start);
+        mRecordStopBtn = (Button) findViewById(R.id.btn_record_stop);
+        mRecordSwitchBtn = (Button) findViewById(R.id.btn_record_switch);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.btn_record_front_start:
+            case R.id.btn_record_start:
                 if(!SDCardUtils.isSDCardEnable()) {
                     LogUtil.i(TAG, "SDCard can't use!");
                     Toast.makeText(CameraActivity.this, "SD卡不可用！", Toast.LENGTH_LONG).show();
@@ -131,26 +143,38 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                 dvrSurfaceTextureFrontListener.cameraDev.startRecord( CamcorderProfile.QUALITY_720P);
                 break;
 
-            case R.id.btn_record_front_stop:
+            case R.id.btn_record_stop:
                 dvrSurfaceTextureFrontListener.cameraDev.stopRecord();
                 break;
 
-            case R.id.btn_record_behind_start:
-//                mediaRecorder2 = new MediaRecorder();
-//                dvrSurfaceTextureBehindListener.cameraDev.startRecord(mediaRecorder2, new File(SDCardUtils.getSDCardPath() + "MyFrontVideo.mp4"), 2);
+//            case R.id.btn_record_behind_start:
+////                mediaRecorder2 = new MediaRecorder();
+////                dvrSurfaceTextureBehindListener.cameraDev.startRecord(mediaRecorder2, new File(SDCardUtils.getSDCardPath() + "MyFrontVideo.mp4"), 2);
+//
+//                break;
 
-                break;
-
-            case R.id.btn_record_behind_stop:
-//                dvrSurfaceTextureBehindListener.cameraDev.stopRecord(mediaRecorder2);
-                break;
+//            case R.id.btn_record_behind_stop:
+////                dvrSurfaceTextureBehindListener.cameraDev.stopRecord(mediaRecorder2);
+//                break;
 
             case R.id.rll_front:
                 behindRll.setVisibility(View.GONE);
+                frontRll.setVisibility(View.VISIBLE);
+                curCamera = FRONT_CAMERA;
+                curCameraDev = dvrSurfaceTextureFrontListener.cameraDev;
                 break;
 
-            case R.id.btn_switch_shuanglu:
+            case R.id.rll_behind:
+                frontRll.setVisibility(View.GONE);
                 behindRll.setVisibility(View.VISIBLE);
+                curCamera = BEHIND_CAMERA;
+                curCameraDev = dvrSurfaceTextureBehindListener.cameraDev;
+                break;
+
+            case R.id.btn_record_switch:
+                frontRll.setVisibility(View.VISIBLE);
+                behindRll.setVisibility(View.VISIBLE);
+                curCamera = ALL_CAMERA;
                 break;
 
             default:

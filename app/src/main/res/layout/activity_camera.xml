@@ -1,77 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal"
     tools:context="com.xinzhihui.mydvr.CameraActivity">
 
-    <RelativeLayout
-        android:id="@+id/rll_front"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:id="@+id/rll_front"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <TextureView
+                android:id="@+id/ttv_camera_front"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <ImageView
+                android:id="@+id/img_record_rec"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/anim_recording"
+                android:visibility="gone"
+                android:layout_alignParentRight="true"/>
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="2dp"
+            android:layout_height="match_parent"
+            android:background="#ffffff"/>
+
+        <RelativeLayout
+            android:id="@+id/rll_behind"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <TextureView
+                android:id="@+id/ttv_camera_behind"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true">
+
+        <Button
+            android:id="@+id/btn_record_start"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="录制"/>
+
+        <Button
+        android:id="@+id/btn_record_stop"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1">
-
-        <TextureView
-            android:id="@+id/ttv_camera_front"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="停止"/>
 
         <Button
-            android:id="@+id/btn_record_front_start"
-            android:layout_width="wrap_content"
+            android:id="@+id/btn_record_switch"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="录制" />
-        <Button
-            android:id="@+id/btn_record_front_stop"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="停止"
-            android:layout_toRightOf="@id/btn_record_front_start"/>
+            android:layout_weight="1"
+            android:text="双路"/>
+    </LinearLayout>
 
-        <Button
-            android:id="@+id/btn_switch_shuanglu"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="双路"
-            android:layout_toRightOf="@id/btn_record_front_stop"/>
 
-        <ImageView
-            android:id="@+id/img_record_rec"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/icon_recording"
-            android:visibility="gone"
-            android:layout_alignParentRight="true"/>
-    </RelativeLayout>
-
-    <TextView
-        android:layout_width="2dp"
-        android:layout_height="match_parent"
-        android:background="#ffffff"/>
-
-    <RelativeLayout
-        android:id="@+id/rll_behind"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1">
-
-        <TextureView
-            android:id="@+id/ttv_camera_behind"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-        <Button
-            android:id="@+id/btn_record_behind_start"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="录制" />
-        <Button
-            android:id="@+id/btn_record_behind_stop"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="停止"
-            android:layout_toRightOf="@id/btn_record_behind_start"/>
-
-    </RelativeLayout>
-
-</LinearLayout>
+</RelativeLayout>

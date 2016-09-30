@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <animation-list xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!--<item android:drawable="@drawable/icon_recording" android:duration="500"></item>-->
-    <!--<item android:drawable="@null" android:duration="500"></item>-->
+    <item android:drawable="@drawable/ic_recording_red" android:duration="500"></item>
+    <item android:drawable="@drawable/ic_recording_white" android:duration="500"></item>
 </animation-list>
