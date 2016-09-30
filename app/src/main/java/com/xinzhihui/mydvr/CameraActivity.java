@@ -29,18 +29,19 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
 
     private TextureView mCameraTtv;
     private TextureView mCameraFrontTtv;
-    public  Camera mCamera;
 
     private Button mRecordFrontStartBtn;
     private Button mRecordFrontStopBtn;
     private ImageView recImg;
+    private RelativeLayout frontRll;
+    private RelativeLayout behindRll;
+    private Button mSwitchBtn;
 
-    private File videoFile;
-    private MediaRecorder mediaRecorderFront;
-    private MediaRecorder mediaRecorder2;
+    private int curCamera;
+    private static final int FRONT_CAMERA = 1;
+    private static final int BEHIND_CAMERA = 2;
 
     CameraFactory factory = new CameraFactory();
-    CameraDev cameraDev;
 
     private DvrSurfaceTextureListener dvrSurfaceTextureFrontListener;
     private DvrSurfaceTextureListener dvrSurfaceTextureBehindListener;
@@ -103,6 +104,8 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         mRecordFrontStartBtn.setOnClickListener(this);
         mRecordFrontStopBtn.setOnClickListener(this);
 
+        frontRll.setOnClickListener(this);
+        mSwitchBtn.setOnClickListener(this);
     }
 
     private void initView(){
@@ -111,6 +114,9 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         mRecordFrontStartBtn = (Button) findViewById(R.id.btn_record_front_start);
         mRecordFrontStopBtn = (Button) findViewById(R.id.btn_record_front_stop);
         recImg = (ImageView) findViewById(R.id.img_record_rec);
+        frontRll = (RelativeLayout) findViewById(R.id.rll_front);
+        behindRll = (RelativeLayout) findViewById(R.id.rll_behind);
+        mSwitchBtn = (Button) findViewById(R.id.btn_switch_shuanglu);
     }
 
     @Override
@@ -122,8 +128,6 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                     Toast.makeText(CameraActivity.this, "SD卡不可用！", Toast.LENGTH_LONG).show();
                 }
 
-//                mediaRecorderFront = new MediaRecorder();
-                videoFile = new File(SDCardUtils.getSDCardPath() + "MyVideo.mp4");
                 dvrSurfaceTextureFrontListener.cameraDev.startRecord( CamcorderProfile.QUALITY_720P);
                 break;
 
@@ -141,27 +145,17 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
 //                dvrSurfaceTextureBehindListener.cameraDev.stopRecord(mediaRecorder2);
                 break;
 
+            case R.id.rll_front:
+                behindRll.setVisibility(View.GONE);
+                break;
+
+            case R.id.btn_switch_shuanglu:
+                behindRll.setVisibility(View.VISIBLE);
+                break;
+
             default:
                 break;
         }
-    }
-
-    private void initCamera(Camera camera) {
-        if (camera == null) {
-            return;
-        }
-        Camera.Parameters parameters = camera.getParameters();
-        //请通过parameters.getSupportedPreviewSizes();设置预览大小,否则设置了一个摄像头不支持大小,将会报错.
-        parameters.setPreviewSize(1920, 1080);//如果设置了一个不支持的大小,会崩溃.坑2
-
-        //请通过parameters.getSupportedPictureSizes();设置拍照图片大小,这一步对于录像来说是非必须的.
-        //parameters.setPictureSize(1920, 1080);
-        List<String> focusModes = parameters.getSupportedFocusModes();
-        if (focusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO)) {
-            //设置对焦模式
-            parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
-        }
-        camera.setParameters(parameters);
     }
 
     /**

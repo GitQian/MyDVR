@@ -7,6 +7,7 @@
     tools:context="com.xinzhihui.mydvr.CameraActivity">
 
     <RelativeLayout
+        android:id="@+id/rll_front"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1">
@@ -28,6 +29,13 @@
             android:text="停止"
             android:layout_toRightOf="@id/btn_record_front_start"/>
 
+        <Button
+            android:id="@+id/btn_switch_shuanglu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="双路"
+            android:layout_toRightOf="@id/btn_record_front_stop"/>
+
         <ImageView
             android:id="@+id/img_record_rec"
             android:layout_width="wrap_content"
@@ -43,6 +51,7 @@
         android:background="#ffffff"/>
 
     <RelativeLayout
+        android:id="@+id/rll_behind"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1">
