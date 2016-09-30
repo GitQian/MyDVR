@@ -7,6 +7,7 @@ import android.media.MediaRecorder;
 
 import com.xinzhihui.mydvr.AppConfig;
 import com.xinzhihui.mydvr.listener.CameraStatusListener;
+import com.xinzhihui.mydvr.utils.LogUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,6 +16,7 @@ import java.io.IOException;
  * Created by Administrator on 2016/9/28.
  */
 public abstract class CameraDev {
+    private final String TAG = getClass().getName();
 
     public int cameraid;
     public CameraStatusListener statusListener;
@@ -51,7 +53,9 @@ public abstract class CameraDev {
         if (camera != null) {
             try {
                 Camera.Parameters parameters = camera.getParameters();
-                parameters.setPreviewSize(480, 320);
+                parameters.getSupportedPreviewSizes().get(0);
+                LogUtil.d("qiansheng", "size:" + parameters.getSupportedPreviewSizes().get(0) );
+                parameters.setPreviewSize(1280, 720);
 
                 camera.setParameters(parameters);
 
@@ -68,11 +72,15 @@ public abstract class CameraDev {
      * 停止预览，释放资源
      */
     public void stopPreview(){
-        camera.stopPreview();
-        camera.release();
-        camera = null;
+        if (camera != null) {
+            camera.stopPreview();
+            camera.release();
+            camera = null;
 
-        setPreviewing(false);
+            setPreviewing(false);
+        }else {
+            LogUtil.i(TAG, "stopPreView ----------->camera is null");
+        }
     }
 
     /**
@@ -83,11 +91,7 @@ public abstract class CameraDev {
         mediaRecorder = new MediaRecorder();
         File file = new File(AppConfig.FRONT_VIDEO_PATH + System.currentTimeMillis() + ".mp4");
         CamcorderProfile camcorderProfile = null;
-        if (profileType == 1) {
-            camcorderProfile = CamcorderProfile.get(CamcorderProfile.QUALITY_720P);
-        }else if (profileType == 2) {
-            camcorderProfile = CamcorderProfile.get(CamcorderProfile.QUALITY_TIME_LAPSE_HIGH);
-        }
+        camcorderProfile = CamcorderProfile.get(profileType);
 
         camera.unlock();
 
@@ -141,12 +145,25 @@ public abstract class CameraDev {
      * @param
      */
     public void stopRecord(){
-        mediaRecorder.setOnInfoListener(null);
-        mediaRecorder.stop();
-//        mediaRecorder.release();
+        if (mediaRecorder != null) {
+            try {
+                mediaRecorder.setOnInfoListener(null);
+                mediaRecorder.stop();
+                mediaRecorder.release();
 
-        setRecording(false);
-        statusListener.onStopRecord();
+//            mediaRecorder = null;
+
+                setRecording(false);
+                statusListener.onStopRecord();
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+                LogUtil.e(TAG, "stopRecord *************>mediaRecorder stop failed!!!");
+            }
+        }else {
+            setRecording(false);
+            LogUtil.i(TAG, "stopRecord --------->mediaRecorder is null!");
+        }
+
     }
 
     public void setPreviewing(boolean previewing) {

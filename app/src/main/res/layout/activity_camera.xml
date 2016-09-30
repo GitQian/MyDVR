@@ -27,6 +27,14 @@
             android:layout_height="wrap_content"
             android:text="停止"
             android:layout_toRightOf="@id/btn_record_front_start"/>
+
+        <ImageView
+            android:id="@+id/img_record_rec"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/icon_recording"
+            android:visibility="gone"
+            android:layout_alignParentRight="true"/>
     </RelativeLayout>
 
     <TextView

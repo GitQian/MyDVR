@@ -1,13 +1,17 @@
 package com.xinzhihui.mydvr;
 
 import android.graphics.SurfaceTexture;
+import android.graphics.drawable.AnimationDrawable;
 import android.hardware.Camera;
+import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.TextureView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.xinzhihui.mydvr.listener.CameraStatusListener;
@@ -29,6 +33,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
 
     private Button mRecordFrontStartBtn;
     private Button mRecordFrontStopBtn;
+    private ImageView recImg;
 
     private File videoFile;
     private MediaRecorder mediaRecorderFront;
@@ -44,6 +49,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
+        initView();
 
         dvrSurfaceTextureFrontListener = new DvrSurfaceTextureListener(0, new CameraStatusListener() {
             @Override
@@ -54,6 +60,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
             @Override
             public void onStartRecord() {
                 Toast.makeText(CameraActivity.this, "正在录制" , Toast.LENGTH_LONG).show();
+                recImg.setVisibility(View.VISIBLE);
             }
 
             @Override
@@ -64,6 +71,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
             @Override
             public void onStopRecord() {
                 Toast.makeText(CameraActivity.this, "停止录制" , Toast.LENGTH_LONG).show();
+                recImg.setVisibility(View.GONE);
             }
         });
 
@@ -89,18 +97,20 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
             }
         });
 
-        mCameraTtv = (TextureView) findViewById(R.id.ttv_camera_front);
         mCameraTtv.setSurfaceTextureListener(dvrSurfaceTextureFrontListener);
-
-        mCameraFrontTtv = (TextureView) findViewById(R.id.ttv_camera_behind);
         mCameraFrontTtv.setSurfaceTextureListener(dvrSurfaceTextureBehindListener);
 
-        mRecordFrontStartBtn = (Button) findViewById(R.id.btn_record_front_start);
         mRecordFrontStartBtn.setOnClickListener(this);
-
-        mRecordFrontStopBtn = (Button) findViewById(R.id.btn_record_front_stop);
         mRecordFrontStopBtn.setOnClickListener(this);
 
+    }
+
+    private void initView(){
+        mCameraTtv = (TextureView) findViewById(R.id.ttv_camera_front);
+        mCameraFrontTtv = (TextureView) findViewById(R.id.ttv_camera_behind);
+        mRecordFrontStartBtn = (Button) findViewById(R.id.btn_record_front_start);
+        mRecordFrontStopBtn = (Button) findViewById(R.id.btn_record_front_stop);
+        recImg = (ImageView) findViewById(R.id.img_record_rec);
     }
 
     @Override
@@ -114,7 +124,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
 
 //                mediaRecorderFront = new MediaRecorder();
                 videoFile = new File(SDCardUtils.getSDCardPath() + "MyVideo.mp4");
-                dvrSurfaceTextureFrontListener.cameraDev.startRecord( 1);
+                dvrSurfaceTextureFrontListener.cameraDev.startRecord( CamcorderProfile.QUALITY_720P);
                 break;
 
             case R.id.btn_record_front_stop:
