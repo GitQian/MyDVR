@@ -1,5 +1,6 @@
 package com.xinzhihui.mydvr;
 
+import android.content.Intent;
 import android.graphics.SurfaceTexture;
 import android.graphics.drawable.AnimationDrawable;
 import android.hardware.Camera;
@@ -12,6 +13,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.xinzhihui.mydvr.listener.CameraStatusListener;
@@ -22,6 +24,8 @@ import com.xinzhihui.mydvr.utils.SDCardUtils;
 
 import java.io.File;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class CameraActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -46,12 +50,17 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     private Button mRecordStartBtn;
     private Button mRecordStopBtn;
     private Button mRecordSwitchBtn;
+    private Button mVideoDirBtn;
 
     CameraFactory factory = new CameraFactory();
 
     private DvrSurfaceTextureListener dvrSurfaceTextureFrontListener;
     private DvrSurfaceTextureListener dvrSurfaceTextureBehindListener;
 
+    private Timer timer = new Timer();
+    private TimerTask timerTask;
+    private TextView timeTv;
+    int timeCount = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,6 +78,19 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                 Toast.makeText(CameraActivity.this, "正在录制" , Toast.LENGTH_LONG).show();
                 recImg.setVisibility(View.VISIBLE);
                 animRec.start();
+
+                timerTask = new TimerTask() {
+                    @Override
+                    public void run() {
+                        CameraActivity.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                timeTv.setText("Time:" + timeCount++);
+                            }
+                        });
+                    }
+                };
+                timer.schedule(timerTask, 0, 1000);
             }
 
             @Override
@@ -81,6 +103,9 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                 Toast.makeText(CameraActivity.this, "停止录制" , Toast.LENGTH_LONG).show();
                 animRec.stop();
                 recImg.setVisibility(View.GONE);
+
+                timerTask.cancel();
+                timeCount = 0;
             }
         });
 
@@ -115,6 +140,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         mRecordStartBtn.setOnClickListener(this);
         mRecordStopBtn.setOnClickListener(this);
         mRecordSwitchBtn.setOnClickListener(this);
+        mVideoDirBtn.setOnClickListener(this);
     }
 
     private void initView(){
@@ -129,6 +155,8 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         mRecordStartBtn = (Button) findViewById(R.id.btn_record_start);
         mRecordStopBtn = (Button) findViewById(R.id.btn_record_stop);
         mRecordSwitchBtn = (Button) findViewById(R.id.btn_record_switch);
+        mVideoDirBtn = (Button) findViewById(R.id.btn_video_dir);
+        timeTv = (TextView) findViewById(R.id.tv_time);
     }
 
     @Override
@@ -175,6 +203,11 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                 frontRll.setVisibility(View.VISIBLE);
                 behindRll.setVisibility(View.VISIBLE);
                 curCamera = ALL_CAMERA;
+                break;
+
+            case R.id.btn_video_dir:
+                Intent intent = new Intent(CameraActivity.this, FileListActivity.class);
+                startActivity(intent);
                 break;
 
             default:

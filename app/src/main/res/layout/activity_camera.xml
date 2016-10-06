@@ -21,6 +21,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
+            <TextView
+                android:id="@+id/tv_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/holo_red_light"/>
+
             <ImageView
                 android:id="@+id/img_record_rec"
                 android:layout_width="wrap_content"
@@ -76,6 +82,13 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="双路"/>
+
+        <Button
+            android:id="@+id/btn_video_dir"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="文件"/>
     </LinearLayout>
 
 
