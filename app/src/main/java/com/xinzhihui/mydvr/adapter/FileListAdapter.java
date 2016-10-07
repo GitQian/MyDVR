@@ -63,6 +63,6 @@ public class FileListAdapter extends BaseAdapter {
     public final class ViewHolder {
         public ImageView img;
         public TextView title;
-        public TextView info;
+        public TextView path;
     }
 }
