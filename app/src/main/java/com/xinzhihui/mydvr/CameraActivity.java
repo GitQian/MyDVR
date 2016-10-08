@@ -78,6 +78,9 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
             public void onStartRecord() {
                 Toast.makeText(CameraActivity.this, "正在录制" , Toast.LENGTH_LONG).show();
                 recImg.setVisibility(View.VISIBLE);
+                timeTv.setVisibility(View.VISIBLE);
+                mRecordStartBtn.setClickable(false);
+                mRecordStopBtn.setClickable(true);
                 animRec.start();
 
                 timerTask = new TimerTask() {
@@ -107,6 +110,8 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                 animRec.stop();
                 recImg.setVisibility(View.GONE);
                 timeTv.setVisibility(View.GONE);
+                mRecordStartBtn.setClickable(true);
+                mRecordStopBtn.setClickable(false);
 
                 timerTask.cancel();
                 timeCount = 0;
