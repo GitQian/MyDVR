@@ -25,22 +25,22 @@
                 android:id="@+id/tv_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:textColor="@android:color/holo_red_light"/>
+                android:textColor="@android:color/holo_red_light"
+                android:textSize="16sp" />
 
             <ImageView
                 android:id="@+id/img_record_rec"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
                 android:background="@drawable/anim_recording"
-                android:visibility="gone"
-                android:layout_alignParentRight="true"/>
+                android:visibility="gone" />
         </RelativeLayout>
 
         <TextView
             android:layout_width="2dp"
             android:layout_height="match_parent"
-            android:background="#ffffff"/>
+            android:background="#ffffff" />
 
         <RelativeLayout
             android:id="@+id/rll_behind"
@@ -60,36 +60,43 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_alignParentBottom="true">
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal">
 
         <Button
             android:id="@+id/btn_record_start"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="录制"/>
+            android:text="录制" />
 
         <Button
-        android:id="@+id/btn_record_stop"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="停止"/>
+            android:id="@+id/btn_record_stop"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="停止" />
+
+        <Button
+            android:id="@+id/btn_camera_takephoto"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="拍照" />
 
         <Button
             android:id="@+id/btn_record_switch"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="双路"/>
+            android:text="双路" />
 
         <Button
             android:id="@+id/btn_video_dir"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="文件"/>
+            android:text="文件" />
     </LinearLayout>
 
 

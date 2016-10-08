@@ -35,6 +35,7 @@ public class AppConfig {
     public static final String BEHIND_VIDEO_PATH = SDCardUtils.getSDCardPath() + "DVR/behind/";
     public static final String LEFT_VIDEO_PATH = SDCardUtils.getSDCardPath() + "DVR/left/";
     public static final String RIGHT_VIDEO_PATH = SDCardUtils.getSDCardPath() + "DVR/right/";
+    public static final String PICTURE_PATH = SDCardUtils.getSDCardPath() + "DVR/picture/";
 
     //录制时长
     public static final int MAX_DURATION = 1*60*1000;

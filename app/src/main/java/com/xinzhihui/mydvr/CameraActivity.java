@@ -50,6 +50,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
 
     private Button mRecordStartBtn;
     private Button mRecordStopBtn;
+    private Button mTakePhotoBtn;
     private Button mRecordSwitchBtn;
     private Button mVideoDirBtn;
 
@@ -148,6 +149,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
 
         mRecordStartBtn.setOnClickListener(this);
         mRecordStopBtn.setOnClickListener(this);
+        mTakePhotoBtn.setOnClickListener(this);
         mRecordSwitchBtn.setOnClickListener(this);
         mVideoDirBtn.setOnClickListener(this);
     }
@@ -163,6 +165,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
 
         mRecordStartBtn = (Button) findViewById(R.id.btn_record_start);
         mRecordStopBtn = (Button) findViewById(R.id.btn_record_stop);
+        mTakePhotoBtn = (Button) findViewById(R.id.btn_camera_takephoto);
         mRecordSwitchBtn = (Button) findViewById(R.id.btn_record_switch);
         mVideoDirBtn = (Button) findViewById(R.id.btn_video_dir);
         timeTv = (TextView) findViewById(R.id.tv_time);
@@ -182,6 +185,12 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
 
             case R.id.btn_record_stop:
                 dvrSurfaceTextureFrontListener.cameraDev.stopRecord();
+                break;
+
+            case R.id.btn_camera_takephoto:
+                //先停止录像
+                dvrSurfaceTextureFrontListener.cameraDev.stopRecord();
+                dvrSurfaceTextureFrontListener.cameraDev.takePhoto();
                 break;
 
 //            case R.id.btn_record_behind_start:
@@ -215,6 +224,8 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                 break;
 
             case R.id.btn_video_dir:
+                //先停止录像
+                dvrSurfaceTextureFrontListener.cameraDev.stopRecord();
                 Intent intent = new Intent(CameraActivity.this, FileListActivity.class);
                 startActivity(intent);
                 break;
@@ -240,6 +251,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         }
         @Override
         public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
+            LogUtil.d(TAG, "onSurfaceTextureAvailable ------->");
                  cameraDev = factory.createCameraDev(mCameraId, cameraStatusListener);
                 cameraDev.open();
                 cameraDev.startPreview(surface);
@@ -252,6 +264,11 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
 
         @Override
         public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
+            LogUtil.d(TAG, "onSurfaceTextureDestroyed --------->");
+            if (cameraDev.mediaRecorder != null) {
+                cameraStatusListener.onStopRecord();
+                cameraDev.killRecord();
+            }
             cameraDev.stopPreview();
             return true;
         }

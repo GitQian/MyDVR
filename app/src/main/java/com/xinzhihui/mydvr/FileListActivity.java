@@ -94,10 +94,11 @@ public class FileListActivity extends AppCompatActivity {
                     //TODO 视屏文件
                     map.put("img", R.drawable.icon_doc);
 
-                    videopathList.add(i, files[i].getPath());
+                    videopathList.add(files[i].getPath());
                 } else {
                     //普通文件
 //                    map.put("img", R.drawable.icon_doc);
+                    map.put("img", R.drawable.icon_picture);
                 }
                 list.add(map);
             }

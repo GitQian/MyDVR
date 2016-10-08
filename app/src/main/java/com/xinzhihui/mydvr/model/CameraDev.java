@@ -6,6 +6,7 @@ import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 
 import com.xinzhihui.mydvr.AppConfig;
+import com.xinzhihui.mydvr.asynctask.SavePictureTask;
 import com.xinzhihui.mydvr.listener.CameraStatusListener;
 import com.xinzhihui.mydvr.utils.DateTimeUtil;
 import com.xinzhihui.mydvr.utils.LogUtil;
@@ -23,7 +24,7 @@ public abstract class CameraDev {
     public CameraStatusListener statusListener;
 
     private Camera camera;
-    private MediaRecorder mediaRecorder;
+    public MediaRecorder mediaRecorder;
 
     private boolean isPreviewing = false;
     private boolean isRecording = false;
@@ -156,7 +157,7 @@ public abstract class CameraDev {
                 mediaRecorder.stop();
                 mediaRecorder.release();
 
-//            mediaRecorder = null;
+            mediaRecorder = null;
 
                 setRecording(false);
                 statusListener.onStopRecord();
@@ -169,6 +170,26 @@ public abstract class CameraDev {
             LogUtil.i(TAG, "stopRecord --------->mediaRecorder is null!");
         }
 
+    }
+
+    public void killRecord() {
+        if (mediaRecorder != null) {
+            mediaRecorder.release();
+        }
+    }
+
+    public void takePhoto() {
+        if (camera != null) {
+            camera.autoFocus(null);
+            camera.takePicture(null, null, new Camera.PictureCallback() {
+                @Override
+                public void onPictureTaken(byte[] data, Camera camera) {
+                    new SavePictureTask().execute(data);
+                    camera.startPreview();
+                    startRecord(CamcorderProfile.QUALITY_720P);
+                }
+            });
+        }
     }
 
     public void setPreviewing(boolean previewing) {
