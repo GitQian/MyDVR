@@ -7,6 +7,7 @@ import android.media.MediaRecorder;
 
 import com.xinzhihui.mydvr.AppConfig;
 import com.xinzhihui.mydvr.listener.CameraStatusListener;
+import com.xinzhihui.mydvr.utils.DateTimeUtil;
 import com.xinzhihui.mydvr.utils.LogUtil;
 
 import java.io.File;
@@ -89,7 +90,11 @@ public abstract class CameraDev {
      */
     public void startRecord(final int profileType){
         mediaRecorder = new MediaRecorder();
-        File file = new File(AppConfig.FRONT_VIDEO_PATH + System.currentTimeMillis() + ".mp4");
+        File dir = new File(AppConfig.FRONT_VIDEO_PATH);
+        if (!dir.exists()) {
+            dir.mkdir();
+        }
+        File file = new File(AppConfig.FRONT_VIDEO_PATH + DateTimeUtil.getCurrentNumberDateTime() + ".mp4");
         CamcorderProfile camcorderProfile = null;
         camcorderProfile = CamcorderProfile.get(profileType);
 
