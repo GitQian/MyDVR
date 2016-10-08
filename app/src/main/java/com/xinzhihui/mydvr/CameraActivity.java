@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.xinzhihui.mydvr.listener.CameraStatusListener;
 import com.xinzhihui.mydvr.model.CameraDev;
 import com.xinzhihui.mydvr.model.CameraFactory;
+import com.xinzhihui.mydvr.utils.DateTimeUtil;
 import com.xinzhihui.mydvr.utils.LogUtil;
 import com.xinzhihui.mydvr.utils.SDCardUtils;
 
@@ -85,7 +86,9 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                         CameraActivity.this.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                timeTv.setText("Time:" + timeCount++);
+//                                timeTv.setText("Time:" + timeCount++);
+                                timeTv.setText(DateTimeUtil.formatLongToTimeStr(timeCount * 1000));
+                                timeCount ++;
                             }
                         });
                     }
@@ -103,6 +106,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                 Toast.makeText(CameraActivity.this, "停止录制" , Toast.LENGTH_LONG).show();
                 animRec.stop();
                 recImg.setVisibility(View.GONE);
+                timeTv.setVisibility(View.GONE);
 
                 timerTask.cancel();
                 timeCount = 0;
