@@ -59,6 +59,7 @@ public class FileListActivity extends AppCompatActivity {
 
                 } else {
                     //其他普通文件
+                    //TODO 图片文件使用图片浏览器
                 }
             }
         });

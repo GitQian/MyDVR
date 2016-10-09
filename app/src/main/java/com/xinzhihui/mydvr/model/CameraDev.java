@@ -85,39 +85,42 @@ public abstract class CameraDev {
         }
     }
 
+    public abstract MediaRecorder initRecorderParameters(Camera camera, MediaRecorder mediaRecorder);
     /**
      * 开始录像
      * @param
      */
-    public void startRecord(final int profileType){
+    public void startRecord(){
         mediaRecorder = new MediaRecorder();
-        File dir = new File(AppConfig.FRONT_VIDEO_PATH);
-        if (!dir.exists()) {
-            dir.mkdir();
-        }
-        File file = new File(AppConfig.FRONT_VIDEO_PATH + DateTimeUtil.getCurrentNumberDateTime() + ".mp4");
-        CamcorderProfile camcorderProfile = null;
-        camcorderProfile = CamcorderProfile.get(profileType);
+//        File dir = new File(AppConfig.FRONT_VIDEO_PATH);
+//        if (!dir.exists()) {
+//            dir.mkdir();
+//        }
+//        File file = new File(AppConfig.FRONT_VIDEO_PATH + DateTimeUtil.getCurrentNumberDateTime() + ".mp4");
+//        CamcorderProfile camcorderProfile = null;
+//        camcorderProfile = CamcorderProfile.get(profileType);
 
         camera.unlock();
 
-        mediaRecorder.reset();
+        initRecorderParameters(camera, mediaRecorder);
 
-        mediaRecorder.setCamera(camera);
-
-        mediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA); //前置
-        mediaRecorder.setOutputFormat(camcorderProfile.fileFormat); //先设置输出格式
-        mediaRecorder.setVideoFrameRate(camcorderProfile.videoFrameRate);
-
-        mediaRecorder.setVideoSize(camcorderProfile.videoFrameWidth, camcorderProfile.videoFrameHeight);
-
-        mediaRecorder.setVideoEncodingBitRate(camcorderProfile.videoBitRate);
-
-        mediaRecorder.setVideoEncoder(camcorderProfile.videoCodec); //后设置视频编码格式
-
-        mediaRecorder.setOutputFile(file.getAbsolutePath());
-
-        mediaRecorder.setMaxDuration(AppConfig.MAX_DURATION);
+//        mediaRecorder.reset();
+//
+//        mediaRecorder.setCamera(camera);
+//
+//        mediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA); //前置
+//        mediaRecorder.setOutputFormat(camcorderProfile.fileFormat); //先设置输出格式
+//        mediaRecorder.setVideoFrameRate(camcorderProfile.videoFrameRate);
+//
+//        mediaRecorder.setVideoSize(640, 360);
+//
+//        mediaRecorder.setVideoEncodingBitRate(camcorderProfile.videoBitRate);
+//
+//        mediaRecorder.setVideoEncoder(camcorderProfile.videoCodec); //后设置视频编码格式
+//
+//        mediaRecorder.setOutputFile(file.getAbsolutePath());
+//
+//        mediaRecorder.setMaxDuration(AppConfig.MAX_DURATION);
 
         mediaRecorder.setOnInfoListener(new MediaRecorder.OnInfoListener() {
             @Override
@@ -125,7 +128,7 @@ public abstract class CameraDev {
                 switch (what) {
                     case MediaRecorder.MEDIA_RECORDER_INFO_MAX_DURATION_REACHED:
                         stopRecord();
-                        startRecord(profileType);
+                        startRecord();
                         break;
                     default:
                         break;
@@ -186,7 +189,7 @@ public abstract class CameraDev {
                 public void onPictureTaken(byte[] data, Camera camera) {
                     new SavePictureTask().execute(data);
                     camera.startPreview();
-                    startRecord(CamcorderProfile.QUALITY_720P);
+                    startRecord();
                 }
             });
         }

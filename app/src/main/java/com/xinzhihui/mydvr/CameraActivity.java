@@ -127,7 +127,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
 
             @Override
             public void onStartRecord() {
-
+                Toast.makeText(CameraActivity.this, "Behind正在录制" , Toast.LENGTH_LONG).show();
             }
 
             @Override
@@ -137,7 +137,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
 
             @Override
             public void onStopRecord() {
-
+                Toast.makeText(CameraActivity.this, "Behind停止录制" , Toast.LENGTH_LONG).show();
             }
         });
 
@@ -180,7 +180,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                     Toast.makeText(CameraActivity.this, "SD卡不可用！", Toast.LENGTH_LONG).show();
                 }
 
-                dvrSurfaceTextureFrontListener.cameraDev.startRecord( CamcorderProfile.QUALITY_720P);
+                dvrSurfaceTextureFrontListener.cameraDev.startRecord();
                 break;
 
             case R.id.btn_record_stop:
@@ -266,6 +266,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
             LogUtil.d(TAG, "onSurfaceTextureDestroyed --------->");
             if (cameraDev.mediaRecorder != null) {
+                //处理back返回卡死问题
                 cameraStatusListener.onStopRecord();
                 cameraDev.killRecord();
             }
