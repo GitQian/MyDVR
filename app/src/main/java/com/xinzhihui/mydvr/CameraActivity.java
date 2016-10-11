@@ -185,6 +185,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
 
             case R.id.btn_record_stop:
                 dvrSurfaceTextureFrontListener.cameraDev.stopRecord();
+//                dvrSurfaceTextureBehindListener.cameraDev.stopRecord();
                 break;
 
             case R.id.btn_camera_takephoto:
@@ -193,15 +194,6 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                 dvrSurfaceTextureFrontListener.cameraDev.takePhoto();
                 break;
 
-//            case R.id.btn_record_behind_start:
-////                mediaRecorder2 = new MediaRecorder();
-////                dvrSurfaceTextureBehindListener.cameraDev.startRecord(mediaRecorder2, new File(SDCardUtils.getSDCardPath() + "MyFrontVideo.mp4"), 2);
-//
-//                break;
-
-//            case R.id.btn_record_behind_stop:
-////                dvrSurfaceTextureBehindListener.cameraDev.stopRecord(mediaRecorder2);
-//                break;
 
             case R.id.rll_front:
                 behindRll.setVisibility(View.GONE);
