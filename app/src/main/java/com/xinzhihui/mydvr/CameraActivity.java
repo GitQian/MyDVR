@@ -1,12 +1,13 @@
 package com.xinzhihui.mydvr;
 
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.graphics.SurfaceTexture;
 import android.graphics.drawable.AnimationDrawable;
-import android.hardware.Camera;
-import android.media.CamcorderProfile;
-import android.media.MediaRecorder;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.view.TextureView;
 import android.view.View;
@@ -19,12 +20,11 @@ import android.widget.Toast;
 import com.xinzhihui.mydvr.listener.CameraStatusListener;
 import com.xinzhihui.mydvr.model.CameraDev;
 import com.xinzhihui.mydvr.model.CameraFactory;
+import com.xinzhihui.mydvr.service.RecordService;
 import com.xinzhihui.mydvr.utils.DateTimeUtil;
 import com.xinzhihui.mydvr.utils.LogUtil;
 import com.xinzhihui.mydvr.utils.SDCardUtils;
 
-import java.io.File;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -63,6 +63,27 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     private TimerTask timerTask;
     private TextView timeTv;
     int timeCount = 0;
+
+    private RecordService mService = null;
+    private ServiceConnection myServiceConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+
+        }
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            LogUtil.d(TAG, "onServiceConnected");
+            mService = ((RecordService.LocalBinder) service).getService();
+            if (mService.getCameraDev(0) == null) {
+                //先得到服务，则为制空，待界面起来置入实例；先得到界面，则为置入实例
+                LogUtil.d(TAG, "onServiceConnected setCameraDev --------->");
+                mService.addCameraDev(dvrSurfaceTextureFrontListener.mCameraId, dvrSurfaceTextureFrontListener.cameraDev);
+            }
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -152,6 +173,11 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         mTakePhotoBtn.setOnClickListener(this);
         mRecordSwitchBtn.setOnClickListener(this);
         mVideoDirBtn.setOnClickListener(this);
+
+        //先startService再bindService;
+        Intent intent = new Intent(CameraActivity.this, RecordService.class);
+        startService(intent);
+        bindService(intent, myServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
     private void initView(){
@@ -180,12 +206,14 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                     Toast.makeText(CameraActivity.this, "SD卡不可用！", Toast.LENGTH_LONG).show();
                 }
 
-                dvrSurfaceTextureFrontListener.cameraDev.startRecord();
+//                dvrSurfaceTextureFrontListener.cameraDev.startRecord();
+                mService.getCameraDev(dvrSurfaceTextureFrontListener.mCameraId).startRecord();
                 break;
 
             case R.id.btn_record_stop:
-                dvrSurfaceTextureFrontListener.cameraDev.stopRecord();
+//                dvrSurfaceTextureFrontListener.cameraDev.stopRecord();
 //                dvrSurfaceTextureBehindListener.cameraDev.stopRecord();
+                mService.getCameraDev(dvrSurfaceTextureFrontListener.mCameraId).stopRecord();
                 break;
 
             case R.id.btn_camera_takephoto:
@@ -217,13 +245,40 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
 
             case R.id.btn_video_dir:
                 //先停止录像
-                dvrSurfaceTextureFrontListener.cameraDev.stopRecord();
+//                dvrSurfaceTextureFrontListener.cameraDev.stopRecord();
                 Intent intent = new Intent(CameraActivity.this, FileListActivity.class);
                 startActivity(intent);
                 break;
 
             default:
                 break;
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //再次bindService，得到service实例
+        Intent intent = new Intent(CameraActivity.this, RecordService.class);
+        bindService(intent,myServiceConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        //解除绑定，服务仍在运行(停止服务必须先解除绑定！！！)
+        unbindService(myServiceConnection);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        LogUtil.d(TAG, "CameraActivity onDestroy ------>");
+        if (mService != null && !dvrSurfaceTextureFrontListener.cameraDev.isRecording()) {
+            //TODO 检查所有设备是否有正在录像的
+            Intent intent = new Intent(CameraActivity.this, RecordService.class);
+            stopService(intent);
+            mService = null;
         }
     }
 
@@ -244,9 +299,37 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         @Override
         public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
             LogUtil.d(TAG, "onSurfaceTextureAvailable ------->");
-                 cameraDev = factory.createCameraDev(mCameraId, cameraStatusListener);
+            if (mService != null ){
+                //服务还没绑定
+                if (mService.isRecording(mCameraId)) {
+                    //后台正在录制
+                    LogUtil.d(TAG, "onSurfaceTextureAvailable --------> Cmera:" + mCameraId + " is Recording");
+                    if (null == mService.getCameraDev(mCameraId) ) {
+                        LogUtil.e(TAG, "onSurfaceTextureAvailable ------> cameraDev is null!!!!");
+                    }
+                    mService.startRender(mCameraId, surface);
+                    LogUtil.d(TAG, "onSurfaceTextureAvailable -------> Camera:" + mCameraId + " is recording to starRender");
+//                    mService.setmHandler(mHandler);  //更新handler
+                    cameraDev = mService.getCameraDev(mCameraId);
+                }else{
+                    //后台没有录制（进入之后不录制...再次进入）（绑定服务在先，就会进入这）------第一次进入情况2（绑定在先）
+                    LogUtil.d(TAG, "onSurfaceTextureAvailable --------> mService not Recording");
+                    cameraDev = factory.createCameraDev(mCameraId, cameraStatusListener);
+                    cameraDev.open();
+                    cameraDev.startPreview(surface);
+
+                    mService.addCameraDev(mCameraId, cameraDev);  //service和cameraDev关联
+//                    mService.setmHandler(mHandler);   //更新设置handler
+                }
+            } else {
+                //第一次进入(与绑定服务有同步问题，可能会进入)----第一次进入情况1（绑定在后）
+                LogUtil.d(TAG, "onSurfaceTextureAvailable --------> mService is null");
+                cameraDev = factory.createCameraDev(mCameraId, cameraStatusListener);
                 cameraDev.open();
                 cameraDev.startPreview(surface);
+
+//                cameraDev.mHandler = mHandler;     //设置handler
+            }
         }
 
         @Override
@@ -257,12 +340,18 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         @Override
         public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
             LogUtil.d(TAG, "onSurfaceTextureDestroyed --------->");
-            if (cameraDev.mediaRecorder != null) {
-                //处理back返回卡死问题
-                cameraStatusListener.onStopRecord();
-                cameraDev.killRecord();
+
+            if (mService.isRecording(mCameraId)) {
+                LogUtil.d(TAG, "onSurfaceTextureDestroyed ---------> Camera:" + mCameraId + " is Recording to stopRender");
+                mService.stopRender(mCameraId);
+            }else {
+                if (cameraDev.mediaRecorder != null) {
+                    //处理back返回卡死问题
+                    cameraStatusListener.onStopRecord();
+                    cameraDev.killRecord();
+                }
+                cameraDev.stopPreview();
             }
-            cameraDev.stopPreview();
             return true;
         }
 

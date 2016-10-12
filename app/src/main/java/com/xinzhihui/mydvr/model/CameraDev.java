@@ -23,7 +23,7 @@ public abstract class CameraDev {
     public int cameraid;
     public CameraStatusListener statusListener;
 
-    private Camera camera;
+    public Camera camera;
     public MediaRecorder mediaRecorder;
 
     private boolean isPreviewing = false;
@@ -81,7 +81,7 @@ public abstract class CameraDev {
 
             setPreviewing(false);
         }else {
-            LogUtil.i(TAG, "stopPreView ----------->camera is null");
+            LogUtil.i(TAG, "stopPreView ----------->camera:" + cameraid +  "is null");
         }
     }
 
