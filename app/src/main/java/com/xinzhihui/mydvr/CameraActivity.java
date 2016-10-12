@@ -7,7 +7,9 @@ import android.content.ServiceConnection;
 import android.graphics.SurfaceTexture;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.view.TextureView;
 import android.view.View;
@@ -42,9 +44,9 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     private RelativeLayout behindRll;
 
     private int curCamera;
-    private static final int FRONT_CAMERA = 1;
-    private static final int BEHIND_CAMERA = 2;
-    private static final int ALL_CAMERA = 3;
+    private static final int FRONT_CAMERA = 0;
+    private static final int BEHIND_CAMERA = 1;
+    private static final int ALL_CAMERA = 10086;
 
     private CameraDev curCameraDev;
 
@@ -63,6 +65,51 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     private TimerTask timerTask;
     private TextView timeTv;
     int timeCount = 0;
+
+    Handler mHandler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+            switch (msg.what) {
+                case 0:
+                    if (msg.arg1 == 0) {
+                        //TODO camera 0 stop
+                        Toast.makeText(CameraActivity.this, "停止录制" , Toast.LENGTH_LONG).show();
+                        animRec.stop();
+                        recImg.setVisibility(View.GONE);
+                        timeTv.setVisibility(View.GONE);
+                        mRecordStartBtn.setClickable(true);
+                        mRecordStopBtn.setClickable(false);
+
+                    }else if (msg.arg1 == 1){
+                        //TODO camera 1 start
+//                        Toast.makeText(CameraActivity.this, "正在录制" , Toast.LENGTH_LONG).show();
+                        recImg.setVisibility(View.VISIBLE);
+                        timeTv.setVisibility(View.VISIBLE);
+                        mRecordStartBtn.setClickable(false);
+                        mRecordStopBtn.setClickable(true);
+                        animRec.start();
+
+                        timeTv.setText(DateTimeUtil.formatLongToTimeStr(msg.arg2 * 1000));
+
+                    }
+                    break;
+
+                case 1:
+                    if (msg.arg1 == 0) {
+                        //stop
+
+                    }else if (msg.arg1 == 1){
+                        //start
+
+                    }
+                    break;
+
+                default:
+                    break;
+            }
+            return false;
+        }
+    });
 
     private RecordService mService = null;
     private ServiceConnection myServiceConnection = new ServiceConnection() {
@@ -98,27 +145,27 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
 
             @Override
             public void onStartRecord() {
-                Toast.makeText(CameraActivity.this, "正在录制" , Toast.LENGTH_LONG).show();
-                recImg.setVisibility(View.VISIBLE);
-                timeTv.setVisibility(View.VISIBLE);
-                mRecordStartBtn.setClickable(false);
-                mRecordStopBtn.setClickable(true);
-                animRec.start();
+//                Toast.makeText(CameraActivity.this, "正在录制" , Toast.LENGTH_LONG).show();
+//                recImg.setVisibility(View.VISIBLE);
+//                timeTv.setVisibility(View.VISIBLE);
+//                mRecordStartBtn.setClickable(false);
+//                mRecordStopBtn.setClickable(true);
+//                animRec.start();
 
-                timerTask = new TimerTask() {
-                    @Override
-                    public void run() {
-                        CameraActivity.this.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-//                                timeTv.setText("Time:" + timeCount++);
-                                timeTv.setText(DateTimeUtil.formatLongToTimeStr(timeCount * 1000));
-                                timeCount ++;
-                            }
-                        });
-                    }
-                };
-                timer.schedule(timerTask, 0, 1000);
+//                timerTask = new TimerTask() {
+//                    @Override
+//                    public void run() {
+//                        CameraActivity.this.runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+////                                timeTv.setText("Time:" + timeCount++);
+//                                timeTv.setText(DateTimeUtil.formatLongToTimeStr(timeCount * 1000));
+//                                timeCount ++;
+//                            }
+//                        });
+//                    }
+//                };
+//                timer.schedule(timerTask, 0, 1000);
             }
 
             @Override
@@ -128,15 +175,15 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
 
             @Override
             public void onStopRecord() {
-                Toast.makeText(CameraActivity.this, "停止录制" , Toast.LENGTH_LONG).show();
-                animRec.stop();
-                recImg.setVisibility(View.GONE);
-                timeTv.setVisibility(View.GONE);
-                mRecordStartBtn.setClickable(true);
-                mRecordStopBtn.setClickable(false);
+//                Toast.makeText(CameraActivity.this, "停止录制" , Toast.LENGTH_LONG).show();
+//                animRec.stop();
+//                recImg.setVisibility(View.GONE);
+//                timeTv.setVisibility(View.GONE);
+//                mRecordStartBtn.setClickable(true);
+//                mRecordStopBtn.setClickable(false);
 
-                timerTask.cancel();
-                timeCount = 0;
+//                timerTask.cancel();
+//                timeCount = 0;
             }
         });
 
@@ -309,8 +356,9 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                     }
                     mService.startRender(mCameraId, surface);
                     LogUtil.d(TAG, "onSurfaceTextureAvailable -------> Camera:" + mCameraId + " is recording to starRender");
-//                    mService.setmHandler(mHandler);  //更新handler
+
                     cameraDev = mService.getCameraDev(mCameraId);
+                    cameraDev.mHandler = mHandler;  //更新handler
                 }else{
                     //后台没有录制（进入之后不录制...再次进入）（绑定服务在先，就会进入这）------第一次进入情况2（绑定在先）
                     LogUtil.d(TAG, "onSurfaceTextureAvailable --------> mService not Recording");
@@ -319,7 +367,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                     cameraDev.startPreview(surface);
 
                     mService.addCameraDev(mCameraId, cameraDev);  //service和cameraDev关联
-//                    mService.setmHandler(mHandler);   //更新设置handler
+                    cameraDev.mHandler = mHandler;   //更新设置handler
                 }
             } else {
                 //第一次进入(与绑定服务有同步问题，可能会进入)----第一次进入情况1（绑定在后）
@@ -328,7 +376,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                 cameraDev.open();
                 cameraDev.startPreview(surface);
 
-//                cameraDev.mHandler = mHandler;     //设置handler
+                cameraDev.mHandler = mHandler;     //设置handler
             }
         }
 

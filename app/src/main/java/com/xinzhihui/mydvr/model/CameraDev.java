@@ -4,6 +4,8 @@ import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
+import android.os.Handler;
+import android.os.Message;
 
 import com.xinzhihui.mydvr.AppConfig;
 import com.xinzhihui.mydvr.asynctask.SavePictureTask;
@@ -13,6 +15,8 @@ import com.xinzhihui.mydvr.utils.LogUtil;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by Administrator on 2016/9/28.
@@ -28,6 +32,11 @@ public abstract class CameraDev {
 
     private boolean isPreviewing = false;
     private boolean isRecording = false;
+
+    public Handler mHandler = null;
+    private Timer mTimer = new Timer();
+    private TimerTask mTimerTask;
+    private int mTimeCount = 0;
 
 
     /**
@@ -145,7 +154,22 @@ public abstract class CameraDev {
         mediaRecorder.start();
 
         setRecording(true);
-//        handler.sendEmptyMessage(1);
+
+        mTimerTask = new TimerTask() {
+            @Override
+            public void run() {
+                Message msg = new Message();
+                msg.what = 0;  //msg.what = cameraid;
+                msg.arg1 = 1;  //start
+                msg.arg2 = mTimeCount;  //time
+                if (mHandler != null) {
+                    mHandler.sendMessage(msg);
+                }
+                mTimeCount ++;
+            }
+        };
+        mTimer.schedule(mTimerTask, 0, 1000);
+
         statusListener.onStartRecord();
     }
 
@@ -167,6 +191,15 @@ public abstract class CameraDev {
             } catch (IllegalStateException e) {
                 e.printStackTrace();
                 LogUtil.e(TAG, "stopRecord *************>mediaRecorder stop failed!!!");
+            }
+
+            mTimerTask.cancel();
+            mTimeCount = 0;
+            if (mHandler != null) {
+                Message msg = new Message();
+                msg.what = 0; //msg.what = cameraid;
+                msg.arg1 = 0; //stop
+                mHandler.sendMessage(msg);
             }
         }else {
             setRecording(false);
