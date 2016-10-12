@@ -26,30 +26,29 @@ import com.xinzhihui.mydvr.utils.DateTimeUtil;
 import com.xinzhihui.mydvr.utils.LogUtil;
 import com.xinzhihui.mydvr.utils.SDCardUtils;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
-public class CameraActivity extends AppCompatActivity implements View.OnClickListener{
+public class CameraActivity extends AppCompatActivity implements View.OnClickListener {
 
     private final String TAG = this.getClass().getName();
 
     private TextureView mCameraTtv;
     private TextureView mCameraFrontTtv;
 
-    private ImageView recImg;
-    private AnimationDrawable animRec;
-    private ImageView recImgBehind;
-    private AnimationDrawable animRecBehid;
+    private ImageView mRecFrontImg;
+    private AnimationDrawable mAnimFrontRec;
+    private ImageView mRecBehindImg;
+    private AnimationDrawable mAnimBehindRec;
+    private TextView mTimeFrontTv;
+    private TextView mTimetBehindTv;
 
-    private RelativeLayout frontRll;
-    private RelativeLayout behindRll;
+    private RelativeLayout mFrontRll;
+    private RelativeLayout mBehindRll;
 
-    private int curCamera;
+    private int mCurCameraId;
     private static final int FRONT_CAMERA = 0;
     private static final int BEHIND_CAMERA = 1;
     private static final int ALL_CAMERA = 10086;
 
-    private CameraDev curCameraDev;
+    private CameraDev mCurCameraDev;
 
     private Button mRecordStartBtn;
     private Button mRecordStopBtn;
@@ -62,12 +61,6 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     private DvrSurfaceTextureListener dvrSurfaceTextureFrontListener;
     private DvrSurfaceTextureListener dvrSurfaceTextureBehindListener;
 
-    private Timer timer = new Timer();
-    private TimerTask timerTask;
-    private TextView timeTv;
-    private TextView timetTvBehind;
-    int timeCount = 0;
-
     Handler mHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
@@ -75,23 +68,23 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                 case FRONT_CAMERA:
                     if (msg.arg1 == 0) {
                         //TODO camera 0 stop
-                        Toast.makeText(CameraActivity.this, "停止录制" , Toast.LENGTH_LONG).show();
-                        animRec.stop();
-                        recImg.setVisibility(View.GONE);
-                        timeTv.setVisibility(View.GONE);
+                        Toast.makeText(CameraActivity.this, "停止录制", Toast.LENGTH_LONG).show();
+                        mAnimFrontRec.stop();
+                        mRecFrontImg.setVisibility(View.GONE);
+                        mTimeFrontTv.setVisibility(View.GONE);
                         mRecordStartBtn.setClickable(true);
                         mRecordStopBtn.setClickable(false);
 
-                    }else if (msg.arg1 == 1){
+                    } else if (msg.arg1 == 1) {
                         //TODO camera 1 start
 //                        Toast.makeText(CameraActivity.this, "正在录制" , Toast.LENGTH_LONG).show();
-                        recImg.setVisibility(View.VISIBLE);
-                        timeTv.setVisibility(View.VISIBLE);
+                        mRecFrontImg.setVisibility(View.VISIBLE);
+                        mTimeFrontTv.setVisibility(View.VISIBLE);
                         mRecordStartBtn.setClickable(false);
                         mRecordStopBtn.setClickable(true);
-                        animRec.start();
+                        mAnimFrontRec.start();
 
-                        timeTv.setText(DateTimeUtil.formatLongToTimeStr(msg.arg2 * 1000));
+                        mTimeFrontTv.setText(DateTimeUtil.formatLongToTimeStr(msg.arg2 * 1000));
 
                     }
                     break;
@@ -99,22 +92,22 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                 case BEHIND_CAMERA:
                     if (msg.arg1 == 0) {
                         //stop
-                        Toast.makeText(CameraActivity.this, "behind停止录制" , Toast.LENGTH_LONG).show();
-                        animRecBehid.stop();
-                        recImgBehind.setVisibility(View.GONE);
-                        timetTvBehind.setVisibility(View.GONE);
+                        Toast.makeText(CameraActivity.this, "behind停止录制", Toast.LENGTH_LONG).show();
+                        mAnimBehindRec.stop();
+                        mRecBehindImg.setVisibility(View.GONE);
+                        mTimetBehindTv.setVisibility(View.GONE);
                         mRecordStartBtn.setClickable(true);
                         mRecordStopBtn.setClickable(false);
 
-                    }else if (msg.arg1 == 1){
+                    } else if (msg.arg1 == 1) {
                         //start
-                        recImgBehind.setVisibility(View.VISIBLE);
-                        timetTvBehind.setVisibility(View.VISIBLE);
+                        mRecBehindImg.setVisibility(View.VISIBLE);
+                        mTimetBehindTv.setVisibility(View.VISIBLE);
                         mRecordStartBtn.setClickable(false);
                         mRecordStopBtn.setClickable(true);
-                        animRecBehid.start();
+                        mAnimBehindRec.start();
 
-                        timetTvBehind.setText(DateTimeUtil.formatLongToTimeStr(msg.arg2 * 1000));
+                        mTimetBehindTv.setText(DateTimeUtil.formatLongToTimeStr(msg.arg2 * 1000));
                     }
                     break;
 
@@ -159,8 +152,8 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         mCameraTtv.setSurfaceTextureListener(dvrSurfaceTextureFrontListener);
         mCameraFrontTtv.setSurfaceTextureListener(dvrSurfaceTextureBehindListener);
 
-        frontRll.setOnClickListener(this);
-        behindRll.setOnClickListener(this);
+        mFrontRll.setOnClickListener(this);
+        mBehindRll.setOnClickListener(this);
 
         mRecordStartBtn.setOnClickListener(this);
         mRecordStopBtn.setOnClickListener(this);
@@ -173,46 +166,46 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         startService(intent);
         bindService(intent, myServiceConnection, Context.BIND_AUTO_CREATE);
 
-        curCameraDev = dvrSurfaceTextureFrontListener.cameraDev;
+        mCurCameraDev = dvrSurfaceTextureFrontListener.cameraDev;
     }
 
-    private void initView(){
+    private void initView() {
         mCameraTtv = (TextureView) findViewById(R.id.ttv_camera_front);
         mCameraFrontTtv = (TextureView) findViewById(R.id.ttv_camera_behind);
-        recImg = (ImageView) findViewById(R.id.img_record_rec);
-        animRec = (AnimationDrawable) recImg.getBackground();
-        recImgBehind = (ImageView) findViewById(R.id.img_record_rec_behind);
-        animRecBehid = (AnimationDrawable) recImgBehind.getBackground();
+        mRecFrontImg = (ImageView) findViewById(R.id.img_front_rec);
+        mAnimFrontRec = (AnimationDrawable) mRecFrontImg.getBackground();
+        mRecBehindImg = (ImageView) findViewById(R.id.img_behind_rec);
+        mAnimBehindRec = (AnimationDrawable) mRecBehindImg.getBackground();
 
-        frontRll = (RelativeLayout) findViewById(R.id.rll_front);
-        behindRll = (RelativeLayout) findViewById(R.id.rll_behind);
+        mFrontRll = (RelativeLayout) findViewById(R.id.rll_front);
+        mBehindRll = (RelativeLayout) findViewById(R.id.rll_behind);
 
         mRecordStartBtn = (Button) findViewById(R.id.btn_record_start);
         mRecordStopBtn = (Button) findViewById(R.id.btn_record_stop);
         mTakePhotoBtn = (Button) findViewById(R.id.btn_camera_takephoto);
         mRecordSwitchBtn = (Button) findViewById(R.id.btn_record_switch);
         mVideoDirBtn = (Button) findViewById(R.id.btn_video_dir);
-        timeTv = (TextView) findViewById(R.id.tv_time);
-        timetTvBehind = (TextView) findViewById(R.id.tv_time_behind);
+        mTimeFrontTv = (TextView) findViewById(R.id.tv_front_time);
+        mTimetBehindTv = (TextView) findViewById(R.id.tv_behind_time);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_record_start:
-                if(!SDCardUtils.isSDCardEnable()) {
+                if (!SDCardUtils.isSDCardEnable()) {
                     LogUtil.i(TAG, "SDCard can't use!");
                     Toast.makeText(CameraActivity.this, "SD卡不可用！", Toast.LENGTH_LONG).show();
                 }
 
 //                dvrSurfaceTextureFrontListener.cameraDev.startRecord();
-                mService.getCameraDev(curCamera).startRecord();
+                mService.getCameraDev(mCurCameraId).startRecord();
                 break;
 
             case R.id.btn_record_stop:
 //                dvrSurfaceTextureFrontListener.cameraDev.stopRecord();
 //                dvrSurfaceTextureBehindListener.cameraDev.stopRecord();
-                mService.getCameraDev(curCamera).stopRecord();
+                mService.getCameraDev(mCurCameraId).stopRecord();
                 break;
 
             case R.id.btn_camera_takephoto:
@@ -223,23 +216,23 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
 
 
             case R.id.rll_front:
-                behindRll.setVisibility(View.GONE);
-                frontRll.setVisibility(View.VISIBLE);
-                curCamera = FRONT_CAMERA;
-                curCameraDev = dvrSurfaceTextureFrontListener.cameraDev;
+                mBehindRll.setVisibility(View.GONE);
+                mFrontRll.setVisibility(View.VISIBLE);
+                mCurCameraId = FRONT_CAMERA;
+                mCurCameraDev = dvrSurfaceTextureFrontListener.cameraDev;
                 break;
 
             case R.id.rll_behind:
-                frontRll.setVisibility(View.GONE);
-                behindRll.setVisibility(View.VISIBLE);
-                curCamera = BEHIND_CAMERA;
-                curCameraDev = dvrSurfaceTextureBehindListener.cameraDev;
+                mFrontRll.setVisibility(View.GONE);
+                mBehindRll.setVisibility(View.VISIBLE);
+                mCurCameraId = BEHIND_CAMERA;
+                mCurCameraDev = dvrSurfaceTextureBehindListener.cameraDev;
                 break;
 
             case R.id.btn_record_switch:
-                frontRll.setVisibility(View.VISIBLE);
-                behindRll.setVisibility(View.VISIBLE);
-                curCamera = ALL_CAMERA;
+                mFrontRll.setVisibility(View.VISIBLE);
+                mBehindRll.setVisibility(View.VISIBLE);
+                mCurCameraId = ALL_CAMERA;
                 break;
 
             case R.id.btn_video_dir:
@@ -259,7 +252,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         super.onResume();
         //再次bindService，得到service实例
         Intent intent = new Intent(CameraActivity.this, RecordService.class);
-        bindService(intent,myServiceConnection, Context.BIND_AUTO_CREATE);
+        bindService(intent, myServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
     @Override
@@ -284,26 +277,27 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     /**
      * 内部类，实现SurfaceTextureListener
      */
-    public class DvrSurfaceTextureListener implements TextureView.SurfaceTextureListener{
+    public class DvrSurfaceTextureListener implements TextureView.SurfaceTextureListener {
 
         private final String TAG = this.getClass().getName();
         private int mCameraId;
-//        private CameraStatusListener cameraStatusListener;
+        //        private CameraStatusListener cameraStatusListener;
         public CameraDev cameraDev;
 
         public DvrSurfaceTextureListener(int cameraId) {
             mCameraId = cameraId;
 //            this.cameraStatusListener = cameraStatusListener;
         }
+
         @Override
         public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
             LogUtil.d(TAG, "onSurfaceTextureAvailable ------->");
-            if (mService != null ){
+            if (mService != null) {
                 //服务还没绑定
                 if (mService.isRecording(mCameraId)) {
                     //后台正在录制
                     LogUtil.d(TAG, "onSurfaceTextureAvailable --------> Cmera:" + mCameraId + " is Recording");
-                    if (null == mService.getCameraDev(mCameraId) ) {
+                    if (null == mService.getCameraDev(mCameraId)) {
                         LogUtil.e(TAG, "onSurfaceTextureAvailable ------> cameraDev is null!!!!");
                     }
                     mService.startRender(mCameraId, surface);
@@ -311,7 +305,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
 
                     cameraDev = mService.getCameraDev(mCameraId);
                     cameraDev.mHandler = mHandler;  //更新handler
-                }else{
+                } else {
                     //后台没有录制（进入之后不录制...再次进入）（绑定服务在先，就会进入这）------第一次进入情况2（绑定在先）
                     LogUtil.d(TAG, "onSurfaceTextureAvailable --------> mService not Recording");
                     cameraDev = factory.createCameraDev(mCameraId);
@@ -344,7 +338,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
             if (mService.isRecording(mCameraId)) {
                 LogUtil.d(TAG, "onSurfaceTextureDestroyed ---------> Camera:" + mCameraId + " is Recording to stopRender");
                 mService.stopRender(mCameraId);
-            }else {
+            } else {
                 if (cameraDev.mediaRecorder != null) {
                     //处理back返回卡死问题
 //                    cameraStatusListener.onStopRecord();
