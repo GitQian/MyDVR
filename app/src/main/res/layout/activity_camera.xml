@@ -53,6 +53,21 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
+            <TextView
+                android:id="@+id/tv_time_behind"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/holo_red_light"
+                android:textSize="16sp" />
+
+            <ImageView
+                android:id="@+id/img_record_rec_behind"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:background="@drawable/anim_recording"
+                android:visibility="gone" />
+
         </RelativeLayout>
 
     </LinearLayout>

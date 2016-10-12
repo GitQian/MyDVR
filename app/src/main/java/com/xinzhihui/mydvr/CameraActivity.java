@@ -38,6 +38,8 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
 
     private ImageView recImg;
     private AnimationDrawable animRec;
+    private ImageView recImgBehind;
+    private AnimationDrawable animRecBehid;
 
     private RelativeLayout frontRll;
     private RelativeLayout behindRll;
@@ -63,6 +65,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     private Timer timer = new Timer();
     private TimerTask timerTask;
     private TextView timeTv;
+    private TextView timetTvBehind;
     int timeCount = 0;
 
     Handler mHandler = new Handler(new Handler.Callback() {
@@ -96,10 +99,22 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                 case BEHIND_CAMERA:
                     if (msg.arg1 == 0) {
                         //stop
+                        Toast.makeText(CameraActivity.this, "behind停止录制" , Toast.LENGTH_LONG).show();
+                        animRecBehid.stop();
+                        recImgBehind.setVisibility(View.GONE);
+                        timetTvBehind.setVisibility(View.GONE);
+                        mRecordStartBtn.setClickable(true);
+                        mRecordStopBtn.setClickable(false);
 
                     }else if (msg.arg1 == 1){
                         //start
+                        recImgBehind.setVisibility(View.VISIBLE);
+                        timetTvBehind.setVisibility(View.VISIBLE);
+                        mRecordStartBtn.setClickable(false);
+                        mRecordStopBtn.setClickable(true);
+                        animRecBehid.start();
 
+                        timetTvBehind.setText(DateTimeUtil.formatLongToTimeStr(msg.arg2 * 1000));
                     }
                     break;
 
@@ -156,6 +171,8 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         Intent intent = new Intent(CameraActivity.this, RecordService.class);
         startService(intent);
         bindService(intent, myServiceConnection, Context.BIND_AUTO_CREATE);
+
+        curCameraDev = dvrSurfaceTextureFrontListener.cameraDev;
     }
 
     private void initView(){
@@ -163,6 +180,8 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         mCameraFrontTtv = (TextureView) findViewById(R.id.ttv_camera_behind);
         recImg = (ImageView) findViewById(R.id.img_record_rec);
         animRec = (AnimationDrawable) recImg.getBackground();
+        recImgBehind = (ImageView) findViewById(R.id.img_record_rec_behind);
+        animRecBehid = (AnimationDrawable) recImgBehind.getBackground();
 
         frontRll = (RelativeLayout) findViewById(R.id.rll_front);
         behindRll = (RelativeLayout) findViewById(R.id.rll_behind);
@@ -173,6 +192,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         mRecordSwitchBtn = (Button) findViewById(R.id.btn_record_switch);
         mVideoDirBtn = (Button) findViewById(R.id.btn_video_dir);
         timeTv = (TextView) findViewById(R.id.tv_time);
+        timetTvBehind = (TextView) findViewById(R.id.tv_time_behind);
     }
 
     @Override
@@ -185,13 +205,13 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                 }
 
 //                dvrSurfaceTextureFrontListener.cameraDev.startRecord();
-                mService.getCameraDev(dvrSurfaceTextureFrontListener.mCameraId).startRecord();
+                mService.getCameraDev(curCamera).startRecord();
                 break;
 
             case R.id.btn_record_stop:
 //                dvrSurfaceTextureFrontListener.cameraDev.stopRecord();
 //                dvrSurfaceTextureBehindListener.cameraDev.stopRecord();
-                mService.getCameraDev(dvrSurfaceTextureFrontListener.mCameraId).stopRecord();
+                mService.getCameraDev(curCamera).stopRecord();
                 break;
 
             case R.id.btn_camera_takephoto:
@@ -327,6 +347,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                 if (cameraDev.mediaRecorder != null) {
                     //处理back返回卡死问题
 //                    cameraStatusListener.onStopRecord();
+                    //stopRecord后 mediaRecorder 置空了
                     cameraDev.killRecord();
                 }
                 cameraDev.stopPreview();
