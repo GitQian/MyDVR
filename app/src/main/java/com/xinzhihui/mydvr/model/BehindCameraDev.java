@@ -13,8 +13,8 @@ import java.io.File;
  */
 public class BehindCameraDev extends CameraDev{
 
-    public BehindCameraDev(){
-        this.cameraid = 1;
+    public BehindCameraDev(int cameraId){
+        this.cameraid = cameraId;
     }
 
     @Override

@@ -11,23 +11,23 @@ public class CameraFactory {
         CameraDev cameraDev;
         switch (cameraid) {
             case AppConfig.FRONT_CAMERA:
-                cameraDev = new FrontCameraDev();
+                cameraDev = new FrontCameraDev(cameraid);
                 break;
 
             case AppConfig.BEHIND_CAMERA:
-                cameraDev = new BehindCameraDev();
+                cameraDev = new BehindCameraDev(cameraid);
                 break;
 
             case AppConfig.LEFT_CAMERA:
-                cameraDev = new FrontCameraDev();
+                cameraDev = new FrontCameraDev(cameraid);
                 break;
 
             case AppConfig.RIGHT_CAMERA:
-                cameraDev = new FrontCameraDev();
+                cameraDev = new FrontCameraDev(cameraid);
                 break;
 
             default:
-                cameraDev = new FrontCameraDev();
+                cameraDev = new FrontCameraDev(cameraid);
                 break;
         }
 

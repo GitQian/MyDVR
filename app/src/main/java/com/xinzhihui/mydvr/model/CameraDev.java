@@ -153,7 +153,7 @@ public abstract class CameraDev {
             @Override
             public void run() {
                 Message msg = new Message();
-                msg.what = 0;  //msg.what = cameraid;
+                msg.what = cameraid;  //msg.what = cameraid;
                 msg.arg1 = 1;  //start
                 msg.arg2 = mTimeCount;  //time
                 if (mHandler != null) {
@@ -189,7 +189,7 @@ public abstract class CameraDev {
             mTimeCount = 0;
             if (mHandler != null) {
                 Message msg = new Message();
-                msg.what = 0; //msg.what = cameraid;
+                msg.what = cameraid; //msg.what = cameraid;
                 msg.arg1 = 0; //stop
                 mHandler.sendMessage(msg);
             }

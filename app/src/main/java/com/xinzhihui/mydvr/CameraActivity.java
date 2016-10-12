@@ -69,7 +69,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         @Override
         public boolean handleMessage(Message msg) {
             switch (msg.what) {
-                case 0:
+                case FRONT_CAMERA:
                     if (msg.arg1 == 0) {
                         //TODO camera 0 stop
                         Toast.makeText(CameraActivity.this, "停止录制" , Toast.LENGTH_LONG).show();
@@ -93,7 +93,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                     }
                     break;
 
-                case 1:
+                case BEHIND_CAMERA:
                     if (msg.arg1 == 0) {
                         //stop
 
@@ -122,8 +122,8 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         public void onServiceConnected(ComponentName name, IBinder service) {
             LogUtil.d(TAG, "onServiceConnected");
             mService = ((RecordService.LocalBinder) service).getService();
-            if (mService.getCameraDev(0) == null) {
-                //先得到服务，则为制空，待界面起来置入实例；先得到界面，则为置入实例
+            if (mService.getCameraDev(FRONT_CAMERA) == null) {
+                //TODO 先得到服务，则为制空，待界面起来置入实例；先得到界面，则为置入实例(各路多要判断)
                 LogUtil.d(TAG, "onServiceConnected setCameraDev --------->");
                 mService.addCameraDev(dvrSurfaceTextureFrontListener.mCameraId, dvrSurfaceTextureFrontListener.cameraDev);
             }
@@ -136,9 +136,9 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         setContentView(R.layout.activity_camera);
         initView();
 
-        dvrSurfaceTextureFrontListener = new DvrSurfaceTextureListener(0);
+        dvrSurfaceTextureFrontListener = new DvrSurfaceTextureListener(FRONT_CAMERA);
 
-        dvrSurfaceTextureBehindListener = new DvrSurfaceTextureListener(1);
+        dvrSurfaceTextureBehindListener = new DvrSurfaceTextureListener(BEHIND_CAMERA);
 
         mCameraTtv.setSurfaceTextureListener(dvrSurfaceTextureFrontListener);
         mCameraFrontTtv.setSurfaceTextureListener(dvrSurfaceTextureBehindListener);

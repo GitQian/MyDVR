@@ -13,8 +13,8 @@ import java.io.File;
  */
 public class FrontCameraDev extends CameraDev{
 
-    public FrontCameraDev(){
-        this.cameraid = 0;
+    public FrontCameraDev(int cameraId){
+        this.cameraid = cameraId;
     }
 
     @Override
