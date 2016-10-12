@@ -2,18 +2,13 @@ package com.xinzhihui.mydvr.model;
 
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
-import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.os.Handler;
 import android.os.Message;
 
-import com.xinzhihui.mydvr.AppConfig;
 import com.xinzhihui.mydvr.asynctask.SavePictureTask;
-import com.xinzhihui.mydvr.listener.CameraStatusListener;
-import com.xinzhihui.mydvr.utils.DateTimeUtil;
 import com.xinzhihui.mydvr.utils.LogUtil;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -25,7 +20,6 @@ public abstract class CameraDev {
     private final String TAG = getClass().getName();
 
     public int cameraid;
-    public CameraStatusListener statusListener;
 
     public Camera camera;
     public MediaRecorder mediaRecorder;
@@ -170,7 +164,6 @@ public abstract class CameraDev {
         };
         mTimer.schedule(mTimerTask, 0, 1000);
 
-        statusListener.onStartRecord();
     }
 
     /**
@@ -187,7 +180,6 @@ public abstract class CameraDev {
             mediaRecorder = null;
 
                 setRecording(false);
-                statusListener.onStopRecord();
             } catch (IllegalStateException e) {
                 e.printStackTrace();
                 LogUtil.e(TAG, "stopRecord *************>mediaRecorder stop failed!!!");

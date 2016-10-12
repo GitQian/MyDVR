@@ -4,7 +4,6 @@ import android.hardware.Camera;
 import android.media.MediaRecorder;
 
 import com.xinzhihui.mydvr.AppConfig;
-import com.xinzhihui.mydvr.listener.CameraStatusListener;
 import com.xinzhihui.mydvr.utils.DateTimeUtil;
 
 import java.io.File;
@@ -14,9 +13,8 @@ import java.io.File;
  */
 public class FrontCameraDev extends CameraDev{
 
-    public FrontCameraDev(CameraStatusListener statusListener){
+    public FrontCameraDev(){
         this.cameraid = 0;
-        this.statusListener = statusListener;
     }
 
     @Override

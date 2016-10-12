@@ -19,7 +19,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.xinzhihui.mydvr.listener.CameraStatusListener;
 import com.xinzhihui.mydvr.model.CameraDev;
 import com.xinzhihui.mydvr.model.CameraFactory;
 import com.xinzhihui.mydvr.service.RecordService;
@@ -137,77 +136,9 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         setContentView(R.layout.activity_camera);
         initView();
 
-        dvrSurfaceTextureFrontListener = new DvrSurfaceTextureListener(0, new CameraStatusListener() {
-            @Override
-            public void onStartPreview() {
-                Toast.makeText(CameraActivity.this, "正在实时预览" , Toast.LENGTH_LONG).show();
-            }
+        dvrSurfaceTextureFrontListener = new DvrSurfaceTextureListener(0);
 
-            @Override
-            public void onStartRecord() {
-//                Toast.makeText(CameraActivity.this, "正在录制" , Toast.LENGTH_LONG).show();
-//                recImg.setVisibility(View.VISIBLE);
-//                timeTv.setVisibility(View.VISIBLE);
-//                mRecordStartBtn.setClickable(false);
-//                mRecordStopBtn.setClickable(true);
-//                animRec.start();
-
-//                timerTask = new TimerTask() {
-//                    @Override
-//                    public void run() {
-//                        CameraActivity.this.runOnUiThread(new Runnable() {
-//                            @Override
-//                            public void run() {
-////                                timeTv.setText("Time:" + timeCount++);
-//                                timeTv.setText(DateTimeUtil.formatLongToTimeStr(timeCount * 1000));
-//                                timeCount ++;
-//                            }
-//                        });
-//                    }
-//                };
-//                timer.schedule(timerTask, 0, 1000);
-            }
-
-            @Override
-            public void onStopPreview() {
-
-            }
-
-            @Override
-            public void onStopRecord() {
-//                Toast.makeText(CameraActivity.this, "停止录制" , Toast.LENGTH_LONG).show();
-//                animRec.stop();
-//                recImg.setVisibility(View.GONE);
-//                timeTv.setVisibility(View.GONE);
-//                mRecordStartBtn.setClickable(true);
-//                mRecordStopBtn.setClickable(false);
-
-//                timerTask.cancel();
-//                timeCount = 0;
-            }
-        });
-
-        dvrSurfaceTextureBehindListener = new DvrSurfaceTextureListener(1, new CameraStatusListener() {
-            @Override
-            public void onStartPreview() {
-
-            }
-
-            @Override
-            public void onStartRecord() {
-                Toast.makeText(CameraActivity.this, "Behind正在录制" , Toast.LENGTH_LONG).show();
-            }
-
-            @Override
-            public void onStopPreview() {
-
-            }
-
-            @Override
-            public void onStopRecord() {
-                Toast.makeText(CameraActivity.this, "Behind停止录制" , Toast.LENGTH_LONG).show();
-            }
-        });
+        dvrSurfaceTextureBehindListener = new DvrSurfaceTextureListener(1);
 
         mCameraTtv.setSurfaceTextureListener(dvrSurfaceTextureFrontListener);
         mCameraFrontTtv.setSurfaceTextureListener(dvrSurfaceTextureBehindListener);
@@ -336,12 +267,12 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
 
         private final String TAG = this.getClass().getName();
         private int mCameraId;
-        private CameraStatusListener cameraStatusListener;
+//        private CameraStatusListener cameraStatusListener;
         public CameraDev cameraDev;
 
-        public DvrSurfaceTextureListener(int cameraId, CameraStatusListener cameraStatusListener) {
+        public DvrSurfaceTextureListener(int cameraId) {
             mCameraId = cameraId;
-            this.cameraStatusListener = cameraStatusListener;
+//            this.cameraStatusListener = cameraStatusListener;
         }
         @Override
         public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
@@ -362,7 +293,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                 }else{
                     //后台没有录制（进入之后不录制...再次进入）（绑定服务在先，就会进入这）------第一次进入情况2（绑定在先）
                     LogUtil.d(TAG, "onSurfaceTextureAvailable --------> mService not Recording");
-                    cameraDev = factory.createCameraDev(mCameraId, cameraStatusListener);
+                    cameraDev = factory.createCameraDev(mCameraId);
                     cameraDev.open();
                     cameraDev.startPreview(surface);
 
@@ -372,7 +303,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
             } else {
                 //第一次进入(与绑定服务有同步问题，可能会进入)----第一次进入情况1（绑定在后）
                 LogUtil.d(TAG, "onSurfaceTextureAvailable --------> mService is null");
-                cameraDev = factory.createCameraDev(mCameraId, cameraStatusListener);
+                cameraDev = factory.createCameraDev(mCameraId);
                 cameraDev.open();
                 cameraDev.startPreview(surface);
 
@@ -395,7 +326,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
             }else {
                 if (cameraDev.mediaRecorder != null) {
                     //处理back返回卡死问题
-                    cameraStatusListener.onStopRecord();
+//                    cameraStatusListener.onStopRecord();
                     cameraDev.killRecord();
                 }
                 cameraDev.stopPreview();
