@@ -24,7 +24,7 @@ public class FrontCameraDev extends CameraDev{
         if (!dir.exists()) {
             dir.mkdir();
         }
-        File file = new File(AppConfig.FRONT_VIDEO_PATH + DateTimeUtil.getCurrentNumberDateTime() + ".mp4");
+        File file = new File(AppConfig.FRONT_VIDEO_PATH + DateTimeUtil.getCurrentDateTimeReplaceSpace() + ".mp4");
 
         mediaRecorder.reset();
 

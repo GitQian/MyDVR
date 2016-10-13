@@ -19,7 +19,7 @@ public class SavePictureTask extends AsyncTask<byte[], String, String> {
         if (!out.exists()) {
             out.mkdirs();
         }
-        File picture = new File(path + "/" + DateTimeUtil.getCurrentNumberDateTime() + ".jpg");
+        File picture = new File(path + "/" + DateTimeUtil.getCurrentDateTimeReplaceSpace() + ".jpg");
         try {
             FileOutputStream fos = new FileOutputStream(picture.getPath());
             fos.write(params[0]);

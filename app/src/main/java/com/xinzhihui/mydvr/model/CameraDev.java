@@ -59,8 +59,16 @@ public abstract class CameraDev {
             try {
                 Camera.Parameters parameters = camera.getParameters();
                 parameters.getSupportedPreviewSizes().get(0);
-                LogUtil.d("qiansheng", "size:" + parameters.getSupportedPreviewSizes().get(0) );
-                parameters.setPreviewSize(1280, 720);
+                for (Camera.Size size : parameters.getSupportedPreviewSizes()) {
+                    LogUtil.d("qiansheng", "width:" + size.width + "height:" + size.height);
+                }
+                for (Camera.Size size : parameters.getSupportedPictureSizes()) {
+                    LogUtil.d("qiansheng", "PictureWidth:" + size.width + "PictureHeight:" + size.height);
+                }
+//                parameters.setPreviewSize(parameters.getSupportedPreviewSizes().get(0).width, parameters.getSupportedPreviewSizes().get(0).height);
+                parameters.setPictureSize(parameters.getSupportedPictureSizes().get(0).width, parameters.getSupportedPictureSizes().get(0).height);
+
+                parameters.setPreviewSize(1280, 720);   //后视镜分辨率1600*480，如果设为1920*1080会绿屏！
 
                 camera.setParameters(parameters);
 
