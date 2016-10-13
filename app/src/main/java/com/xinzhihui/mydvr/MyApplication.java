@@ -1,6 +1,7 @@
 package com.xinzhihui.mydvr;
 
 import android.app.Application;
+import android.content.Context;
 import android.util.Log;
 
 import com.xinzhihui.mydvr.utils.LogUtil;
@@ -13,9 +14,11 @@ import java.io.File;
 public class MyApplication extends Application {
 
     private final String TAG = getClass().getName();
+    private static Context mContext;
     @Override
     public void onCreate() {
         super.onCreate();
+        mContext = getApplicationContext();
         initPath(); //初始化文件目录
     }
 
@@ -37,5 +40,9 @@ public class MyApplication extends Application {
         if (!dir.exists()) {
             dir.mkdir();
         }
+    }
+
+    public static Context getContext() {
+        return mContext;
     }
 }

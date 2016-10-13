@@ -89,6 +89,13 @@
             android:background="@drawable/selector_record_closed" />
 
         <Button
+            android:id="@+id/btn_record_lock"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/selector_record_lock_off"/>
+
+        <Button
             android:id="@+id/btn_camera_takephoto"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
