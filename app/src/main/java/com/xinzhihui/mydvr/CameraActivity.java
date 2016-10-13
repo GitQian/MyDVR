@@ -15,6 +15,7 @@ import android.view.TextureView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,7 +39,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     private ImageView mRecBehindImg;
     private AnimationDrawable mAnimBehindRec;
     private TextView mTimeFrontTv;
-    private TextView mTimetBehindTv;
+    private TextView mTimeBehindTv;
 
     private RelativeLayout mFrontRll;
     private RelativeLayout mBehindRll;
@@ -50,6 +51,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
 
     private CameraDev mCurCameraDev;
 
+    private LinearLayout mRecordCtrlLly;
     private Button mRecordStartBtn;
     private Button mRecordStopBtn;
     private Button mTakePhotoBtn;
@@ -72,16 +74,16 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                         mAnimFrontRec.stop();
                         mRecFrontImg.setVisibility(View.GONE);
                         mTimeFrontTv.setVisibility(View.GONE);
-                        mRecordStartBtn.setClickable(true);
-                        mRecordStopBtn.setClickable(false);
+//                        mRecordStartBtn.setClickable(true);
+//                        mRecordStopBtn.setClickable(false);
 
                     } else if (msg.arg1 == 1) {
                         //TODO camera 1 start
 //                        Toast.makeText(CameraActivity.this, "正在录制" , Toast.LENGTH_LONG).show();
                         mRecFrontImg.setVisibility(View.VISIBLE);
                         mTimeFrontTv.setVisibility(View.VISIBLE);
-                        mRecordStartBtn.setClickable(false);
-                        mRecordStopBtn.setClickable(true);
+//                        mRecordStartBtn.setClickable(false);
+//                        mRecordStopBtn.setClickable(true);
                         mAnimFrontRec.start();
 
                         mTimeFrontTv.setText(DateTimeUtil.formatLongToTimeStr(msg.arg2 * 1000));
@@ -95,19 +97,19 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                         Toast.makeText(CameraActivity.this, "behind停止录制", Toast.LENGTH_LONG).show();
                         mAnimBehindRec.stop();
                         mRecBehindImg.setVisibility(View.GONE);
-                        mTimetBehindTv.setVisibility(View.GONE);
-                        mRecordStartBtn.setClickable(true);
-                        mRecordStopBtn.setClickable(false);
+                        mTimeBehindTv.setVisibility(View.GONE);
+//                        mRecordStartBtn.setClickable(true);
+//                        mRecordStopBtn.setClickable(false);
 
                     } else if (msg.arg1 == 1) {
                         //start
                         mRecBehindImg.setVisibility(View.VISIBLE);
-                        mTimetBehindTv.setVisibility(View.VISIBLE);
-                        mRecordStartBtn.setClickable(false);
-                        mRecordStopBtn.setClickable(true);
+                        mTimeBehindTv.setVisibility(View.VISIBLE);
+//                        mRecordStartBtn.setClickable(false);
+//                        mRecordStopBtn.setClickable(true);
                         mAnimBehindRec.start();
 
-                        mTimetBehindTv.setText(DateTimeUtil.formatLongToTimeStr(msg.arg2 * 1000));
+                        mTimeBehindTv.setText(DateTimeUtil.formatLongToTimeStr(msg.arg2 * 1000));
                     }
                     break;
 
@@ -155,6 +157,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         mFrontRll.setOnClickListener(this);
         mBehindRll.setOnClickListener(this);
 
+        mRecordCtrlLly.setVisibility(View.GONE);
         mRecordStartBtn.setOnClickListener(this);
         mRecordStopBtn.setOnClickListener(this);
         mTakePhotoBtn.setOnClickListener(this);
@@ -180,13 +183,14 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         mFrontRll = (RelativeLayout) findViewById(R.id.rll_front);
         mBehindRll = (RelativeLayout) findViewById(R.id.rll_behind);
 
+        mRecordCtrlLly = (LinearLayout) findViewById(R.id.lly_record_ctrl);
         mRecordStartBtn = (Button) findViewById(R.id.btn_record_start);
         mRecordStopBtn = (Button) findViewById(R.id.btn_record_stop);
         mTakePhotoBtn = (Button) findViewById(R.id.btn_camera_takephoto);
         mRecordSwitchBtn = (Button) findViewById(R.id.btn_record_switch);
         mVideoDirBtn = (Button) findViewById(R.id.btn_video_dir);
         mTimeFrontTv = (TextView) findViewById(R.id.tv_front_time);
-        mTimetBehindTv = (TextView) findViewById(R.id.tv_behind_time);
+        mTimeBehindTv = (TextView) findViewById(R.id.tv_behind_time);
     }
 
     @Override
@@ -210,14 +214,17 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
 
             case R.id.btn_camera_takephoto:
                 //先停止录像
-                dvrSurfaceTextureFrontListener.cameraDev.stopRecord();
-                dvrSurfaceTextureFrontListener.cameraDev.takePhoto();
+//                dvrSurfaceTextureFrontListener.cameraDev.stopRecord();
+//                dvrSurfaceTextureFrontListener.cameraDev.takePhoto();
+//                mService.getCameraDev(mCurCameraId).stopRecord();
+                mService.getCameraDev(mCurCameraId).takePhoto();
                 break;
 
 
             case R.id.rll_front:
                 mBehindRll.setVisibility(View.GONE);
                 mFrontRll.setVisibility(View.VISIBLE);
+                mRecordCtrlLly.setVisibility(View.VISIBLE);
                 mCurCameraId = FRONT_CAMERA;
                 mCurCameraDev = dvrSurfaceTextureFrontListener.cameraDev;
                 break;
@@ -225,6 +232,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
             case R.id.rll_behind:
                 mFrontRll.setVisibility(View.GONE);
                 mBehindRll.setVisibility(View.VISIBLE);
+                mRecordCtrlLly.setVisibility(View.VISIBLE);
                 mCurCameraId = BEHIND_CAMERA;
                 mCurCameraDev = dvrSurfaceTextureBehindListener.cameraDev;
                 break;
@@ -232,6 +240,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
             case R.id.btn_record_switch:
                 mFrontRll.setVisibility(View.VISIBLE);
                 mBehindRll.setVisibility(View.VISIBLE);
+                mRecordCtrlLly.setVisibility(View.GONE);
                 mCurCameraId = ALL_CAMERA;
                 break;
 
@@ -334,6 +343,12 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         @Override
         public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
             LogUtil.d(TAG, "onSurfaceTextureDestroyed --------->");
+            if (mService == null) {
+                //activity onDestroy先执行
+                cameraDev.killRecord();
+                cameraDev.stopPreview();
+                return true;
+            }
 
             if (mService.isRecording(mCameraId)) {
                 LogUtil.d(TAG, "onSurfaceTextureDestroyed ---------> Camera:" + mCameraId + " is Recording to stopRender");

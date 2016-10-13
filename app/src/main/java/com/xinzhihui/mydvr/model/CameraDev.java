@@ -94,36 +94,13 @@ public abstract class CameraDev {
      * @param
      */
     public void startRecord(){
+        if (isRecording()) {
+            return;
+        }
         mediaRecorder = new MediaRecorder();
-//        File dir = new File(AppConfig.FRONT_VIDEO_PATH);
-//        if (!dir.exists()) {
-//            dir.mkdir();
-//        }
-//        File file = new File(AppConfig.FRONT_VIDEO_PATH + DateTimeUtil.getCurrentNumberDateTime() + ".mp4");
-//        CamcorderProfile camcorderProfile = null;
-//        camcorderProfile = CamcorderProfile.get(profileType);
-
         camera.unlock();
 
         initRecorderParameters(camera, mediaRecorder);
-
-//        mediaRecorder.reset();
-//
-//        mediaRecorder.setCamera(camera);
-//
-//        mediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA); //前置
-//        mediaRecorder.setOutputFormat(camcorderProfile.fileFormat); //先设置输出格式
-//        mediaRecorder.setVideoFrameRate(camcorderProfile.videoFrameRate);
-//
-//        mediaRecorder.setVideoSize(640, 360);
-//
-//        mediaRecorder.setVideoEncodingBitRate(camcorderProfile.videoBitRate);
-//
-//        mediaRecorder.setVideoEncoder(camcorderProfile.videoCodec); //后设置视频编码格式
-//
-//        mediaRecorder.setOutputFile(file.getAbsolutePath());
-//
-//        mediaRecorder.setMaxDuration(AppConfig.MAX_DURATION);
 
         mediaRecorder.setOnInfoListener(new MediaRecorder.OnInfoListener() {
             @Override
@@ -207,14 +184,15 @@ public abstract class CameraDev {
     }
 
     public void takePhoto() {
+        //TODO 可以设置一个参数，通过参数确定拍照完毕之后是否录像！
         if (camera != null) {
             camera.autoFocus(null);
             camera.takePicture(null, null, new Camera.PictureCallback() {
                 @Override
                 public void onPictureTaken(byte[] data, Camera camera) {
                     new SavePictureTask().execute(data);
-                    camera.startPreview();
-                    startRecord();
+//                    camera.startPreview();
+//                    startRecord();
                 }
             });
         }
