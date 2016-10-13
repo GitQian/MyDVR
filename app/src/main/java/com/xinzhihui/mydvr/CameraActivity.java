@@ -167,6 +167,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         startService(intent);
         bindService(intent, myServiceConnection, Context.BIND_AUTO_CREATE);
 
+        mCurCameraDev = dvrSurfaceTextureFrontListener.cameraDev;  //当做初始化
     }
 
     private void initView() {
@@ -188,6 +189,8 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
 
         mTimeFrontTv = (TextView) findViewById(R.id.tv_front_time);
         mTimeBehindTv = (TextView) findViewById(R.id.tv_behind_time);
+
+//        mCurCameraDev = dvrSurfaceTextureFrontListener.cameraDev;  //当做初始化
     }
 
     @Override
@@ -198,12 +201,16 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                     LogUtil.i(TAG, "SDCard can't use!");
                     Toast.makeText(CameraActivity.this, "SD卡不可用！", Toast.LENGTH_LONG).show();
                 }
-                if (mCurCameraDev.isRecording()) {
+                if (mService.getCameraDev(mCurCameraId).isRecording()) {
+                    //通过mService获取到的是已经更新过的，安全！
                     mRecordCtrlBtn.setBackgroundResource(R.drawable.selector_record_closed);
-                    mCurCameraDev.stopRecord();
+//                    mCurCameraDev.stopRecord();
+                    mService.getCameraDev(mCurCameraId).stopRecord();
                 } else {
                     mRecordCtrlBtn.setBackgroundResource(R.drawable.selector_record_started);
-                    mCurCameraDev.startRecord();
+//                    mCurCameraDev.startRecord();
+                    //通过mService获取到的当前CameraDev是最新的（已更新过），mCurCameraDev没有及时更新
+                    mService.getCameraDev(mCurCameraId).startRecord();
                 }
                 break;
 

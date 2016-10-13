@@ -24,7 +24,7 @@ public class BehindCameraDev extends CameraDev{
         if (!dir.exists()) {
             dir.mkdir();
         }
-        File file = new File(AppConfig.BEHIND_VIDEO_PATH + DateTimeUtil.getCurrentDateTimeReplaceSpace() + ".mp4");
+        File file = new File(AppConfig.BEHIND_VIDEO_PATH + "Behind_" + DateTimeUtil.getCurrentDateTimeReplaceSpace() + ".mp4");
 
         mediaRecorder.reset();
 
