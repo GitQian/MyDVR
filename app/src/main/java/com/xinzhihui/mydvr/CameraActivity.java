@@ -52,11 +52,10 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     private CameraDev mCurCameraDev;
 
     private LinearLayout mRecordCtrlLly;
-    private Button mRecordStartBtn;
-    private Button mRecordStopBtn;
     private Button mTakePhotoBtn;
     private Button mRecordSwitchBtn;
     private Button mVideoDirBtn;
+    private Button mRecordCtrlBtn;
 
     CameraFactory factory = new CameraFactory();
 
@@ -158,18 +157,16 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         mBehindRll.setOnClickListener(this);
 
         mRecordCtrlLly.setVisibility(View.GONE);
-        mRecordStartBtn.setOnClickListener(this);
-        mRecordStopBtn.setOnClickListener(this);
         mTakePhotoBtn.setOnClickListener(this);
         mRecordSwitchBtn.setOnClickListener(this);
         mVideoDirBtn.setOnClickListener(this);
+        mRecordCtrlBtn.setOnClickListener(this);
 
         //先startService再bindService;
         Intent intent = new Intent(CameraActivity.this, RecordService.class);
         startService(intent);
         bindService(intent, myServiceConnection, Context.BIND_AUTO_CREATE);
 
-        mCurCameraDev = dvrSurfaceTextureFrontListener.cameraDev;
     }
 
     private void initView() {
@@ -184,11 +181,11 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         mBehindRll = (RelativeLayout) findViewById(R.id.rll_behind);
 
         mRecordCtrlLly = (LinearLayout) findViewById(R.id.lly_record_ctrl);
-        mRecordStartBtn = (Button) findViewById(R.id.btn_record_start);
-        mRecordStopBtn = (Button) findViewById(R.id.btn_record_stop);
         mTakePhotoBtn = (Button) findViewById(R.id.btn_camera_takephoto);
         mRecordSwitchBtn = (Button) findViewById(R.id.btn_record_switch);
         mVideoDirBtn = (Button) findViewById(R.id.btn_video_dir);
+        mRecordCtrlBtn = (Button) findViewById(R.id.btn_record_ctrl);
+
         mTimeFrontTv = (TextView) findViewById(R.id.tv_front_time);
         mTimeBehindTv = (TextView) findViewById(R.id.tv_behind_time);
     }
@@ -196,20 +193,18 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.btn_record_start:
+            case R.id.btn_record_ctrl:
                 if (!SDCardUtils.isSDCardEnable()) {
                     LogUtil.i(TAG, "SDCard can't use!");
                     Toast.makeText(CameraActivity.this, "SD卡不可用！", Toast.LENGTH_LONG).show();
                 }
-
-//                dvrSurfaceTextureFrontListener.cameraDev.startRecord();
-                mService.getCameraDev(mCurCameraId).startRecord();
-                break;
-
-            case R.id.btn_record_stop:
-//                dvrSurfaceTextureFrontListener.cameraDev.stopRecord();
-//                dvrSurfaceTextureBehindListener.cameraDev.stopRecord();
-                mService.getCameraDev(mCurCameraId).stopRecord();
+                if (mCurCameraDev.isRecording()) {
+                    mRecordCtrlBtn.setBackgroundResource(R.drawable.selector_record_closed);
+                    mCurCameraDev.stopRecord();
+                } else {
+                    mRecordCtrlBtn.setBackgroundResource(R.drawable.selector_record_started);
+                    mCurCameraDev.startRecord();
+                }
                 break;
 
             case R.id.btn_camera_takephoto:
@@ -227,6 +222,11 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                 mRecordCtrlLly.setVisibility(View.VISIBLE);
                 mCurCameraId = FRONT_CAMERA;
                 mCurCameraDev = dvrSurfaceTextureFrontListener.cameraDev;
+                if (mCurCameraDev.isRecording()) {
+                    mRecordCtrlBtn.setBackgroundResource(R.drawable.selector_record_started);
+                } else {
+                    mRecordCtrlBtn.setBackgroundResource(R.drawable.selector_record_closed);
+                }
                 break;
 
             case R.id.rll_behind:
@@ -235,6 +235,11 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                 mRecordCtrlLly.setVisibility(View.VISIBLE);
                 mCurCameraId = BEHIND_CAMERA;
                 mCurCameraDev = dvrSurfaceTextureBehindListener.cameraDev;
+                if (mCurCameraDev.isRecording()) {
+                    mRecordCtrlBtn.setBackgroundResource(R.drawable.selector_record_started);
+                } else {
+                    mRecordCtrlBtn.setBackgroundResource(R.drawable.selector_record_closed);
+                }
                 break;
 
             case R.id.btn_record_switch:

@@ -74,45 +74,46 @@
 
     <LinearLayout
         android:id="@+id/lly_record_ctrl"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/btn_record_start"
-            android:layout_width="0dp"
+            android:id="@+id/btn_record_ctrl"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="录制" />
-
-        <Button
-            android:id="@+id/btn_record_stop"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="停止" />
+            android:layout_marginRight="20dp"
+            android:background="@drawable/selector_record_closed" />
 
         <Button
             android:id="@+id/btn_camera_takephoto"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="拍照" />
+            android:layout_marginRight="20dp"
+            android:background="@drawable/selector_record_takephoto" />
 
         <Button
             android:id="@+id/btn_record_switch"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_marginRight="20dp"
             android:text="双路" />
 
         <Button
             android:id="@+id/btn_video_dir"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="文件" />
+            android:layout_marginRight="20dp"
+            android:background="@drawable/selector_record_file" />
+
+        <Button
+            android:id="@+id/btn_record_setting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/selector_record_setting" />
     </LinearLayout>
 
 
