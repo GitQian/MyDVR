@@ -216,9 +216,10 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
 
             case R.id.btn_camera_takephoto:
                 //先停止录像
-//                dvrSurfaceTextureFrontListener.cameraDev.stopRecord();
-//                dvrSurfaceTextureFrontListener.cameraDev.takePhoto();
-//                mService.getCameraDev(mCurCameraId).stopRecord();
+                if (mService.getCameraDev(mCurCameraId).camera == null) {
+                    Toast.makeText(CameraActivity.this, "设备不能使用", Toast.LENGTH_SHORT).show();
+                    break;
+                }
                 mService.getCameraDev(mCurCameraId).takePhoto();
                 break;
 
