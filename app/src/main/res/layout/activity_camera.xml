@@ -102,12 +102,6 @@
             android:layout_marginRight="20dp"
             android:background="@drawable/selector_record_takephoto" />
 
-        <Button
-            android:id="@+id/btn_record_switch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="20dp"
-            android:text="双路" />
 
         <Button
             android:id="@+id/btn_video_dir"
@@ -122,6 +116,13 @@
             android:layout_height="wrap_content"
             android:layout_marginRight="20dp"
             android:background="@drawable/selector_record_setting" />
+
+        <Button
+            android:id="@+id/btn_record_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/selector_record_switch" />
     </LinearLayout>
 
 
