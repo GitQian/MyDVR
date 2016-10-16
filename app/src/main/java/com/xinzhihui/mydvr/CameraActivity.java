@@ -260,7 +260,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
             case R.id.btn_video_dir:
                 //先停止录像
 //                dvrSurfaceTextureFrontListener.cameraDev.stopRecord();
-                Intent intent = new Intent(CameraActivity.this, FileListActivity.class);
+                Intent intent = new Intent(CameraActivity.this, FileList2Activity.class);
                 startActivity(intent);
                 break;
 

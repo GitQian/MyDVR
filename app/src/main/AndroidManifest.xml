@@ -37,7 +37,9 @@
         <service
             android:name=".service.RecordService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true" />
+
+        <activity android:name=".FileList2Activity"></activity>
     </application>
 
 </manifest>
