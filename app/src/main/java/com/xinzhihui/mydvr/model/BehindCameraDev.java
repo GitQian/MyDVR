@@ -18,7 +18,7 @@ public class BehindCameraDev extends CameraDev{
     }
 
     @Override
-    public MediaRecorder initRecorderParameters(Camera camera, MediaRecorder mediaRecorder) {
+    public MediaRecorder initRecorderParameters(Camera camera, MediaRecorder mediaRecorder, boolean isSound) {
 
         File dir = new File(AppConfig.BEHIND_VIDEO_PATH);
         if (!dir.exists()) {
@@ -31,6 +31,9 @@ public class BehindCameraDev extends CameraDev{
         mediaRecorder.setCamera(camera);
 
         mediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA); //前置
+        if (isSound) {
+            mediaRecorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
+        }
         mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4); //先设置输出格式
         mediaRecorder.setVideoFrameRate(30);
 
@@ -39,6 +42,7 @@ public class BehindCameraDev extends CameraDev{
         mediaRecorder.setVideoEncodingBitRate(6000000);  //6M
 
         mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264); //后设置视频编码格式
+        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
 
         mediaRecorder.setOutputFile(file.getAbsolutePath());
 

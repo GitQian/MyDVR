@@ -96,7 +96,7 @@ public abstract class CameraDev {
         }
     }
 
-    public abstract MediaRecorder initRecorderParameters(Camera camera, MediaRecorder mediaRecorder);
+    public abstract MediaRecorder initRecorderParameters(Camera camera, MediaRecorder mediaRecorder, boolean isSound);
     /**
      * 开始录像
      * @param
@@ -108,7 +108,7 @@ public abstract class CameraDev {
         mediaRecorder = new MediaRecorder();
         camera.unlock();
 
-        initRecorderParameters(camera, mediaRecorder);
+        initRecorderParameters(camera, mediaRecorder, true);
 
         mediaRecorder.setOnInfoListener(new MediaRecorder.OnInfoListener() {
             @Override
