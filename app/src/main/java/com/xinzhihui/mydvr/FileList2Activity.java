@@ -16,12 +16,14 @@ import com.xinzhihui.mydvr.fragment.VideoFileFragment;
 public class FileList2Activity extends AppCompatActivity implements CompoundButton.OnCheckedChangeListener, VideoFileFragment.OnFragmentInteractionListener {
 
     private RadioButton mLockVideoBtn;
-    private RadioButton mNormalVideoBtn;
+    private RadioButton mFrontVideoBtn;
+    private RadioButton mBehindVideoBtn;
     private RadioButton mPictureBtn;
 
     FragmentTransaction mFragmentTransaction = null;
     private Fragment mLockVideoFragment;
-    private Fragment mNormalVideoFragment;
+    private Fragment mFrontVideoFragment;
+    private Fragment mBehindVideoFragment;
     private Fragment mPictureFragment;
 
     @Override
@@ -34,11 +36,13 @@ public class FileList2Activity extends AppCompatActivity implements CompoundButt
 
     private void initView() {
         mLockVideoBtn = (RadioButton) findViewById(R.id.rbtn_lock_video);
-        mNormalVideoBtn = (RadioButton) findViewById(R.id.rbtn_normal_video);
+        mFrontVideoBtn = (RadioButton) findViewById(R.id.rbtn_front_video);
+        mBehindVideoBtn = (RadioButton) findViewById(R.id.rbtn_behind_video);
         mPictureBtn = (RadioButton) findViewById(R.id.rbtn_all_picture);
 
         mLockVideoBtn.setOnCheckedChangeListener(this);
-        mNormalVideoBtn.setOnCheckedChangeListener(this);
+        mFrontVideoBtn.setOnCheckedChangeListener(this);
+        mBehindVideoBtn.setOnCheckedChangeListener(this);
         mPictureBtn.setOnCheckedChangeListener(this);
 
         mLockVideoFragment = VideoFileFragment.newInstance("LockVideo", AppConfig.FRONT_VIDEO_PATH);
@@ -53,8 +57,12 @@ public class FileList2Activity extends AppCompatActivity implements CompoundButt
             fragmentTransaction.hide(mLockVideoFragment);
         }
 
-        if (mNormalVideoFragment != null) {
-            fragmentTransaction.hide(mNormalVideoFragment);
+        if (mFrontVideoFragment != null) {
+            fragmentTransaction.hide(mFrontVideoFragment);
+        }
+
+        if (mBehindVideoFragment != null) {
+            fragmentTransaction.hide(mBehindVideoFragment);
         }
         if (mPictureFragment != null) {
             fragmentTransaction.hide(mPictureFragment);
@@ -79,12 +87,21 @@ public class FileList2Activity extends AppCompatActivity implements CompoundButt
                 }
                 break;
 
-            case R.id.rbtn_normal_video:
-                if (null == mNormalVideoFragment) {
-                    mNormalVideoFragment = VideoFileFragment.newInstance("NormalVideo", AppConfig.BEHIND_VIDEO_PATH);
-                    mFragmentTransaction.add(R.id.fragment_container, mNormalVideoFragment);
+            case R.id.rbtn_front_video:
+                if (null == mFrontVideoFragment) {
+                    mFrontVideoFragment = VideoFileFragment.newInstance("FrontVideo", AppConfig.FRONT_VIDEO_PATH);
+                    mFragmentTransaction.add(R.id.fragment_container, mFrontVideoFragment);
                 } else {
-                    mFragmentTransaction.show(mNormalVideoFragment);
+                    mFragmentTransaction.show(mFrontVideoFragment);
+                }
+                break;
+
+            case R.id.rbtn_behind_video:
+                if (mBehindVideoFragment == null) {
+                    mBehindVideoFragment = VideoFileFragment.newInstance("BehindVideo", AppConfig.BEHIND_VIDEO_PATH);
+                    mFragmentTransaction.add(R.id.fragment_container, mBehindVideoFragment);
+                }else {
+                    mFragmentTransaction.show(mBehindVideoFragment);
                 }
                 break;
 
