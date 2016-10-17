@@ -26,6 +26,7 @@ import com.xinzhihui.mydvr.service.RecordService;
 import com.xinzhihui.mydvr.utils.DateTimeUtil;
 import com.xinzhihui.mydvr.utils.LogUtil;
 import com.xinzhihui.mydvr.utils.SDCardUtils;
+import com.xinzhihui.mydvr.utils.SPUtils;
 
 public class CameraActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -62,6 +63,8 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
 
     private DvrSurfaceTextureListener dvrSurfaceTextureFrontListener;
     private DvrSurfaceTextureListener dvrSurfaceTextureBehindListener;
+
+    private boolean isAutoRun;
 
     Handler mHandler = new Handler(new Handler.Callback() {
         @Override
@@ -146,6 +149,8 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
         initView();
+
+        isAutoRun = (Boolean) SPUtils.get(MyApplication.getContext(), "isAuto", true);
 
         dvrSurfaceTextureFrontListener = new DvrSurfaceTextureListener(FRONT_CAMERA);
 
@@ -287,6 +292,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
 
     @Override
     protected void onPause() {
+        isAutoRun = false;  //避免其他界面返回时开始录像
         super.onPause();
         //解除绑定，服务仍在运行(停止服务必须先解除绑定！！！)
         unbindService(myServiceConnection);
@@ -344,6 +350,9 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
 
                     mService.addCameraDev(mCameraId, cameraDev);  //service和cameraDev关联
                     cameraDev.mHandler = mHandler;   //更新设置handler
+                    if (isAutoRun) {
+                        cameraDev.startRecord();  //自启动录像
+                    }
                 }
             } else {
                 //第一次进入(与绑定服务有同步问题，可能会进入)----第一次进入情况1（绑定在后）
@@ -353,6 +362,9 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                 cameraDev.startPreview(surface);
 
                 cameraDev.mHandler = mHandler;     //设置handler
+                if (isAutoRun) {
+                    cameraDev.startRecord();  //自启动录像
+                }
             }
         }
 

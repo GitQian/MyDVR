@@ -107,6 +107,10 @@ public abstract class CameraDev {
         if (isRecording()) {
             return;
         }
+        if (camera == null) {
+            LogUtil.d("qiansheng", "startRecord ------>camera is null!!!!!");
+            return;
+        }
         mediaRecorder = new MediaRecorder();
         camera.unlock();
 
@@ -130,11 +134,12 @@ public abstract class CameraDev {
 
         try {
             mediaRecorder.prepare();
+            mediaRecorder.start();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        mediaRecorder.start();
+
 
         setRecording(true);
 

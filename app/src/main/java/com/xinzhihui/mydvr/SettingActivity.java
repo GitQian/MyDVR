@@ -11,6 +11,7 @@ import com.xinzhihui.mydvr.utils.SPUtils;
 public class SettingActivity extends AppCompatActivity implements CompoundButton.OnCheckedChangeListener{
 
     private Switch mSoundSwitch;
+    private Switch mAutoSwitch;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -23,6 +24,10 @@ public class SettingActivity extends AppCompatActivity implements CompoundButton
         mSoundSwitch = (Switch) findViewById(R.id.switch_setting_sound);
         mSoundSwitch.setOnCheckedChangeListener(this);
         mSoundSwitch.setChecked((Boolean) SPUtils.get(MyApplication.getContext(),"isSound", true));
+
+        mAutoSwitch = (Switch) findViewById(R.id.switch_setting_auto);
+        mAutoSwitch.setOnCheckedChangeListener(this);
+        mAutoSwitch.setChecked((Boolean) SPUtils.get(MyApplication.getContext(), "isAuto", true));
     }
 
     @Override
@@ -35,6 +40,14 @@ public class SettingActivity extends AppCompatActivity implements CompoundButton
                 }else {
                     SPUtils.put(MyApplication.getContext(), "isSound", false);
                     LogUtil.d("qiansheng", "onCheckedChanged ---------> isSond is false!");
+                }
+                break;
+
+            case R.id.switch_setting_auto:
+                if (isChecked) {
+                    SPUtils.put(MyApplication.getContext(), "isAuto", true);
+                }else {
+                    SPUtils.put(MyApplication.getContext(), "isAuto", false);
                 }
                 break;
 
