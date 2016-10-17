@@ -56,6 +56,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     private Button mRecordSwitchBtn;
     private Button mVideoDirBtn;
     private Button mRecordCtrlBtn;
+    private Button mRecordSettingBtn;
 
     CameraFactory factory = new CameraFactory();
 
@@ -161,6 +162,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         mRecordSwitchBtn.setOnClickListener(this);
         mVideoDirBtn.setOnClickListener(this);
         mRecordCtrlBtn.setOnClickListener(this);
+        mRecordSettingBtn.setOnClickListener(this);
 
         //先startService再bindService;
         Intent intent = new Intent(CameraActivity.this, RecordService.class);
@@ -186,6 +188,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         mRecordSwitchBtn = (Button) findViewById(R.id.btn_record_switch);
         mVideoDirBtn = (Button) findViewById(R.id.btn_video_dir);
         mRecordCtrlBtn = (Button) findViewById(R.id.btn_record_ctrl);
+        mRecordSettingBtn = (Button) findViewById(R.id.btn_record_setting);
 
         mTimeFrontTv = (TextView) findViewById(R.id.tv_front_time);
         mTimeBehindTv = (TextView) findViewById(R.id.tv_behind_time);
@@ -262,6 +265,11 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
 //                dvrSurfaceTextureFrontListener.cameraDev.stopRecord();
                 Intent intent = new Intent(CameraActivity.this, FileList2Activity.class);
                 startActivity(intent);
+                break;
+
+            case R.id.btn_record_setting:
+                Intent settingIntent = new Intent(CameraActivity.this, SettingActivity.class);
+                startActivity(settingIntent);
                 break;
 
             default:
