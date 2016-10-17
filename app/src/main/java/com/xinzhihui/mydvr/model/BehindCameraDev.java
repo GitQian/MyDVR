@@ -42,7 +42,9 @@ public class BehindCameraDev extends CameraDev{
         mediaRecorder.setVideoEncodingBitRate(6000000);  //6M
 
         mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264); //后设置视频编码格式
-        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
+        if (isSound) {
+            mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
+        }
 
         mediaRecorder.setOutputFile(file.getAbsolutePath());
 

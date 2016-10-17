@@ -3,4 +3,10 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+
+
+    <!-- setting-->
+    <color name="colorSettingBg">#3F3F3F</color>
+    <color name="colorSettingItemPressed">#999696</color>
+
 </resources>

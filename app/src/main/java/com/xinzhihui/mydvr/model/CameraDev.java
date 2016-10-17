@@ -6,8 +6,10 @@ import android.media.MediaRecorder;
 import android.os.Handler;
 import android.os.Message;
 
+import com.xinzhihui.mydvr.MyApplication;
 import com.xinzhihui.mydvr.asynctask.SavePictureTask;
 import com.xinzhihui.mydvr.utils.LogUtil;
+import com.xinzhihui.mydvr.utils.SPUtils;
 
 import java.io.IOException;
 import java.util.Timer;
@@ -108,7 +110,9 @@ public abstract class CameraDev {
         mediaRecorder = new MediaRecorder();
         camera.unlock();
 
-        initRecorderParameters(camera, mediaRecorder, true);
+        boolean isSound = false;
+        isSound = (Boolean) SPUtils.get(MyApplication.getContext(), "isSound", true);
+        initRecorderParameters(camera, mediaRecorder, isSound);
 
         mediaRecorder.setOnInfoListener(new MediaRecorder.OnInfoListener() {
             @Override
