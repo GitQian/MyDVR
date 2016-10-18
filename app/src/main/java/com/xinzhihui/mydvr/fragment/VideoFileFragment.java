@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.xinzhihui.mydvr.R;
 import com.xinzhihui.mydvr.VideoPlayerActivity;
@@ -50,7 +51,7 @@ public class VideoFileFragment extends Fragment {
      * this fragment using the provided parameters.
      *
      * @param fileType Parameter 1.
-     * @param dirUrl Parameter 2.
+     * @param dirUrl   Parameter 2.
      * @return A new instance of fragment VideoFileFragment.
      */
     public static VideoFileFragment newInstance(String fileType, String dirUrl) {
@@ -96,7 +97,7 @@ public class VideoFileFragment extends Fragment {
                     mFileList = getData();
                     mFileListAdapter = new FileListAdapter(mFileList, getActivity());
                     mFileListView.setAdapter(mFileListAdapter);
-                } else if ((int) mFileList.get(position).get("img") == R.drawable.icon_doc) {
+                } else if ((int) mFileList.get(position).get("img") == R.drawable.icon_file_normalvideo) {
                     //TODO 视屏文件
                     Intent intent = new Intent(getActivity(), VideoPlayerActivity.class);
                     intent.putStringArrayListExtra("extra_play_list", mVideopathList);
@@ -110,6 +111,16 @@ public class VideoFileFragment extends Fragment {
                 } else {
                     //其他普通文件
                     //TODO 图片文件使用图片浏览器
+                    File file = new File((String) mFileList.get(position).get("path"));
+                    Intent picIntent = new Intent(Intent.ACTION_VIEW);
+                    picIntent.setDataAndType(Uri.fromFile(file), "image/*");
+                    try {
+                        startActivity(picIntent);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getActivity(), "找不到应用程序打开该文件", Toast.LENGTH_SHORT).show();
+                    }
+
                 }
             }
         });
@@ -145,7 +156,7 @@ public class VideoFileFragment extends Fragment {
                     map.put("img", R.drawable.icon_file);
                 } else if (files[i].isFile() & ".mp4".equalsIgnoreCase(StringUtils.getPathSuffix(files[i].getName()))) {
                     //TODO 视屏文件
-                    map.put("img", R.drawable.icon_doc);
+                    map.put("img", R.drawable.icon_file_normalvideo);
 
                     mVideopathList.add(files[i].getPath());
                 } else {

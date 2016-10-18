@@ -57,7 +57,7 @@ public class LockVideoAdapter extends BaseAdapter {
             viewHolder = (LockVideoAdapter.ViewHolder) convertView.getTag();
         }
 
-        viewHolder.img.setBackgroundResource(R.drawable.icon_doc);
+        viewHolder.img.setBackgroundResource(R.drawable.icon_file_lockvideo);
         viewHolder.title.setText(StringUtils.getPathSubName(mPathList.get(position)));
         return convertView;
     }
