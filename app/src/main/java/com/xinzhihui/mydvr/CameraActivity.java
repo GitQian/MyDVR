@@ -20,6 +20,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.xinzhihui.mydvr.db.LockVideoDAL;
 import com.xinzhihui.mydvr.model.CameraDev;
 import com.xinzhihui.mydvr.model.CameraFactory;
 import com.xinzhihui.mydvr.service.RecordService;
@@ -106,7 +107,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                         mAnimBehindRec.stop();
                         mRecBehindImg.setVisibility(View.GONE);
                         mTimeBehindTv.setVisibility(View.GONE);
-                        if (mFrontRll.getVisibility() == View.VISIBLE) {
+                        if (mBehindRll.getVisibility() == View.VISIBLE) {
                             //如果还处于前置摄像头界面，则更新（否则通过点击具体摄像头界面更新）
                             mRecordFileLockBtn.setBackgroundResource(R.drawable.btn_record_lock_off);
                         }
@@ -296,11 +297,15 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                     if (mService.getCameraDev(mCurCameraId).isLocked()) {
                         //处于锁定状态
                         Toast.makeText(CameraActivity.this, "解锁", Toast.LENGTH_SHORT).show();
+                        LockVideoDAL lockVideoDAL = new LockVideoDAL(MyApplication.getContext());
+                        lockVideoDAL.deleteLockVideo(path);
                         mRecordFileLockBtn.setBackgroundResource(R.drawable.selector_record_lock_off);
                         mService.getCameraDev(mCurCameraId).setLocked(false);
                     }else {
                         //处于未锁定状态
                         Toast.makeText(CameraActivity.this, "上锁", Toast.LENGTH_SHORT).show();
+                        LockVideoDAL lockVideoDAL = new LockVideoDAL(MyApplication.getContext());
+                        lockVideoDAL.addLockVideo(path);
                         mRecordFileLockBtn.setBackgroundResource(R.drawable.selector_record_lock_on);
                         mService.getCameraDev(mCurCameraId).setLocked(true);
                     }
