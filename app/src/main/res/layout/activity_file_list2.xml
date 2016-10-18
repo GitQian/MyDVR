@@ -53,7 +53,7 @@
             android:background="@drawable/selector_filelist_lock"
             android:button="@null"
             android:gravity="center"
-            android:text="前路视屏"
+            android:text="后路视屏"
             android:textColor="#ffffff"
             android:textSize="18sp" />
 
