@@ -11,6 +11,7 @@ import com.xinzhihui.mydvr.asynctask.SavePictureTask;
 import com.xinzhihui.mydvr.utils.LogUtil;
 import com.xinzhihui.mydvr.utils.SPUtils;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -25,6 +26,9 @@ public abstract class CameraDev {
 
     public Camera camera;
     public MediaRecorder mediaRecorder;
+
+    public File mVideoFile;
+    public boolean isLocked = false;
 
     private boolean isPreviewing = false;
     private boolean isRecording = false;
@@ -98,7 +102,8 @@ public abstract class CameraDev {
         }
     }
 
-    public abstract MediaRecorder initRecorderParameters(Camera camera, MediaRecorder mediaRecorder, boolean isSound);
+    public abstract File makeFile();
+    public abstract MediaRecorder initRecorderParameters(Camera camera, MediaRecorder mediaRecorder, File file, boolean isSound);
     /**
      * 开始录像
      * @param
@@ -111,12 +116,14 @@ public abstract class CameraDev {
             LogUtil.d("qiansheng", "startRecord ------>camera is null!!!!!");
             return;
         }
+        mVideoFile = makeFile();
+
         mediaRecorder = new MediaRecorder();
         camera.unlock();
 
         boolean isSound = false;
         isSound = (Boolean) SPUtils.get(MyApplication.getContext(), "isSound", true);
-        initRecorderParameters(camera, mediaRecorder, isSound);
+        initRecorderParameters(camera, mediaRecorder, mVideoFile, isSound);
 
         mediaRecorder.setOnInfoListener(new MediaRecorder.OnInfoListener() {
             @Override
@@ -179,6 +186,7 @@ public abstract class CameraDev {
                 LogUtil.e(TAG, "stopRecord *************>mediaRecorder stop failed!!!");
             }
 
+            setLocked(false);
             mTimerTask.cancel();
             mTimeCount = 0;
             if (mHandler != null) {
@@ -230,4 +238,17 @@ public abstract class CameraDev {
     public boolean isRecording() {
         return isRecording;
     }
+
+    public File getmVideoFile() {
+        return mVideoFile;
+    }
+
+    public boolean isLocked() {
+        return isLocked;
+    }
+
+    public void setLocked(boolean locked) {
+        isLocked = locked;
+    }
+
 }

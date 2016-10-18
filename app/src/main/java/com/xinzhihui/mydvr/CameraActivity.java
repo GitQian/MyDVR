@@ -58,6 +58,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     private Button mVideoDirBtn;
     private Button mRecordCtrlBtn;
     private Button mRecordSettingBtn;
+    private Button mRecordFileLockBtn;
 
     CameraFactory factory = new CameraFactory();
 
@@ -77,6 +78,10 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                         mAnimFrontRec.stop();
                         mRecFrontImg.setVisibility(View.GONE);
                         mTimeFrontTv.setVisibility(View.GONE);
+                        if (mFrontRll.getVisibility() == View.VISIBLE) {
+                            //如果还处于前置摄像头界面，则更新（否则通过点击具体摄像头界面更新）
+                            mRecordFileLockBtn.setBackgroundResource(R.drawable.btn_record_lock_off);
+                        }
 //                        mRecordStartBtn.setClickable(true);
 //                        mRecordStopBtn.setClickable(false);
 
@@ -101,6 +106,10 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                         mAnimBehindRec.stop();
                         mRecBehindImg.setVisibility(View.GONE);
                         mTimeBehindTv.setVisibility(View.GONE);
+                        if (mFrontRll.getVisibility() == View.VISIBLE) {
+                            //如果还处于前置摄像头界面，则更新（否则通过点击具体摄像头界面更新）
+                            mRecordFileLockBtn.setBackgroundResource(R.drawable.btn_record_lock_off);
+                        }
 //                        mRecordStartBtn.setClickable(true);
 //                        mRecordStopBtn.setClickable(false);
 
@@ -168,6 +177,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         mVideoDirBtn.setOnClickListener(this);
         mRecordCtrlBtn.setOnClickListener(this);
         mRecordSettingBtn.setOnClickListener(this);
+        mRecordFileLockBtn.setOnClickListener(this);
 
         //先startService再bindService;
         Intent intent = new Intent(CameraActivity.this, RecordService.class);
@@ -194,6 +204,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         mVideoDirBtn = (Button) findViewById(R.id.btn_video_dir);
         mRecordCtrlBtn = (Button) findViewById(R.id.btn_record_ctrl);
         mRecordSettingBtn = (Button) findViewById(R.id.btn_record_setting);
+        mRecordFileLockBtn = (Button) findViewById(R.id.btn_record_lock);
 
         mTimeFrontTv = (TextView) findViewById(R.id.tv_front_time);
         mTimeBehindTv = (TextView) findViewById(R.id.tv_behind_time);
@@ -240,8 +251,15 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                 mCurCameraDev = dvrSurfaceTextureFrontListener.cameraDev;
                 if (mCurCameraDev.isRecording()) {
                     mRecordCtrlBtn.setBackgroundResource(R.drawable.selector_record_started);
+                    //TODO 判断该文件是否被标记 锁定
+                    if (mCurCameraDev.isLocked()) {
+                        mRecordFileLockBtn.setBackgroundResource(R.drawable.selector_record_lock_on);
+                    }else {
+                        mRecordFileLockBtn.setBackgroundResource(R.drawable.selector_record_lock_off);
+                    }
                 } else {
                     mRecordCtrlBtn.setBackgroundResource(R.drawable.selector_record_closed);
+                    mRecordFileLockBtn.setBackgroundResource(R.drawable.selector_record_lock_off);
                 }
                 break;
 
@@ -253,8 +271,15 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                 mCurCameraDev = dvrSurfaceTextureBehindListener.cameraDev;
                 if (mCurCameraDev.isRecording()) {
                     mRecordCtrlBtn.setBackgroundResource(R.drawable.selector_record_started);
+                    //TODO 判断该文件是否被标记 锁定
+                    if (mCurCameraDev.isLocked()) {
+                        mRecordFileLockBtn.setBackgroundResource(R.drawable.selector_record_lock_on);
+                    }else {
+                        mRecordFileLockBtn.setBackgroundResource(R.drawable.selector_record_lock_off);
+                    }
                 } else {
                     mRecordCtrlBtn.setBackgroundResource(R.drawable.selector_record_closed);
+                    mRecordFileLockBtn.setBackgroundResource(R.drawable.selector_record_lock_off);
                 }
                 break;
 
@@ -263,6 +288,25 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                 mBehindRll.setVisibility(View.VISIBLE);
                 mRecordCtrlLly.setVisibility(View.GONE);
                 mCurCameraId = ALL_CAMERA;
+                break;
+
+            case R.id.btn_record_lock:
+                if (mService.getCameraDev(mCurCameraId).isRecording()) {
+                    String path = mService.getCameraDev(mCurCameraId).getmVideoFile().getAbsolutePath();
+                    if (mService.getCameraDev(mCurCameraId).isLocked()) {
+                        //处于锁定状态
+                        Toast.makeText(CameraActivity.this, "解锁", Toast.LENGTH_SHORT).show();
+                        mRecordFileLockBtn.setBackgroundResource(R.drawable.selector_record_lock_off);
+                        mService.getCameraDev(mCurCameraId).setLocked(false);
+                    }else {
+                        //处于未锁定状态
+                        Toast.makeText(CameraActivity.this, "上锁", Toast.LENGTH_SHORT).show();
+                        mRecordFileLockBtn.setBackgroundResource(R.drawable.selector_record_lock_on);
+                        mService.getCameraDev(mCurCameraId).setLocked(true);
+                    }
+                }else {
+                    Toast.makeText(CameraActivity.this, "不在录制状态！", Toast.LENGTH_SHORT).show();
+                }
                 break;
 
             case R.id.btn_video_dir:

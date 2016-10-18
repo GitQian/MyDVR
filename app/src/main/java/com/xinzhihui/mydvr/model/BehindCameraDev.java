@@ -18,13 +18,17 @@ public class BehindCameraDev extends CameraDev{
     }
 
     @Override
-    public MediaRecorder initRecorderParameters(Camera camera, MediaRecorder mediaRecorder, boolean isSound) {
-
+    public File makeFile() {
         File dir = new File(AppConfig.BEHIND_VIDEO_PATH);
         if (!dir.exists()) {
             dir.mkdir();
         }
         File file = new File(AppConfig.BEHIND_VIDEO_PATH + "Behind_" + DateTimeUtil.getCurrentDateTimeReplaceSpace() + ".mp4");
+        return file;
+    }
+
+    @Override
+    public MediaRecorder initRecorderParameters(Camera camera, MediaRecorder mediaRecorder, File file, boolean isSound) {
 
         mediaRecorder.reset();
 

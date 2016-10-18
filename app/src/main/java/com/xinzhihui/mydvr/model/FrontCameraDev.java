@@ -18,13 +18,17 @@ public class FrontCameraDev extends CameraDev{
     }
 
     @Override
-    public MediaRecorder initRecorderParameters(Camera camera, MediaRecorder mediaRecorder, boolean isSound) {
-
+    public File makeFile() {
         File dir = new File(AppConfig.FRONT_VIDEO_PATH);
         if (!dir.exists()) {
             dir.mkdir();
         }
         File file = new File(AppConfig.FRONT_VIDEO_PATH + "Front_" + DateTimeUtil.getCurrentDateTimeReplaceSpace() + ".mp4");
+        return file;
+    }
+
+    @Override
+    public MediaRecorder initRecorderParameters(Camera camera, MediaRecorder mediaRecorder, File file, boolean isSound) {
 
         mediaRecorder.reset();
 
