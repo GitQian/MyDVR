@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
 
+import com.xinzhihui.mydvr.fragment.LockVideoFragment;
 import com.xinzhihui.mydvr.fragment.VideoFileFragment;
 
 /**
@@ -45,7 +46,7 @@ public class FileList2Activity extends AppCompatActivity implements CompoundButt
         mBehindVideoBtn.setOnCheckedChangeListener(this);
         mPictureBtn.setOnCheckedChangeListener(this);
 
-        mLockVideoFragment = VideoFileFragment.newInstance("LockVideo", AppConfig.FRONT_VIDEO_PATH);
+        mLockVideoFragment = LockVideoFragment.newInstance();
         mFragmentTransaction = getSupportFragmentManager().beginTransaction();
         mFragmentTransaction.add(R.id.fragment_container, mLockVideoFragment);
         mFragmentTransaction.commitAllowingStateLoss();
@@ -80,7 +81,7 @@ public class FileList2Activity extends AppCompatActivity implements CompoundButt
         switch (buttonView.getId()) {
             case R.id.rbtn_lock_video:
                 if (null == mLockVideoFragment) {
-                    mLockVideoFragment = VideoFileFragment.newInstance("LockVideo", AppConfig.FRONT_VIDEO_PATH);
+                    mLockVideoFragment = LockVideoFragment.newInstance();
                     mFragmentTransaction.add(R.id.fragment_container, mLockVideoFragment);
                 } else {
                     mFragmentTransaction.show(mLockVideoFragment);
@@ -100,7 +101,7 @@ public class FileList2Activity extends AppCompatActivity implements CompoundButt
                 if (mBehindVideoFragment == null) {
                     mBehindVideoFragment = VideoFileFragment.newInstance("BehindVideo", AppConfig.BEHIND_VIDEO_PATH);
                     mFragmentTransaction.add(R.id.fragment_container, mBehindVideoFragment);
-                }else {
+                } else {
                     mFragmentTransaction.show(mBehindVideoFragment);
                 }
                 break;
