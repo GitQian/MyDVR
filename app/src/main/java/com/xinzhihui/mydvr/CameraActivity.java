@@ -69,7 +69,8 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     private DvrSurfaceTextureListener dvrSurfaceTextureFrontListener;
     private DvrSurfaceTextureListener dvrSurfaceTextureBehindListener;
 
-    private boolean isAutoRun;
+    private boolean isFrontAuto;
+    private boolean isBehindAuto;
 
     Handler mHandler = new Handler(new Handler.Callback() {
         @Override
@@ -171,7 +172,8 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         setContentView(R.layout.activity_camera);
         initView();
 
-        isAutoRun = (Boolean) SPUtils.get(MyApplication.getContext(), "isAuto", true);
+        isFrontAuto = (Boolean) SPUtils.get(MyApplication.getContext(), "isFrontAuto", true);
+        isBehindAuto = (Boolean) SPUtils.get(MyApplication.getContext(), "isBehindAuto", false);
 
         dvrSurfaceTextureFrontListener = new DvrSurfaceTextureListener(FRONT_CAMERA);
 
@@ -370,7 +372,8 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
 
     @Override
     protected void onPause() {
-        isAutoRun = false;  //避免其他界面返回时开始录像
+        isFrontAuto = false;  //避免其他界面返回时开始录像
+        isBehindAuto = false;
         super.onPause();
         //解除绑定，服务仍在运行(停止服务必须先解除绑定！！！)
         unbindService(myServiceConnection);
@@ -428,8 +431,10 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
 
                     mService.addCameraDev(mCameraId, cameraDev);  //service和cameraDev关联
                     cameraDev.mHandler = mHandler;   //更新设置handler
-                    if (isAutoRun) {
+                    if (mCameraId == AppConfig.FRONT_CAMERA && isFrontAuto) {
                         cameraDev.startRecord();  //自启动录像
+                    }else if (mCameraId == AppConfig.BEHIND_CAMERA && isBehindAuto){
+                        cameraDev.startRecord();
                     }
                 }
             } else {
@@ -440,7 +445,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                 cameraDev.startPreview(surface);
 
                 cameraDev.mHandler = mHandler;     //设置handler
-                if (isAutoRun) {
+                if (isFrontAuto) {
                     cameraDev.startRecord();  //自启动录像
                 }
             }

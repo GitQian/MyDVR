@@ -96,7 +96,7 @@
             android:textSize="18sp" />
 
         <Switch
-            android:id="@+id/switch_behind_setting_auto"
+            android:id="@+id/switch_setting_behind_auto"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
