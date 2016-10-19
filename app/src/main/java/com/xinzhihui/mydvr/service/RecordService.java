@@ -134,6 +134,16 @@ public class RecordService extends Service {
         cameraDevList.get(cameraId).takePhoto();
     }
 
+    public void stopAllRecord() {
+        for (CameraDev cameraDev : cameraDevList) {
+            if (cameraDev != null) {
+                if (cameraDev.isRecording()) {
+                    cameraDev.stopRecord();
+                }
+            }
+        }
+    }
+
     public CameraDev getCameraDev(int cameraId) {
         if (cameraDevList == null) {
             return null;

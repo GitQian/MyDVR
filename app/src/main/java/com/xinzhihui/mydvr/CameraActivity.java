@@ -1,7 +1,9 @@
 package com.xinzhihui.mydvr;
 
+import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.SurfaceTexture;
@@ -10,6 +12,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.TextureView;
 import android.view.View;
@@ -82,6 +85,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                         if (mFrontRll.getVisibility() == View.VISIBLE) {
                             //如果还处于前置摄像头界面，则更新（否则通过点击具体摄像头界面更新）
                             mRecordFileLockBtn.setBackgroundResource(R.drawable.btn_record_lock_off);
+                            mRecordCtrlBtn.setBackgroundResource(R.drawable.selector_record_closed);
                         }
 //                        mRecordStartBtn.setClickable(true);
 //                        mRecordStopBtn.setClickable(false);
@@ -110,6 +114,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                         if (mBehindRll.getVisibility() == View.VISIBLE) {
                             //如果还处于前置摄像头界面，则更新（否则通过点击具体摄像头界面更新）
                             mRecordFileLockBtn.setBackgroundResource(R.drawable.btn_record_lock_off);
+                            mRecordCtrlBtn.setBackgroundResource(R.drawable.selector_record_closed);
                         }
 //                        mRecordStartBtn.setClickable(true);
 //                        mRecordStopBtn.setClickable(false);
@@ -255,7 +260,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                     //TODO 判断该文件是否被标记 锁定
                     if (mCurCameraDev.isLocked()) {
                         mRecordFileLockBtn.setBackgroundResource(R.drawable.selector_record_lock_on);
-                    }else {
+                    } else {
                         mRecordFileLockBtn.setBackgroundResource(R.drawable.selector_record_lock_off);
                     }
                 } else {
@@ -275,7 +280,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                     //TODO 判断该文件是否被标记 锁定
                     if (mCurCameraDev.isLocked()) {
                         mRecordFileLockBtn.setBackgroundResource(R.drawable.selector_record_lock_on);
-                    }else {
+                    } else {
                         mRecordFileLockBtn.setBackgroundResource(R.drawable.selector_record_lock_off);
                     }
                 } else {
@@ -301,7 +306,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                         lockVideoDAL.deleteLockVideo(path);
                         mRecordFileLockBtn.setBackgroundResource(R.drawable.selector_record_lock_off);
                         mService.getCameraDev(mCurCameraId).setLocked(false);
-                    }else {
+                    } else {
                         //处于未锁定状态
                         Toast.makeText(CameraActivity.this, "上锁", Toast.LENGTH_SHORT).show();
                         LockVideoDAL lockVideoDAL = new LockVideoDAL(MyApplication.getContext());
@@ -309,7 +314,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                         mRecordFileLockBtn.setBackgroundResource(R.drawable.selector_record_lock_on);
                         mService.getCameraDev(mCurCameraId).setLocked(true);
                     }
-                }else {
+                } else {
                     Toast.makeText(CameraActivity.this, "不在录制状态！", Toast.LENGTH_SHORT).show();
                 }
                 break;
@@ -322,8 +327,26 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                 break;
 
             case R.id.btn_record_setting:
-                Intent settingIntent = new Intent(CameraActivity.this, SettingActivity.class);
-                startActivity(settingIntent);
+                Dialog alertDialog = new AlertDialog.Builder(this)
+                        .setTitle("提示")
+                        .setMessage("进入设置将会停止当前录像！")
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                mService.stopAllRecord();
+                                Intent settingIntent = new Intent(CameraActivity.this, SettingActivity.class);
+                                startActivity(settingIntent);
+                            }
+                        })
+                        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        })
+                        .create();
+                alertDialog.show();
+
                 break;
 
             default:
