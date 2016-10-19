@@ -118,7 +118,7 @@ public abstract class CameraDev {
 
     public abstract File makeFile();
 
-    public abstract MediaRecorder initRecorderParameters(Camera camera, MediaRecorder mediaRecorder, File file, boolean isSound);
+    public abstract MediaRecorder initRecorderParameters(Camera camera, MediaRecorder mediaRecorder, File file);
 
     /**
      * 开始录像
@@ -138,9 +138,7 @@ public abstract class CameraDev {
         mediaRecorder = new MediaRecorder();
         camera.unlock();
 
-        boolean isSound = false;
-        isSound = (Boolean) SPUtils.get(MyApplication.getContext(), "isSound", true);
-        initRecorderParameters(camera, mediaRecorder, mVideoFile, isSound);
+        initRecorderParameters(camera, mediaRecorder, mVideoFile);
 
         mediaRecorder.setOnInfoListener(new MediaRecorder.OnInfoListener() {
             @Override

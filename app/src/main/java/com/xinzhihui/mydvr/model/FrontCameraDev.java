@@ -4,16 +4,18 @@ import android.hardware.Camera;
 import android.media.MediaRecorder;
 
 import com.xinzhihui.mydvr.AppConfig;
+import com.xinzhihui.mydvr.MyApplication;
 import com.xinzhihui.mydvr.utils.DateTimeUtil;
+import com.xinzhihui.mydvr.utils.SPUtils;
 
 import java.io.File;
 
 /**
  * Created by Administrator on 2016/9/28.
  */
-public class FrontCameraDev extends CameraDev{
+public class FrontCameraDev extends CameraDev {
 
-    public FrontCameraDev(int cameraId){
+    public FrontCameraDev(int cameraId) {
         this.cameraid = cameraId;
     }
 
@@ -28,13 +30,15 @@ public class FrontCameraDev extends CameraDev{
     }
 
     @Override
-    public MediaRecorder initRecorderParameters(Camera camera, MediaRecorder mediaRecorder, File file, boolean isSound) {
+    public MediaRecorder initRecorderParameters(Camera camera, MediaRecorder mediaRecorder, File file) {
 
         mediaRecorder.reset();
 
         mediaRecorder.setCamera(camera);
 
         mediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA); //前置
+        boolean isSound = false;
+        isSound = (Boolean) SPUtils.get(MyApplication.getContext(), "isFrontSound", true);
         if (isSound) {
             mediaRecorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
         }
