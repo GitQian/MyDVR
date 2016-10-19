@@ -44,7 +44,8 @@
             android:exported="true" />
 
         <activity android:name=".FileList2Activity" />
-        <activity android:name=".SettingActivity"></activity>
+        <activity android:name=".SettingActivity" />
+        <activity android:name=".Setting2Activity"></activity>
     </application>
 
 </manifest>

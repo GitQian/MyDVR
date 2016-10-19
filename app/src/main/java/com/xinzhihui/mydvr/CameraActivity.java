@@ -97,6 +97,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                         mTimeFrontTv.setVisibility(View.VISIBLE);
 //                        mRecordStartBtn.setClickable(false);
 //                        mRecordStopBtn.setClickable(true);
+                        //TODO 这里是有问题的！多次启动动画（内存）
                         mAnimFrontRec.start();
 
                         mTimeFrontTv.setText(DateTimeUtil.formatLongToTimeStr(msg.arg2 * 1000));
@@ -334,7 +335,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 mService.stopAllRecord();
-                                Intent settingIntent = new Intent(CameraActivity.this, SettingActivity.class);
+                                Intent settingIntent = new Intent(CameraActivity.this, Setting2Activity.class);
                                 startActivity(settingIntent);
                             }
                         })
