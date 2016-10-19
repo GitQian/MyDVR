@@ -43,10 +43,11 @@ public abstract class CameraDev {
 
     /**
      * 打开摄像头
+     *
      * @return Camera对象
      */
-    public Camera open(){
-        if (camera!=null) {
+    public Camera open() {
+        if (camera != null) {
             camera.release();
             camera = null;
         }
@@ -60,9 +61,10 @@ public abstract class CameraDev {
 
     /**
      * 开始预览
+     *
      * @param surface
      */
-    public void startPreview(SurfaceTexture surface){
+    public void startPreview(SurfaceTexture surface) {
         if (camera != null) {
             try {
                 Camera.Parameters parameters = camera.getParameters();
@@ -102,25 +104,28 @@ public abstract class CameraDev {
     /**
      * 停止预览，释放资源
      */
-    public void stopPreview(){
+    public void stopPreview() {
         if (camera != null) {
             camera.stopPreview();
             camera.release();
             camera = null;
 
             setPreviewing(false);
-        }else {
-            LogUtil.i(TAG, "stopPreView ----------->camera:" + cameraid +  "is null");
+        } else {
+            LogUtil.i(TAG, "stopPreView ----------->camera:" + cameraid + "is null");
         }
     }
 
     public abstract File makeFile();
+
     public abstract MediaRecorder initRecorderParameters(Camera camera, MediaRecorder mediaRecorder, File file, boolean isSound);
+
     /**
      * 开始录像
+     *
      * @param
      */
-    public void startRecord(){
+    public void startRecord() {
         if (isRecording()) {
             return;
         }
@@ -159,38 +164,43 @@ public abstract class CameraDev {
         }
 
 
-
         setRecording(true);
 
+        sendMessage(mHandler, cameraid, 1, 0);
         mTimerTask = new TimerTask() {
             @Override
             public void run() {
-                Message msg = new Message();
-                msg.what = cameraid;  //msg.what = cameraid;
-                msg.arg1 = 1;  //start
-                msg.arg2 = mTimeCount;  //time
-                if (mHandler != null) {
-                    mHandler.sendMessage(msg);
-                }
-                mTimeCount ++;
+                sendMessage(mHandler, cameraid, 2, mTimeCount);
+                mTimeCount++;
             }
         };
         mTimer.schedule(mTimerTask, 0, 1000);
 
     }
 
+    private void sendMessage(Handler handler, int msgWhat, int msgArg1, int msgArg2) {
+        if (handler != null) {
+            Message msg = new Message();
+            msg.what = msgWhat;
+            msg.arg1 = msgArg1;
+            msg.arg2 = msgArg2;
+            handler.sendMessage(msg);
+        }
+    }
+
     /**
      * 停止录像
+     *
      * @param
      */
-    public void stopRecord(){
+    public void stopRecord() {
         if (mediaRecorder != null) {
             try {
                 mediaRecorder.setOnInfoListener(null);
                 mediaRecorder.stop();
                 mediaRecorder.release();
 
-            mediaRecorder = null;
+                mediaRecorder = null;
 
                 setRecording(false);
             } catch (IllegalStateException e) {
@@ -201,13 +211,8 @@ public abstract class CameraDev {
             setLocked(false);
             mTimerTask.cancel();
             mTimeCount = 0;
-            if (mHandler != null) {
-                Message msg = new Message();
-                msg.what = cameraid; //msg.what = cameraid;
-                msg.arg1 = 0; //stop
-                mHandler.sendMessage(msg);
-            }
-        }else {
+            sendMessage(mHandler, cameraid, 0, 0);
+        } else {
             setRecording(false);
             LogUtil.i(TAG, "stopRecord --------->mediaRecorder is null!");
         }

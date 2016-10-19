@@ -99,9 +99,11 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
 //                        mRecordStopBtn.setClickable(true);
                         //TODO 这里是有问题的！多次启动动画（内存）
                         mAnimFrontRec.start();
+                        mRecordCtrlBtn.setBackgroundResource(R.drawable.selector_record_started);
 
+                    } else if (msg.arg1 == 2) {
+                        //TODO Time Update
                         mTimeFrontTv.setText(DateTimeUtil.formatLongToTimeStr(msg.arg2 * 1000));
-
                     }
                     break;
 
@@ -128,6 +130,9 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
 //                        mRecordStopBtn.setClickable(true);
                         mAnimBehindRec.start();
 
+                        mRecordCtrlBtn.setBackgroundResource(R.drawable.selector_record_started);
+                    } else if (msg.arg1 == 2) {
+                        //update time
                         mTimeBehindTv.setText(DateTimeUtil.formatLongToTimeStr(msg.arg2 * 1000));
                     }
                     break;
