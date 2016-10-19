@@ -16,6 +16,7 @@ import com.xinzhihui.mydvr.utils.SPUtils;
 
 public class SettingFrontFragment extends Fragment implements CompoundButton.OnCheckedChangeListener {
 
+    private Switch mSoundSwitch;
     private Switch mAutoSwitch;
 
     public SettingFrontFragment() {
@@ -42,6 +43,10 @@ public class SettingFrontFragment extends Fragment implements CompoundButton.OnC
     }
 
     private void initView(View view) {
+        mSoundSwitch = (Switch) view.findViewById(R.id.switch_setting_front_sound);
+        mSoundSwitch.setOnCheckedChangeListener(this);
+        mSoundSwitch.setChecked((Boolean) SPUtils.get(MyApplication.getContext(), "isFrontSound", true));
+
         mAutoSwitch = (Switch) view.findViewById(R.id.switch_setting_front_auto);
         mAutoSwitch.setOnCheckedChangeListener(this);
         mAutoSwitch.setChecked((Boolean) SPUtils.get(MyApplication.getContext(), "isFrontAuto", true));
@@ -51,12 +56,17 @@ public class SettingFrontFragment extends Fragment implements CompoundButton.OnC
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         switch (buttonView.getId()) {
             case R.id.switch_setting_front_sound:
+                if (isChecked) {
+                    SPUtils.put(MyApplication.getContext(), "isFrontSound", true);
+                } else {
+                    SPUtils.put(MyApplication.getContext(), "isFrontSound", false);
+                }
                 break;
 
             case R.id.switch_setting_front_auto:
                 if (isChecked) {
                     SPUtils.put(MyApplication.getContext(), "isFrontAuto", true);
-                }else {
+                } else {
                     SPUtils.put(MyApplication.getContext(), "isFrontAuto", false);
                 }
                 break;

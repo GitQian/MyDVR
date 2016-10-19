@@ -16,6 +16,7 @@ import com.xinzhihui.mydvr.utils.SPUtils;
 
 public class SettingBehindFragment extends Fragment implements CompoundButton.OnCheckedChangeListener {
 
+    private Switch mSoundSwitch;
     private Switch mAutoSwitch;
 
     public SettingBehindFragment() {
@@ -43,6 +44,10 @@ public class SettingBehindFragment extends Fragment implements CompoundButton.On
 
 
     private void initView(View view) {
+        mSoundSwitch = (Switch) view.findViewById(R.id.switch_setting_behind_sound);
+        mSoundSwitch.setOnCheckedChangeListener(this);
+        mSoundSwitch.setChecked((Boolean) SPUtils.get(MyApplication.getContext(), "isBehindSound", true));
+
         mAutoSwitch = (Switch) view.findViewById(R.id.switch_setting_behind_auto);
         mAutoSwitch.setOnCheckedChangeListener(this);
         mAutoSwitch.setChecked((Boolean) SPUtils.get(MyApplication.getContext(), "isBehindAuto", false));
@@ -53,12 +58,17 @@ public class SettingBehindFragment extends Fragment implements CompoundButton.On
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         switch (buttonView.getId()) {
             case R.id.switch_setting_behind_sound:
+                if (isChecked) {
+                    SPUtils.put(MyApplication.getContext(), "isBehindSound", true);
+                } else {
+                    SPUtils.put(MyApplication.getContext(), "isBehindSound", false);
+                }
                 break;
 
             case R.id.switch_setting_behind_auto:
                 if (isChecked) {
                     SPUtils.put(MyApplication.getContext(), "isBehindAuto", true);
-                }else {
+                } else {
                     SPUtils.put(MyApplication.getContext(), "isBehindAuto", false);
                 }
                 break;
