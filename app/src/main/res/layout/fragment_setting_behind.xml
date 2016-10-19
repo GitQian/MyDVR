@@ -64,6 +64,7 @@
             android:textSize="18sp" />
 
         <Switch
+            android:id="@+id/switch_setting_behind_water"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"

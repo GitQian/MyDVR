@@ -17,6 +17,7 @@ import com.xinzhihui.mydvr.utils.SPUtils;
 public class SettingBehindFragment extends Fragment implements CompoundButton.OnCheckedChangeListener {
 
     private Switch mSoundSwitch;
+    private Switch mWaterSwitch;
     private Switch mAutoSwitch;
 
     public SettingBehindFragment() {
@@ -48,6 +49,10 @@ public class SettingBehindFragment extends Fragment implements CompoundButton.On
         mSoundSwitch.setOnCheckedChangeListener(this);
         mSoundSwitch.setChecked((Boolean) SPUtils.get(MyApplication.getContext(), "isBehindSound", true));
 
+        mWaterSwitch = (Switch) view.findViewById(R.id.switch_setting_behind_water);
+        mWaterSwitch.setOnCheckedChangeListener(this);
+        mWaterSwitch.setChecked((Boolean) SPUtils.get(MyApplication.getContext(), "isBehindWater", true));
+
         mAutoSwitch = (Switch) view.findViewById(R.id.switch_setting_behind_auto);
         mAutoSwitch.setOnCheckedChangeListener(this);
         mAutoSwitch.setChecked((Boolean) SPUtils.get(MyApplication.getContext(), "isBehindAuto", false));
@@ -62,6 +67,14 @@ public class SettingBehindFragment extends Fragment implements CompoundButton.On
                     SPUtils.put(MyApplication.getContext(), "isBehindSound", true);
                 } else {
                     SPUtils.put(MyApplication.getContext(), "isBehindSound", false);
+                }
+                break;
+
+            case R.id.switch_setting_behind_water:
+                if (isChecked) {
+                    SPUtils.put(MyApplication.getContext(), "isBehindWater", true);
+                } else {
+                    SPUtils.put(MyApplication.getContext(), "isBehindWater", false);
                 }
                 break;
 

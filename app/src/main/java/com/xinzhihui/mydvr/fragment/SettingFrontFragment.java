@@ -17,6 +17,7 @@ import com.xinzhihui.mydvr.utils.SPUtils;
 public class SettingFrontFragment extends Fragment implements CompoundButton.OnCheckedChangeListener {
 
     private Switch mSoundSwitch;
+    private Switch mWaterSwitch;
     private Switch mAutoSwitch;
 
     public SettingFrontFragment() {
@@ -47,6 +48,10 @@ public class SettingFrontFragment extends Fragment implements CompoundButton.OnC
         mSoundSwitch.setOnCheckedChangeListener(this);
         mSoundSwitch.setChecked((Boolean) SPUtils.get(MyApplication.getContext(), "isFrontSound", true));
 
+        mWaterSwitch = (Switch) view.findViewById(R.id.switch_setting_front_water);
+        mWaterSwitch.setOnCheckedChangeListener(this);
+        mWaterSwitch.setChecked((Boolean) SPUtils.get(MyApplication.getContext(), "isFrontWater", true));
+
         mAutoSwitch = (Switch) view.findViewById(R.id.switch_setting_front_auto);
         mAutoSwitch.setOnCheckedChangeListener(this);
         mAutoSwitch.setChecked((Boolean) SPUtils.get(MyApplication.getContext(), "isFrontAuto", true));
@@ -60,6 +65,14 @@ public class SettingFrontFragment extends Fragment implements CompoundButton.OnC
                     SPUtils.put(MyApplication.getContext(), "isFrontSound", true);
                 } else {
                     SPUtils.put(MyApplication.getContext(), "isFrontSound", false);
+                }
+                break;
+
+            case R.id.switch_setting_front_water:
+                if (isChecked) {
+                    SPUtils.put(MyApplication.getContext(), "isFrontWater", true);
+                } else {
+                    SPUtils.put(MyApplication.getContext(), "isFrontWater", false);
                 }
                 break;
 

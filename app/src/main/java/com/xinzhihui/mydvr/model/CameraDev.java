@@ -6,6 +6,7 @@ import android.media.MediaRecorder;
 import android.os.Handler;
 import android.os.Message;
 
+import com.xinzhihui.mydvr.AppConfig;
 import com.xinzhihui.mydvr.MyApplication;
 import com.xinzhihui.mydvr.asynctask.SavePictureTask;
 import com.xinzhihui.mydvr.utils.LogUtil;
@@ -85,10 +86,21 @@ public abstract class CameraDev {
                 camera.setPreviewTexture(surface);
                 camera.startPreview();
 
-                Class<?> c = camera.getClass();
-                Method startRender = c.getMethod("startWaterMark");
-                startRender.invoke(camera);
-                setPreviewing(true);
+                if (cameraid == AppConfig.FRONT_CAMERA) {
+                    if ((Boolean) SPUtils.get(MyApplication.getContext(), "isFrontWater", true)) {
+                        Class<?> c = camera.getClass();
+                        Method startRender = c.getMethod("startWaterMark");
+                        startRender.invoke(camera);
+                        setPreviewing(true);
+                    }
+                }else if (cameraid == AppConfig.BEHIND_CAMERA) {
+                    if ((Boolean) SPUtils.get(MyApplication.getContext(), "isBehindWater", true)) {
+                        Class<?> c = camera.getClass();
+                        Method startRender = c.getMethod("startWaterMark");
+                        startRender.invoke(camera);
+                        setPreviewing(true);
+                    }
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (NoSuchMethodException e) {
