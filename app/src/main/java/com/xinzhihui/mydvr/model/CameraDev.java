@@ -13,6 +13,8 @@ import com.xinzhihui.mydvr.utils.SPUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -80,8 +82,18 @@ public abstract class CameraDev {
 
                 camera.setPreviewTexture(surface);
                 camera.startPreview();
+
+                Class<?> c = camera.getClass();
+                Method startRender = c.getMethod("startWaterMark");
+                startRender.invoke(camera);
                 setPreviewing(true);
             } catch (IOException e) {
+                e.printStackTrace();
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
                 e.printStackTrace();
             }
         }
