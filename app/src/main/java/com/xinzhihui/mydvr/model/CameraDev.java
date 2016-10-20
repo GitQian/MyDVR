@@ -9,6 +9,7 @@ import android.os.Message;
 import com.xinzhihui.mydvr.AppConfig;
 import com.xinzhihui.mydvr.MyApplication;
 import com.xinzhihui.mydvr.asynctask.SavePictureTask;
+import com.xinzhihui.mydvr.utils.ACache;
 import com.xinzhihui.mydvr.utils.LogUtil;
 import com.xinzhihui.mydvr.utils.SPUtils;
 
@@ -16,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -69,17 +71,40 @@ public abstract class CameraDev {
         if (camera != null) {
             try {
                 Camera.Parameters parameters = camera.getParameters();
-                parameters.getSupportedPreviewSizes().get(0);
-                for (Camera.Size size : parameters.getSupportedPreviewSizes()) {
-                    LogUtil.d("qiansheng", "width:" + size.width + "height:" + size.height);
+                //获取摄像头支持的分辨率
+                ACache aCache = ACache.get(MyApplication.getContext());
+                ArrayList<String> sizeList = new ArrayList<String>();
+                if (cameraid == AppConfig.FRONT_CAMERA) {
+                    for (Camera.Size size : parameters.getSupportedPreviewSizes()) {
+                        LogUtil.d("qiansheng", "width:" + size.width + "height:" + size.height);
+                        sizeList.add(size.width + "x" + size.height);
+                    }
+                    aCache.put("FrontSolution", sizeList);
+                } else {
+                    for (Camera.Size size : parameters.getSupportedPreviewSizes()) {
+                        LogUtil.d("qiansheng", "widthBehind:" + size.width + "heightBehind:" + size.height);
+                    }
                 }
+
+
                 for (Camera.Size size : parameters.getSupportedPictureSizes()) {
                     LogUtil.d("qiansheng", "PictureWidth:" + size.width + "PictureHeight:" + size.height);
                 }
 //                parameters.setPreviewSize(parameters.getSupportedPreviewSizes().get(0).width, parameters.getSupportedPreviewSizes().get(0).height);
                 parameters.setPictureSize(parameters.getSupportedPictureSizes().get(0).width, parameters.getSupportedPictureSizes().get(0).height);
 
-                parameters.setPreviewSize(1280, 720);   //后视镜分辨率1600*480，如果设为1920*1080会绿屏！
+                if (cameraid == AppConfig.FRONT_CAMERA) {
+                    //设置已选分辨率
+                    int soluWhere = (Integer) SPUtils.get(MyApplication.getContext(), "FrontSolutionWhere", Integer.valueOf(0));
+                    ACache aaCache = ACache.get(MyApplication.getContext());
+                    ArrayList<String> sizeeList = (ArrayList<String>) aaCache.getAsObject("FrontSolution");
+                    String str = sizeeList.get(soluWhere);
+                    int width = Integer.valueOf(str.split("x")[0]);
+                    int height = Integer.valueOf(str.split("x")[1]);
+                    parameters.setPreviewSize(width, height);   //后视镜分辨率1600*480，如果设为1920*1080会绿屏！
+                } else {
+                    parameters.setPreviewSize(1280, 720);   //后视镜分辨率1600*480，如果设为1920*1080会绿屏！
+                }
 
                 camera.setParameters(parameters);
 
@@ -93,7 +118,7 @@ public abstract class CameraDev {
                         startRender.invoke(camera);
                         setPreviewing(true);
                     }
-                }else if (cameraid == AppConfig.BEHIND_CAMERA) {
+                } else if (cameraid == AppConfig.BEHIND_CAMERA) {
                     if ((Boolean) SPUtils.get(MyApplication.getContext(), "isBehindWater", true)) {
                         Class<?> c = camera.getClass();
                         Method startRender = c.getMethod("startWaterMark");
