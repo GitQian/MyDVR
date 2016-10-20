@@ -16,7 +16,10 @@ import android.widget.Switch;
 
 import com.xinzhihui.mydvr.MyApplication;
 import com.xinzhihui.mydvr.R;
+import com.xinzhihui.mydvr.utils.ACache;
 import com.xinzhihui.mydvr.utils.SPUtils;
+
+import java.util.ArrayList;
 
 public class SettingBehindFragment extends Fragment implements CompoundButton.OnCheckedChangeListener, View.OnClickListener {
 
@@ -107,9 +110,20 @@ public class SettingBehindFragment extends Fragment implements CompoundButton.On
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.rly_setting_behind_solution:
+                ACache aCache = ACache.get(MyApplication.getContext());
+                ArrayList<String> sizeList = (ArrayList<String>) aCache.getAsObject("BehindSolution");
+                int size = sizeList.size();
+                String[] array = (String[]) sizeList.toArray(new String[size]);  //list转换为数组
+                int soluWhere = (Integer) SPUtils.get(MyApplication.getContext(), "BehindSolutionWhere", Integer.valueOf(0));  //已选编号
+
                 Dialog alertDialog = new AlertDialog.Builder(getActivity())
-                        .setTitle("分辨率")
-                        .setSingleChoiceItems(new String[]{"1920x1080", "1280x720", "640x480"}, 0, null)
+                        .setTitle("后摄像头分辨率")
+                        .setSingleChoiceItems(array, soluWhere, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                SPUtils.put(MyApplication.getContext(), "BehindSolutionWhere", which);
+                            }
+                        })
                         .create();
                 alertDialog.show();
                 break;

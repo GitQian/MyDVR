@@ -115,7 +115,7 @@ public class SettingFrontFragment extends Fragment implements CompoundButton.OnC
                 int soluWhere = (Integer) SPUtils.get(MyApplication.getContext(), "FrontSolutionWhere", Integer.valueOf(0));  //已选编号
 
                 Dialog alertDialog = new AlertDialog.Builder(getActivity())
-                        .setTitle("分辨率")
+                        .setTitle("前摄像头分辨率")
                         .setSingleChoiceItems(array, soluWhere, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {

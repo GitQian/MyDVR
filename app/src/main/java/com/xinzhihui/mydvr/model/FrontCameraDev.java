@@ -23,6 +23,25 @@ public class FrontCameraDev extends CameraDev {
     }
 
     @Override
+    public Camera.Parameters initRreviewParameters(Camera.Parameters parameters) {
+        //获取并存储摄像头支持的分辨率
+        ACache aCache = ACache.get(MyApplication.getContext());
+        ArrayList<String> sizeList = new ArrayList<String>();
+        for (Camera.Size size : parameters.getSupportedPreviewSizes()) {
+            sizeList.add(size.width + "x" + size.height);
+        }
+        aCache.put("FrontSolution", sizeList);
+
+        //设置Picture大小
+        parameters.setPictureSize(parameters.getSupportedPictureSizes().get(0).width, parameters.getSupportedPictureSizes().get(0).height);
+
+        //设置已选Preview分辨率
+        int soluWhere = (Integer) SPUtils.get(MyApplication.getContext(), "FrontSolutionWhere", Integer.valueOf(0));
+        parameters.setPreviewSize(parameters.getSupportedPictureSizes().get(soluWhere).width, parameters.getSupportedPictureSizes().get(soluWhere).height);   //后视镜分辨率1600*480，如果设为1920*1080会绿屏！
+        return parameters;
+    }
+
+    @Override
     public File makeFile() {
         File dir = new File(AppConfig.FRONT_VIDEO_PATH);
         if (!dir.exists()) {

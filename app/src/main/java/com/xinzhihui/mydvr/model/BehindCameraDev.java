@@ -5,10 +5,12 @@ import android.media.MediaRecorder;
 
 import com.xinzhihui.mydvr.AppConfig;
 import com.xinzhihui.mydvr.MyApplication;
+import com.xinzhihui.mydvr.utils.ACache;
 import com.xinzhihui.mydvr.utils.DateTimeUtil;
 import com.xinzhihui.mydvr.utils.SPUtils;
 
 import java.io.File;
+import java.util.ArrayList;
 
 /**
  * Created by Administrator on 2016/9/28.
@@ -17,6 +19,25 @@ public class BehindCameraDev extends CameraDev {
 
     public BehindCameraDev(int cameraId) {
         this.cameraid = cameraId;
+    }
+
+    @Override
+    public Camera.Parameters initRreviewParameters(Camera.Parameters parameters) {
+        //获取并存储摄像头支持的分辨率
+        ACache aCache = ACache.get(MyApplication.getContext());
+        ArrayList<String> sizeList = new ArrayList<String>();
+        for (Camera.Size size : parameters.getSupportedPreviewSizes()) {
+            sizeList.add(size.width + "x" + size.height);
+        }
+        aCache.put("BehindSolution", sizeList);
+
+        //设置Picture大小
+        parameters.setPictureSize(parameters.getSupportedPictureSizes().get(0).width, parameters.getSupportedPictureSizes().get(0).height);
+
+        //设置已选Preview分辨率
+        int soluWhere = (Integer) SPUtils.get(MyApplication.getContext(), "BehindSolutionWhere", Integer.valueOf(0));
+        parameters.setPreviewSize(parameters.getSupportedPictureSizes().get(soluWhere).width, parameters.getSupportedPictureSizes().get(soluWhere).height);   //后视镜分辨率1600*480，如果设为1920*1080会绿屏！
+        return parameters;
     }
 
     @Override
@@ -38,14 +59,22 @@ public class BehindCameraDev extends CameraDev {
 
         mediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA); //前置
         boolean isSound = false;
-        isSound = (Boolean) SPUtils.get(MyApplication.getContext(), "isFrontSound", true);
+        isSound = (Boolean) SPUtils.get(MyApplication.getContext(), "isBehindSound", true);
         if (isSound) {
             mediaRecorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
         }
         mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4); //先设置输出格式
         mediaRecorder.setVideoFrameRate(30);
 
-        mediaRecorder.setVideoSize(640, 360);
+        //获取已选择的分辨率
+        int soluWhere = (Integer) SPUtils.get(MyApplication.getContext(), "BehindSolutionWhere", Integer.valueOf(0));
+        ACache aCache = ACache.get(MyApplication.getContext());
+        ArrayList<String> sizeList = (ArrayList<String>) aCache.getAsObject("BehindSolution");
+        String str = sizeList.get(soluWhere);
+        int width = Integer.valueOf(str.split("x")[0]);
+        int height = Integer.valueOf(str.split("x")[1]);
+
+        mediaRecorder.setVideoSize(width, height);
 
         mediaRecorder.setVideoEncodingBitRate(6000000);  //6M
 

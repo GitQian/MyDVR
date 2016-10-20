@@ -62,6 +62,8 @@ public abstract class CameraDev {
         return camera;
     }
 
+    public abstract Camera.Parameters initRreviewParameters(Camera.Parameters parameters);
+
     /**
      * 开始预览
      *
@@ -71,40 +73,8 @@ public abstract class CameraDev {
         if (camera != null) {
             try {
                 Camera.Parameters parameters = camera.getParameters();
-                //获取摄像头支持的分辨率
-                ACache aCache = ACache.get(MyApplication.getContext());
-                ArrayList<String> sizeList = new ArrayList<String>();
-                if (cameraid == AppConfig.FRONT_CAMERA) {
-                    for (Camera.Size size : parameters.getSupportedPreviewSizes()) {
-                        LogUtil.d("qiansheng", "width:" + size.width + "height:" + size.height);
-                        sizeList.add(size.width + "x" + size.height);
-                    }
-                    aCache.put("FrontSolution", sizeList);
-                } else {
-                    for (Camera.Size size : parameters.getSupportedPreviewSizes()) {
-                        LogUtil.d("qiansheng", "widthBehind:" + size.width + "heightBehind:" + size.height);
-                    }
-                }
 
-
-                for (Camera.Size size : parameters.getSupportedPictureSizes()) {
-                    LogUtil.d("qiansheng", "PictureWidth:" + size.width + "PictureHeight:" + size.height);
-                }
-//                parameters.setPreviewSize(parameters.getSupportedPreviewSizes().get(0).width, parameters.getSupportedPreviewSizes().get(0).height);
-                parameters.setPictureSize(parameters.getSupportedPictureSizes().get(0).width, parameters.getSupportedPictureSizes().get(0).height);
-
-                if (cameraid == AppConfig.FRONT_CAMERA) {
-                    //设置已选分辨率
-                    int soluWhere = (Integer) SPUtils.get(MyApplication.getContext(), "FrontSolutionWhere", Integer.valueOf(0));
-                    ACache aaCache = ACache.get(MyApplication.getContext());
-                    ArrayList<String> sizeeList = (ArrayList<String>) aaCache.getAsObject("FrontSolution");
-                    String str = sizeeList.get(soluWhere);
-                    int width = Integer.valueOf(str.split("x")[0]);
-                    int height = Integer.valueOf(str.split("x")[1]);
-                    parameters.setPreviewSize(width, height);   //后视镜分辨率1600*480，如果设为1920*1080会绿屏！
-                } else {
-                    parameters.setPreviewSize(1280, 720);   //后视镜分辨率1600*480，如果设为1920*1080会绿屏！
-                }
+                parameters = initRreviewParameters(parameters);
 
                 camera.setParameters(parameters);
 
