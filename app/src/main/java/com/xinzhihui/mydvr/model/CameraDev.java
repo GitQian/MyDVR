@@ -82,14 +82,14 @@ public abstract class CameraDev {
                 camera.startPreview();
 
                 if (cameraid == AppConfig.FRONT_CAMERA) {
-                    if ((Boolean) SPUtils.get(MyApplication.getContext(), "isFrontWater", true)) {
+                    if ((Boolean) SPUtils.get(MyApplication.getContext(), AppConfig.KEY_IS_FRONT_WATER, true)) {
                         Class<?> c = camera.getClass();
                         Method startRender = c.getMethod("startWaterMark");
                         startRender.invoke(camera);
                         setPreviewing(true);
                     }
                 } else if (cameraid == AppConfig.BEHIND_CAMERA) {
-                    if ((Boolean) SPUtils.get(MyApplication.getContext(), "isBehindWater", true)) {
+                    if ((Boolean) SPUtils.get(MyApplication.getContext(), AppConfig.KEY_IS_BEHIND_WATER, true)) {
                         Class<?> c = camera.getClass();
                         Method startRender = c.getMethod("startWaterMark");
                         startRender.invoke(camera);
@@ -152,6 +152,15 @@ public abstract class CameraDev {
             public void onInfo(MediaRecorder mr, int what, int extra) {
                 switch (what) {
                     case MediaRecorder.MEDIA_RECORDER_INFO_MAX_DURATION_REACHED:
+//                        Class<?> c = mediaRecorder.getClass();
+//                        Method startRender = null;
+//                        try {
+//                            startRender = c.getMethod("setNextSaveFile", String.class);
+//                            startRender.invoke(mediaRecorder,mVideoFile.getAbsolutePath());
+//                        } catch (Exception e) {
+//                            e.printStackTrace();
+//                            LogUtil.e("qiansheng", "setNextSaveFile Error!!!");
+//                        }
                         stopRecord();
                         startRecord();
                         break;

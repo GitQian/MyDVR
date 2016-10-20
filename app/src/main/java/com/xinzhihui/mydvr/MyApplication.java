@@ -39,14 +39,14 @@ public class MyApplication extends Application {
         if ((Boolean) SPUtils.get(mContext, "isFirstApp", true)) {
             SPUtils.put(mContext, "isFirstApp", false);
             //TODO 初始化设置
-            SPUtils.put(mContext, "isFrontSound", true);   //默认录制声音
-            SPUtils.put(mContext, "isBehindSound", true);
+            SPUtils.put(mContext, AppConfig.KEY_IS_FRONT_SOUND, true);   //默认录制声音
+            SPUtils.put(mContext, AppConfig.KEY_IS_BEHIND_SOUND, true);
 
-            SPUtils.put(mContext, "isFrontWater", true);
-            SPUtils.put(mContext, "isBehindWater", true);
+            SPUtils.put(mContext, AppConfig.KEY_IS_FRONT_WATER, true);
+            SPUtils.put(mContext, AppConfig.KEY_IS_BEHIND_WATER, true);
 
-            SPUtils.put(mContext, "isFrontAuto", true);
-            SPUtils.put(mContext, "isBehindAuto", false);
+            SPUtils.put(mContext, AppConfig.KEY_IS_FRONT_AUTO, true);
+            SPUtils.put(mContext, AppConfig.KEY_IS_BEHIND_AUTO, false);
         }
     }
 

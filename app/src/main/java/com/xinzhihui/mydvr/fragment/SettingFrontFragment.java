@@ -14,6 +14,7 @@ import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 
+import com.xinzhihui.mydvr.AppConfig;
 import com.xinzhihui.mydvr.MyApplication;
 import com.xinzhihui.mydvr.R;
 import com.xinzhihui.mydvr.utils.ACache;
@@ -56,15 +57,15 @@ public class SettingFrontFragment extends Fragment implements CompoundButton.OnC
     private void initView(View view) {
         mSoundSwitch = (Switch) view.findViewById(R.id.switch_setting_front_sound);
         mSoundSwitch.setOnCheckedChangeListener(this);
-        mSoundSwitch.setChecked((Boolean) SPUtils.get(MyApplication.getContext(), "isFrontSound", true));
+        mSoundSwitch.setChecked((Boolean) SPUtils.get(MyApplication.getContext(), AppConfig.KEY_IS_FRONT_SOUND, true));
 
         mWaterSwitch = (Switch) view.findViewById(R.id.switch_setting_front_water);
         mWaterSwitch.setOnCheckedChangeListener(this);
-        mWaterSwitch.setChecked((Boolean) SPUtils.get(MyApplication.getContext(), "isFrontWater", true));
+        mWaterSwitch.setChecked((Boolean) SPUtils.get(MyApplication.getContext(), AppConfig.KEY_IS_FRONT_WATER, true));
 
         mAutoSwitch = (Switch) view.findViewById(R.id.switch_setting_front_auto);
         mAutoSwitch.setOnCheckedChangeListener(this);
-        mAutoSwitch.setChecked((Boolean) SPUtils.get(MyApplication.getContext(), "isFrontAuto", true));
+        mAutoSwitch.setChecked((Boolean) SPUtils.get(MyApplication.getContext(), AppConfig.KEY_IS_FRONT_AUTO, true));
 
         mSolutionRly = (RelativeLayout) view.findViewById(R.id.rly_setting_front_solution);
         mSolutionRly.setOnClickListener(this);
@@ -77,25 +78,25 @@ public class SettingFrontFragment extends Fragment implements CompoundButton.OnC
         switch (buttonView.getId()) {
             case R.id.switch_setting_front_sound:
                 if (isChecked) {
-                    SPUtils.put(MyApplication.getContext(), "isFrontSound", true);
+                    SPUtils.put(MyApplication.getContext(), AppConfig.KEY_IS_FRONT_SOUND, true);
                 } else {
-                    SPUtils.put(MyApplication.getContext(), "isFrontSound", false);
+                    SPUtils.put(MyApplication.getContext(), AppConfig.KEY_IS_FRONT_SOUND, false);
                 }
                 break;
 
             case R.id.switch_setting_front_water:
                 if (isChecked) {
-                    SPUtils.put(MyApplication.getContext(), "isFrontWater", true);
+                    SPUtils.put(MyApplication.getContext(), AppConfig.KEY_IS_FRONT_WATER, true);
                 } else {
-                    SPUtils.put(MyApplication.getContext(), "isFrontWater", false);
+                    SPUtils.put(MyApplication.getContext(), AppConfig.KEY_IS_FRONT_WATER, false);
                 }
                 break;
 
             case R.id.switch_setting_front_auto:
                 if (isChecked) {
-                    SPUtils.put(MyApplication.getContext(), "isFrontAuto", true);
+                    SPUtils.put(MyApplication.getContext(), AppConfig.KEY_IS_FRONT_AUTO, true);
                 } else {
-                    SPUtils.put(MyApplication.getContext(), "isFrontAuto", false);
+                    SPUtils.put(MyApplication.getContext(), AppConfig.KEY_IS_FRONT_AUTO, false);
                 }
                 break;
 
@@ -112,14 +113,14 @@ public class SettingFrontFragment extends Fragment implements CompoundButton.OnC
                 ArrayList<String> sizeList = (ArrayList<String>) aCache.getAsObject("FrontSolution");
                 int size = sizeList.size();
                 String[] array = (String[]) sizeList.toArray(new String[size]);  //list转换为数组
-                int soluWhere = (Integer) SPUtils.get(MyApplication.getContext(), "FrontSolutionWhere", Integer.valueOf(0));  //已选编号
+                int soluWhere = (Integer) SPUtils.get(MyApplication.getContext(), AppConfig.KEY_FRONT_SOLUTION_WHERE, Integer.valueOf(0));  //已选编号
 
                 Dialog alertDialog = new AlertDialog.Builder(getActivity())
                         .setTitle("前摄像头分辨率")
                         .setSingleChoiceItems(array, soluWhere, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                SPUtils.put(MyApplication.getContext(), "FrontSolutionWhere", which);
+                                SPUtils.put(MyApplication.getContext(), AppConfig.KEY_FRONT_SOLUTION_WHERE, which);
                             }
                         })
                         .create();

@@ -14,6 +14,7 @@ import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 
+import com.xinzhihui.mydvr.AppConfig;
 import com.xinzhihui.mydvr.MyApplication;
 import com.xinzhihui.mydvr.R;
 import com.xinzhihui.mydvr.utils.ACache;
@@ -57,15 +58,15 @@ public class SettingBehindFragment extends Fragment implements CompoundButton.On
     private void initView(View view) {
         mSoundSwitch = (Switch) view.findViewById(R.id.switch_setting_behind_sound);
         mSoundSwitch.setOnCheckedChangeListener(this);
-        mSoundSwitch.setChecked((Boolean) SPUtils.get(MyApplication.getContext(), "isBehindSound", true));
+        mSoundSwitch.setChecked((Boolean) SPUtils.get(MyApplication.getContext(), AppConfig.KEY_IS_BEHIND_SOUND, true));
 
         mWaterSwitch = (Switch) view.findViewById(R.id.switch_setting_behind_water);
         mWaterSwitch.setOnCheckedChangeListener(this);
-        mWaterSwitch.setChecked((Boolean) SPUtils.get(MyApplication.getContext(), "isBehindWater", true));
+        mWaterSwitch.setChecked((Boolean) SPUtils.get(MyApplication.getContext(), AppConfig.KEY_IS_BEHIND_WATER, true));
 
         mAutoSwitch = (Switch) view.findViewById(R.id.switch_setting_behind_auto);
         mAutoSwitch.setOnCheckedChangeListener(this);
-        mAutoSwitch.setChecked((Boolean) SPUtils.get(MyApplication.getContext(), "isBehindAuto", false));
+        mAutoSwitch.setChecked((Boolean) SPUtils.get(MyApplication.getContext(), AppConfig.KEY_IS_BEHIND_AUTO, false));
 
         mSolutionRly = (RelativeLayout) view.findViewById(R.id.rly_setting_behind_solution);
         mSolutionRly.setOnClickListener(this);
@@ -79,25 +80,25 @@ public class SettingBehindFragment extends Fragment implements CompoundButton.On
         switch (buttonView.getId()) {
             case R.id.switch_setting_behind_sound:
                 if (isChecked) {
-                    SPUtils.put(MyApplication.getContext(), "isBehindSound", true);
+                    SPUtils.put(MyApplication.getContext(), AppConfig.KEY_IS_BEHIND_SOUND, true);
                 } else {
-                    SPUtils.put(MyApplication.getContext(), "isBehindSound", false);
+                    SPUtils.put(MyApplication.getContext(), AppConfig.KEY_IS_BEHIND_SOUND, false);
                 }
                 break;
 
             case R.id.switch_setting_behind_water:
                 if (isChecked) {
-                    SPUtils.put(MyApplication.getContext(), "isBehindWater", true);
+                    SPUtils.put(MyApplication.getContext(), AppConfig.KEY_IS_BEHIND_WATER, true);
                 } else {
-                    SPUtils.put(MyApplication.getContext(), "isBehindWater", false);
+                    SPUtils.put(MyApplication.getContext(), AppConfig.KEY_IS_BEHIND_WATER, false);
                 }
                 break;
 
             case R.id.switch_setting_behind_auto:
                 if (isChecked) {
-                    SPUtils.put(MyApplication.getContext(), "isBehindAuto", true);
+                    SPUtils.put(MyApplication.getContext(), AppConfig.KEY_IS_BEHIND_AUTO, true);
                 } else {
-                    SPUtils.put(MyApplication.getContext(), "isBehindAuto", false);
+                    SPUtils.put(MyApplication.getContext(), AppConfig.KEY_IS_BEHIND_AUTO, false);
                 }
                 break;
 
@@ -114,14 +115,14 @@ public class SettingBehindFragment extends Fragment implements CompoundButton.On
                 ArrayList<String> sizeList = (ArrayList<String>) aCache.getAsObject("BehindSolution");
                 int size = sizeList.size();
                 String[] array = (String[]) sizeList.toArray(new String[size]);  //list转换为数组
-                int soluWhere = (Integer) SPUtils.get(MyApplication.getContext(), "BehindSolutionWhere", Integer.valueOf(0));  //已选编号
+                int soluWhere = (Integer) SPUtils.get(MyApplication.getContext(), AppConfig.KEY_BEHIND_SOLUTION_WHERE, Integer.valueOf(0));  //已选编号
 
                 Dialog alertDialog = new AlertDialog.Builder(getActivity())
                         .setTitle("后摄像头分辨率")
                         .setSingleChoiceItems(array, soluWhere, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                SPUtils.put(MyApplication.getContext(), "BehindSolutionWhere", which);
+                                SPUtils.put(MyApplication.getContext(), AppConfig.KEY_BEHIND_SOLUTION_WHERE, which);
                             }
                         })
                         .create();

@@ -172,8 +172,8 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         setContentView(R.layout.activity_camera);
         initView();
 
-        isFrontAuto = (Boolean) SPUtils.get(MyApplication.getContext(), "isFrontAuto", true);
-        isBehindAuto = (Boolean) SPUtils.get(MyApplication.getContext(), "isBehindAuto", false);
+        isFrontAuto = (Boolean) SPUtils.get(MyApplication.getContext(), AppConfig.KEY_IS_FRONT_AUTO, true);
+        isBehindAuto = (Boolean) SPUtils.get(MyApplication.getContext(), AppConfig.KEY_IS_BEHIND_AUTO, false);
 
         dvrSurfaceTextureFrontListener = new DvrSurfaceTextureListener(FRONT_CAMERA);
 

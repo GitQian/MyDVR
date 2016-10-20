@@ -35,7 +35,7 @@ public class BehindCameraDev extends CameraDev {
         parameters.setPictureSize(parameters.getSupportedPictureSizes().get(0).width, parameters.getSupportedPictureSizes().get(0).height);
 
         //设置已选Preview分辨率
-        int soluWhere = (Integer) SPUtils.get(MyApplication.getContext(), "BehindSolutionWhere", Integer.valueOf(0));
+        int soluWhere = (Integer) SPUtils.get(MyApplication.getContext(), AppConfig.KEY_BEHIND_SOLUTION_WHERE, Integer.valueOf(0));
         parameters.setPreviewSize(parameters.getSupportedPictureSizes().get(soluWhere).width, parameters.getSupportedPictureSizes().get(soluWhere).height);   //后视镜分辨率1600*480，如果设为1920*1080会绿屏！
         return parameters;
     }
@@ -59,7 +59,7 @@ public class BehindCameraDev extends CameraDev {
 
         mediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA); //前置
         boolean isSound = false;
-        isSound = (Boolean) SPUtils.get(MyApplication.getContext(), "isBehindSound", true);
+        isSound = (Boolean) SPUtils.get(MyApplication.getContext(), AppConfig.KEY_IS_BEHIND_SOUND, true);
         if (isSound) {
             mediaRecorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
         }
@@ -67,7 +67,7 @@ public class BehindCameraDev extends CameraDev {
         mediaRecorder.setVideoFrameRate(30);
 
         //获取已选择的分辨率
-        int soluWhere = (Integer) SPUtils.get(MyApplication.getContext(), "BehindSolutionWhere", Integer.valueOf(0));
+        int soluWhere = (Integer) SPUtils.get(MyApplication.getContext(), AppConfig.KEY_BEHIND_SOLUTION_WHERE, Integer.valueOf(0));
         ACache aCache = ACache.get(MyApplication.getContext());
         ArrayList<String> sizeList = (ArrayList<String>) aCache.getAsObject("BehindSolution");
         String str = sizeList.get(soluWhere);

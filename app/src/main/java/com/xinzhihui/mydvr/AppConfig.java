@@ -43,4 +43,16 @@ public class AppConfig {
     public static final int THREE_MINUTE_DURATION = 1*90*1000;
     public static final int FIVE_MINUTE_DURATION = 1*120*1000;
 
+    //SharedPreferences Key
+    public static final String KEY_IS_FRONT_SOUND = "isFrontSound";
+    public static final String KEY_IS_BEHIND_SOUND = "isBehindSound";
+    public static final String KEY_IS_FRONT_WATER = "isFrontWater";
+    public static final String KEY_IS_BEHIND_WATER = "isBehindWater";
+    public static final String KEY_IS_FRONT_AUTO = "isFrontAuto";
+    public static final String KEY_IS_BEHIND_AUTO = "isBehindAuto";
+
+    public static final String KEY_FRONT_SOLUTION_WHERE = "FrontSolutionWhere";
+    public static final String KEY_BEHIND_SOLUTION_WHERE = "BehindSolutionWhere";
+
+
 }
