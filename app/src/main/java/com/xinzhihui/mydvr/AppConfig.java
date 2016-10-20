@@ -38,6 +38,9 @@ public class AppConfig {
     public static final String PICTURE_PATH = SDCardUtils.getSDCardPath() + "DVR/picture/";
 
     //录制时长
-    public static final int MAX_DURATION = 1*60*1000;
+    public static final int DEFAULT_MAX_DURATION = 1*60*1000;
+    public static final int ONE_MINUTE_DURATION = 1*60*1000;
+    public static final int THREE_MINUTE_DURATION = 1*90*1000;
+    public static final int FIVE_MINUTE_DURATION = 1*120*1000;
 
 }

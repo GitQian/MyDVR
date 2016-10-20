@@ -1,24 +1,31 @@
 package com.xinzhihui.mydvr.fragment;
 
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
+import android.widget.RelativeLayout;
 import android.widget.Switch;
 
 import com.xinzhihui.mydvr.MyApplication;
 import com.xinzhihui.mydvr.R;
 import com.xinzhihui.mydvr.utils.SPUtils;
 
-public class SettingBehindFragment extends Fragment implements CompoundButton.OnCheckedChangeListener {
+public class SettingBehindFragment extends Fragment implements CompoundButton.OnCheckedChangeListener, View.OnClickListener {
 
     private Switch mSoundSwitch;
     private Switch mWaterSwitch;
     private Switch mAutoSwitch;
+
+    private RelativeLayout mSolutionRly;
+    private RelativeLayout mVideoTimeRly;
 
     public SettingBehindFragment() {
         // Required empty public constructor
@@ -56,6 +63,11 @@ public class SettingBehindFragment extends Fragment implements CompoundButton.On
         mAutoSwitch = (Switch) view.findViewById(R.id.switch_setting_behind_auto);
         mAutoSwitch.setOnCheckedChangeListener(this);
         mAutoSwitch.setChecked((Boolean) SPUtils.get(MyApplication.getContext(), "isBehindAuto", false));
+
+        mSolutionRly = (RelativeLayout) view.findViewById(R.id.rly_setting_behind_solution);
+        mSolutionRly.setOnClickListener(this);
+        mVideoTimeRly = (RelativeLayout) view.findViewById(R.id.rly_setting_behind_time);
+        mVideoTimeRly.setOnClickListener(this);
     }
 
 
@@ -84,6 +96,36 @@ public class SettingBehindFragment extends Fragment implements CompoundButton.On
                 } else {
                     SPUtils.put(MyApplication.getContext(), "isBehindAuto", false);
                 }
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.rly_setting_behind_solution:
+                Dialog alertDialog = new AlertDialog.Builder(getActivity())
+                        .setTitle("分辨率")
+                        .setSingleChoiceItems(new String[]{"1920x1080", "1280x720", "640x480"}, 0, null)
+                        .create();
+                alertDialog.show();
+                break;
+
+            case R.id.rly_setting_behind_time:
+                int where = (Integer) SPUtils.get(MyApplication.getContext(), "BehindTimeSize", Integer.valueOf(0));
+                Dialog sizeDialog = new AlertDialog.Builder(getActivity())
+                        .setTitle("录制时长")
+                        .setSingleChoiceItems(new String[]{"一分钟", "三分钟", "五分钟"}, where, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                SPUtils.put(MyApplication.getContext(), "BehindTimeSize", which);
+                            }
+                        })
+                        .create();
+                sizeDialog.show();
                 break;
 
             default:

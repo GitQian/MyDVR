@@ -111,6 +111,7 @@
     </RelativeLayout>
 
     <RelativeLayout
+        android:id="@+id/rly_setting_front_solution"
         android:layout_width="match_parent"
         android:layout_height="53dp"
         android:layout_marginTop="7dp"
@@ -177,6 +178,7 @@
     </RelativeLayout>
 
     <RelativeLayout
+        android:id="@+id/rly_setting_front_time"
         android:layout_width="match_parent"
         android:layout_height="53dp"
         android:layout_marginTop="7dp"

@@ -56,7 +56,20 @@ public class FrontCameraDev extends CameraDev {
 
         mediaRecorder.setOutputFile(file.getAbsolutePath());
 
-        mediaRecorder.setMaxDuration(AppConfig.MAX_DURATION);
+        int where = (Integer) SPUtils.get(MyApplication.getContext(), "FrontTimeSize", 0);
+        int duration = AppConfig.DEFAULT_MAX_DURATION;
+        switch (where) {
+            case 0:
+                duration = AppConfig.DEFAULT_MAX_DURATION;
+                break;
+            case 1:
+                duration = AppConfig.THREE_MINUTE_DURATION;
+                break;
+            case 2:
+                duration = AppConfig.FIVE_MINUTE_DURATION;
+                break;
+        }
+        mediaRecorder.setMaxDuration(duration);
         return mediaRecorder;
     }
 }
