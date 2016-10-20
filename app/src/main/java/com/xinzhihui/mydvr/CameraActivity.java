@@ -433,7 +433,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                     cameraDev.mHandler = mHandler;   //更新设置handler
                     if (mCameraId == AppConfig.FRONT_CAMERA && isFrontAuto) {
                         cameraDev.startRecord();  //自启动录像
-                    }else if (mCameraId == AppConfig.BEHIND_CAMERA && isBehindAuto){
+                    } else if (mCameraId == AppConfig.BEHIND_CAMERA && isBehindAuto) {
                         cameraDev.startRecord();
                     }
                 }
@@ -445,8 +445,10 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                 cameraDev.startPreview(surface);
 
                 cameraDev.mHandler = mHandler;     //设置handler
-                if (isFrontAuto) {
+                if (mCameraId == AppConfig.FRONT_CAMERA && isFrontAuto) {
                     cameraDev.startRecord();  //自启动录像
+                } else if (mCameraId == AppConfig.BEHIND_CAMERA && isBehindAuto) {
+                    cameraDev.startRecord();
                 }
             }
         }
