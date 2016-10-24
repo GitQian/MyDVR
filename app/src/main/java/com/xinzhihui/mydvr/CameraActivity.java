@@ -383,7 +383,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     protected void onDestroy() {
         super.onDestroy();
         LogUtil.d(TAG, "CameraActivity onDestroy ------>");
-        if (mService != null && !dvrSurfaceTextureFrontListener.cameraDev.isRecording()) {
+        if (mService != null && !dvrSurfaceTextureFrontListener.cameraDev.isRecording() && !dvrSurfaceTextureBehindListener.cameraDev.isRecording()) {
             //TODO 检查所有设备是否有正在录像的
             Intent intent = new Intent(CameraActivity.this, RecordService.class);
             stopService(intent);

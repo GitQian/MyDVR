@@ -37,6 +37,10 @@ public class FrontCameraDev extends CameraDev {
 
         //设置已选Preview分辨率
         int soluWhere = (Integer) SPUtils.get(MyApplication.getContext(), AppConfig.KEY_FRONT_SOLUTION_WHERE, Integer.valueOf(0));
+        if (soluWhere >=  parameters.getSupportedPreviewSizes().size()) {
+            soluWhere = 0;
+            SPUtils.put(MyApplication.getContext(), AppConfig.KEY_FRONT_SOLUTION_WHERE, soluWhere);
+        }
         parameters.setPreviewSize(parameters.getSupportedPictureSizes().get(soluWhere).width, parameters.getSupportedPictureSizes().get(soluWhere).height);   //后视镜分辨率1600*480，如果设为1920*1080会绿屏！
         return parameters;
     }
@@ -71,6 +75,10 @@ public class FrontCameraDev extends CameraDev {
         int soluWhere = (Integer) SPUtils.get(MyApplication.getContext(), AppConfig.KEY_FRONT_SOLUTION_WHERE, Integer.valueOf(0));
         ACache aCache = ACache.get(MyApplication.getContext());
         ArrayList<String> sizeList = (ArrayList<String>) aCache.getAsObject("FrontSolution");
+        if (soluWhere >= sizeList.size()) {
+            soluWhere = 0;
+            SPUtils.put(MyApplication.getContext(), AppConfig.KEY_FRONT_SOLUTION_WHERE, soluWhere);
+        }
         String str = sizeList.get(soluWhere);
         int width = Integer.valueOf(str.split("x")[0]);
         int height = Integer.valueOf(str.split("x")[1]);
