@@ -32,6 +32,11 @@ public class RecordService extends Service {
         cameraDevList = new ArrayList<CameraDev>();
         cameraDevList.add(null);
         cameraDevList.add(null);
+        cameraDevList.add(null);
+        cameraDevList.add(null);
+        cameraDevList.add(null);
+        cameraDevList.add(null);
+        cameraDevList.add(null);
         LogUtil.d(TAG, "RecordService onCreate --------->");
     }
 

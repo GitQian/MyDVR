@@ -50,8 +50,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     private RelativeLayout mBehindRll;
 
     private int mCurCameraId;
-    private static final int FRONT_CAMERA = 0;
-    private static final int BEHIND_CAMERA = 1;
+
     private static final int ALL_CAMERA = 10086;
 
     private CameraDev mCurCameraDev;
@@ -76,7 +75,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         @Override
         public boolean handleMessage(Message msg) {
             switch (msg.what) {
-                case FRONT_CAMERA:
+                case AppConfig.FRONT_CAMERA:
                     if (msg.arg1 == 0) {
                         //TODO camera 0 stop
                         Toast.makeText(CameraActivity.this, "停止录制", Toast.LENGTH_LONG).show();
@@ -108,7 +107,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                     }
                     break;
 
-                case BEHIND_CAMERA:
+                case AppConfig.BEHIND_CAMERA:
                     if (msg.arg1 == 0) {
                         //stop
                         Toast.makeText(CameraActivity.this, "behind停止录制", Toast.LENGTH_LONG).show();
@@ -157,11 +156,11 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         public void onServiceConnected(ComponentName name, IBinder service) {
             LogUtil.d(TAG, "onServiceConnected ------->");
             mService = ((RecordService.LocalBinder) service).getService();
-            if (null == mService.getCameraDev(FRONT_CAMERA) && null == mService.getCameraDev(BEHIND_CAMERA)) {
+            if (null == mService.getCameraDev(AppConfig.FRONT_CAMERA) && null == mService.getCameraDev(AppConfig.BEHIND_CAMERA)) {
                 //TODO 先得到服务，则为制空，待界面起来置入实例；先得到界面，则为置入实例(各路多要判断)
                 LogUtil.d(TAG, "onServiceConnected ---------> addCameraDev");
-                mService.addCameraDev(FRONT_CAMERA, dvrSurfaceTextureFrontListener.cameraDev);
-                mService.addCameraDev(BEHIND_CAMERA, dvrSurfaceTextureBehindListener.cameraDev);
+                mService.addCameraDev(AppConfig.FRONT_CAMERA, dvrSurfaceTextureFrontListener.cameraDev);
+                mService.addCameraDev(AppConfig.BEHIND_CAMERA, dvrSurfaceTextureBehindListener.cameraDev);
             }
         }
     };
@@ -175,9 +174,9 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         isFrontAuto = (Boolean) SPUtils.get(MyApplication.getContext(), AppConfig.KEY_IS_FRONT_AUTO, true);
         isBehindAuto = (Boolean) SPUtils.get(MyApplication.getContext(), AppConfig.KEY_IS_BEHIND_AUTO, false);
 
-        dvrSurfaceTextureFrontListener = new DvrSurfaceTextureListener(FRONT_CAMERA);
+        dvrSurfaceTextureFrontListener = new DvrSurfaceTextureListener(AppConfig.FRONT_CAMERA);
 
-        dvrSurfaceTextureBehindListener = new DvrSurfaceTextureListener(BEHIND_CAMERA);
+        dvrSurfaceTextureBehindListener = new DvrSurfaceTextureListener(AppConfig.BEHIND_CAMERA);
 
         mCameraTtv.setSurfaceTextureListener(dvrSurfaceTextureFrontListener);
         mCameraFrontTtv.setSurfaceTextureListener(dvrSurfaceTextureBehindListener);
@@ -261,7 +260,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                 mBehindRll.setVisibility(View.GONE);
                 mFrontRll.setVisibility(View.VISIBLE);
                 mRecordCtrlLly.setVisibility(View.VISIBLE);
-                mCurCameraId = FRONT_CAMERA;
+                mCurCameraId = AppConfig.FRONT_CAMERA;
                 mCurCameraDev = dvrSurfaceTextureFrontListener.cameraDev;
                 if (mCurCameraDev.isRecording()) {
                     mRecordCtrlBtn.setBackgroundResource(R.drawable.selector_record_started);
@@ -281,7 +280,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                 mFrontRll.setVisibility(View.GONE);
                 mBehindRll.setVisibility(View.VISIBLE);
                 mRecordCtrlLly.setVisibility(View.VISIBLE);
-                mCurCameraId = BEHIND_CAMERA;
+                mCurCameraId = AppConfig.BEHIND_CAMERA;
                 mCurCameraDev = dvrSurfaceTextureBehindListener.cameraDev;
                 if (mCurCameraDev.isRecording()) {
                     mRecordCtrlBtn.setBackgroundResource(R.drawable.selector_record_started);
