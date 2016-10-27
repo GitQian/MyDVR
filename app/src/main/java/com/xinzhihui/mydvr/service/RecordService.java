@@ -52,6 +52,9 @@ public class RecordService extends Service {
     @Override
     public boolean onUnbind(Intent intent) {
         LogUtil.d(TAG, "RecordService onUnbind --------->");
+//        for (CameraDev cameraDev : cameraDevList) {
+//            cameraDev.mHandler = null;
+//        }
         return super.onUnbind(intent);
     }
 

@@ -56,7 +56,9 @@ public abstract class CameraDev {
         }
         try {
             camera = Camera.open(cameraid);
+            LogUtil.d(TAG, "open -------> cameraId:" + cameraid);
         } catch (Exception e) {
+            LogUtil.e(TAG, "open -------> cameraId:" + cameraid + "error!!!!");
             e.printStackTrace();
         }
         return camera;
@@ -80,7 +82,9 @@ public abstract class CameraDev {
 
                 camera.setPreviewTexture(surface);
                 camera.startPreview();
+                LogUtil.d(TAG, "startPreview -------> have started");
 
+                //水印
                 if (cameraid == AppConfig.FRONT_CAMERA) {
                     if ((Boolean) SPUtils.get(MyApplication.getContext(), AppConfig.KEY_IS_FRONT_WATER, true)) {
                         Class<?> c = camera.getClass();
@@ -99,6 +103,7 @@ public abstract class CameraDev {
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (NoSuchMethodException e) {
+                LogUtil.e(TAG, "startPreview -------> not have startWaterMark method!!!");
                 e.printStackTrace();
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
@@ -118,8 +123,9 @@ public abstract class CameraDev {
             camera = null;
 
             setPreviewing(false);
+            LogUtil.d(TAG, "stopPreView ------->have stoped");
         } else {
-            LogUtil.i(TAG, "stopPreView ----------->camera:" + cameraid + "is null");
+            LogUtil.e(TAG, "stopPreView ----------->camera:" + cameraid + "is null");
         }
     }
 
@@ -137,7 +143,7 @@ public abstract class CameraDev {
             return;
         }
         if (camera == null) {
-            LogUtil.d("qiansheng", "startRecord ------>camera is null!!!!!");
+            LogUtil.d(TAG, "startRecord ------>camera is null!!!!!");
             return;
         }
         mVideoFile = makeFile();
@@ -173,7 +179,9 @@ public abstract class CameraDev {
         try {
             mediaRecorder.prepare();
             mediaRecorder.start();
+            LogUtil.e(TAG, "startRecord ------> cameraDev:" + cameraid + " " + "startRecord!!!");
         } catch (IOException e) {
+            LogUtil.e(TAG, "startRecord ------> cameraDev:" + cameraid + " " + "startRecord error!!!");
             e.printStackTrace();
         }
 
@@ -217,9 +225,10 @@ public abstract class CameraDev {
                 mediaRecorder = null;
 
                 setRecording(false);
+                LogUtil.d(TAG, "stopRecord -------> have stoped");
             } catch (IllegalStateException e) {
                 e.printStackTrace();
-                LogUtil.e(TAG, "stopRecord *************>mediaRecorder stop failed!!!");
+                LogUtil.e(TAG, "stopRecord -------->mediaRecorder stop failed!!!");
             }
 
             setLocked(false);
