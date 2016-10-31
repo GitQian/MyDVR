@@ -32,6 +32,8 @@ import com.xinzhihui.mydvr.utils.LogUtil;
 import com.xinzhihui.mydvr.utils.SDCardUtils;
 import com.xinzhihui.mydvr.utils.SPUtils;
 
+import java.lang.ref.WeakReference;
+
 public class CameraActivity extends AppCompatActivity implements View.OnClickListener {
 
     private final String TAG = this.getClass().getName();
@@ -71,21 +73,34 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     private boolean isFrontAuto;
     private boolean isBehindAuto;
 
-    Handler mHandler = new Handler(new Handler.Callback() {
+    Handler mHandler = new MyHandler(this);
+
+    private static class MyHandler extends Handler {
+        private final WeakReference<CameraActivity> mActivity;
+
+        public MyHandler(CameraActivity activity) {
+            mActivity = new WeakReference<CameraActivity>(activity);
+        }
+
         @Override
-        public boolean handleMessage(Message msg) {
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if (mActivity.get() == null) {
+                return;
+            }
             switch (msg.what) {
                 case AppConfig.FRONT_CAMERA:
                     if (msg.arg1 == 0) {
                         //TODO camera 0 stop
-                        Toast.makeText(CameraActivity.this, "停止录制", Toast.LENGTH_LONG).show();
-                        mAnimFrontRec.stop();
-                        mRecFrontImg.setVisibility(View.GONE);
-                        mTimeFrontTv.setVisibility(View.GONE);
-                        if (mFrontRll.getVisibility() == View.VISIBLE) {
+                        Toast.makeText(MyApplication.getContext(), "停止录制", Toast.LENGTH_LONG).show();
+
+                        mActivity.get().mAnimFrontRec.stop();
+                        mActivity.get().mRecFrontImg.setVisibility(View.GONE);
+                        mActivity.get().mTimeFrontTv.setVisibility(View.GONE);
+                        if (mActivity.get().mFrontRll.getVisibility() == View.VISIBLE) {
                             //如果还处于前置摄像头界面，则更新（否则通过点击具体摄像头界面更新）
-                            mRecordFileLockBtn.setBackgroundResource(R.drawable.btn_record_lock_off);
-                            mRecordCtrlBtn.setBackgroundResource(R.drawable.selector_record_closed);
+                            mActivity.get().mRecordFileLockBtn.setBackgroundResource(R.drawable.btn_record_lock_off);
+                            mActivity.get().mRecordCtrlBtn.setBackgroundResource(R.drawable.selector_record_closed);
                         }
 //                        mRecordStartBtn.setClickable(true);
 //                        mRecordStopBtn.setClickable(false);
@@ -93,56 +108,55 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                     } else if (msg.arg1 == 1) {
                         //TODO camera 1 start
 //                        Toast.makeText(CameraActivity.this, "正在录制" , Toast.LENGTH_LONG).show();
-                        mRecFrontImg.setVisibility(View.VISIBLE);
-                        mTimeFrontTv.setVisibility(View.VISIBLE);
+                        mActivity.get().mRecFrontImg.setVisibility(View.VISIBLE);
+                        mActivity.get().mTimeFrontTv.setVisibility(View.VISIBLE);
 //                        mRecordStartBtn.setClickable(false);
 //                        mRecordStopBtn.setClickable(true);
                         //TODO 这里是有问题的！多次启动动画（内存）
-                        mAnimFrontRec.start();
-                        mRecordCtrlBtn.setBackgroundResource(R.drawable.selector_record_started);
+                        mActivity.get().mAnimFrontRec.start();
+                        mActivity.get().mRecordCtrlBtn.setBackgroundResource(R.drawable.selector_record_started);
 
                     } else if (msg.arg1 == 2) {
                         //TODO Time Update
-                        mTimeFrontTv.setText(DateTimeUtil.formatLongToTimeStr(msg.arg2 * 1000));
+                        mActivity.get().mTimeFrontTv.setText(DateTimeUtil.formatLongToTimeStr(msg.arg2 * 1000));
                     }
                     break;
 
                 case AppConfig.BEHIND_CAMERA:
                     if (msg.arg1 == 0) {
                         //stop
-                        Toast.makeText(CameraActivity.this, "behind停止录制", Toast.LENGTH_LONG).show();
-                        mAnimBehindRec.stop();
-                        mRecBehindImg.setVisibility(View.GONE);
-                        mTimeBehindTv.setVisibility(View.GONE);
-                        if (mBehindRll.getVisibility() == View.VISIBLE) {
+                        Toast.makeText(MyApplication.getContext(), "behind停止录制", Toast.LENGTH_LONG).show();
+                        mActivity.get().mAnimBehindRec.stop();
+                        mActivity.get().mRecBehindImg.setVisibility(View.GONE);
+                        mActivity.get().mTimeBehindTv.setVisibility(View.GONE);
+                        if (mActivity.get().mBehindRll.getVisibility() == View.VISIBLE) {
                             //如果还处于前置摄像头界面，则更新（否则通过点击具体摄像头界面更新）
-                            mRecordFileLockBtn.setBackgroundResource(R.drawable.btn_record_lock_off);
-                            mRecordCtrlBtn.setBackgroundResource(R.drawable.selector_record_closed);
+                            mActivity.get().mRecordFileLockBtn.setBackgroundResource(R.drawable.btn_record_lock_off);
+                            mActivity.get().mRecordCtrlBtn.setBackgroundResource(R.drawable.selector_record_closed);
                         }
 //                        mRecordStartBtn.setClickable(true);
 //                        mRecordStopBtn.setClickable(false);
 
                     } else if (msg.arg1 == 1) {
                         //start
-                        mRecBehindImg.setVisibility(View.VISIBLE);
-                        mTimeBehindTv.setVisibility(View.VISIBLE);
+                        mActivity.get().mRecBehindImg.setVisibility(View.VISIBLE);
+                        mActivity.get().mTimeBehindTv.setVisibility(View.VISIBLE);
 //                        mRecordStartBtn.setClickable(false);
 //                        mRecordStopBtn.setClickable(true);
-                        mAnimBehindRec.start();
+                        mActivity.get().mAnimBehindRec.start();
 
-                        mRecordCtrlBtn.setBackgroundResource(R.drawable.selector_record_started);
+                        mActivity.get().mRecordCtrlBtn.setBackgroundResource(R.drawable.selector_record_started);
                     } else if (msg.arg1 == 2) {
                         //update time
-                        mTimeBehindTv.setText(DateTimeUtil.formatLongToTimeStr(msg.arg2 * 1000));
+                        mActivity.get().mTimeBehindTv.setText(DateTimeUtil.formatLongToTimeStr(msg.arg2 * 1000));
                     }
                     break;
 
                 default:
                     break;
             }
-            return false;
         }
-    });
+    }
 
     private RecordService mService = null;
     private ServiceConnection myServiceConnection = new ServiceConnection() {
@@ -389,8 +403,8 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
             mService = null;
         }
 
-//        mHandler.removeCallbacksAndMessages(null);
-//        mHandler = null;
+        mHandler.removeCallbacksAndMessages(null);
+
     }
 
     /**
