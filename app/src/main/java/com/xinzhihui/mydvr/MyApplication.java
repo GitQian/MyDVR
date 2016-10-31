@@ -2,8 +2,11 @@ package com.xinzhihui.mydvr;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.hardware.Camera;
 import android.util.Log;
 
+import com.squareup.leakcanary.LeakCanary;
 import com.xinzhihui.mydvr.utils.LogUtil;
 import com.xinzhihui.mydvr.utils.SPUtils;
 
@@ -21,8 +24,24 @@ public class MyApplication extends Application {
     public void onCreate() {
         super.onCreate();
         mContext = getApplicationContext();
+
+        if (LeakCanary.isInAnalyzerProcess(this)) {
+            // This process is dedicated to LeakCanary for heap analysis.
+            // You should not init your app in this process.
+            return;
+        }
+        LeakCanary.install(this);
+
         initPath(); //初始化文件目录
         initSetting();
+
+        if (checkCameraHardware(this)) {
+            LogUtil.d(TAG, "have camera!!");
+        } else {
+            LogUtil.e(TAG, "no camera!!!");
+        }
+
+        LogUtil.d(TAG, "camera number:" + Camera.getNumberOfCameras());
     }
 
     private void initPath() {
@@ -57,6 +76,19 @@ public class MyApplication extends Application {
         }
         if (!dir.exists()) {
             dir.mkdir();
+        }
+    }
+
+    /**
+     * Check if this device has a camera
+     */
+    private boolean checkCameraHardware(Context context) {
+        if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
+            // this device has a camera
+            return true;
+        } else {
+            // no camera on this device
+            return false;
         }
     }
 
