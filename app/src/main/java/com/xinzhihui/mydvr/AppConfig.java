@@ -15,9 +15,14 @@ public class AppConfig {
     //后路设备
     public static final int BEHIND_CAMERA = 1;
     //左路设备
-    public static final int LEFT_CAMERA = 2;
+    public static final int LEFT_CAMERA = 20;
     //右路设备
-    public static final int RIGHT_CAMERA = 3;
+    public static final int RIGHT_CAMERA = 30;
+
+    public static int FRONT_CAMERA_INDEX = 0;
+    public static int BEHIND_CAMERA_INDEX = 1;
+    public static int LEFT_CAMERA_INDEX = 20;
+    public static int RIGHT_CAMERA_INDEX = 30;
 
     // 硬件层的前后左右摄像头顺序 在Camera.open(id)对应id的值;
     public static final int FRONT_CAMERA_DEV_INDEX = 0;
