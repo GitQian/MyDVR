@@ -74,7 +74,6 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     private boolean isBehindAuto;
 
     Handler mHandler = new MyHandler(this);
-
     private static class MyHandler extends Handler {
         private final WeakReference<CameraActivity> mActivity;
 
@@ -243,9 +242,15 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_record_ctrl:
+//                new DeleteFileTask().execute(new String[] {AppConfig.FRONT_VIDEO_PATH, AppConfig.BEHIND_VIDEO_PATH});
+
                 if (!SDCardUtils.isSDCardEnable()) {
                     LogUtil.i(TAG, "SDCard can't use!");
                     Toast.makeText(CameraActivity.this, "SD卡不可用！", Toast.LENGTH_LONG).show();
+                }
+                if (mService.getCameraDev(mCurCameraId).camera == null) {
+                    Toast.makeText(CameraActivity.this, "设备不能使用", Toast.LENGTH_SHORT).show();
+                    break;
                 }
                 if (mService.getCameraDev(mCurCameraId).isRecording()) {
                     //通过mService获取到的是已经更新过的，安全！
@@ -276,18 +281,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                 mRecordCtrlLly.setVisibility(View.VISIBLE);
                 mCurCameraId = AppConfig.FRONT_CAMERA;
                 mCurCameraDev = dvrSurfaceTextureFrontListener.cameraDev;
-                if (mCurCameraDev.isRecording()) {
-                    mRecordCtrlBtn.setBackgroundResource(R.drawable.selector_record_started);
-                    //TODO 判断该文件是否被标记 锁定
-                    if (mCurCameraDev.isLocked()) {
-                        mRecordFileLockBtn.setBackgroundResource(R.drawable.selector_record_lock_on);
-                    } else {
-                        mRecordFileLockBtn.setBackgroundResource(R.drawable.selector_record_lock_off);
-                    }
-                } else {
-                    mRecordCtrlBtn.setBackgroundResource(R.drawable.selector_record_closed);
-                    mRecordFileLockBtn.setBackgroundResource(R.drawable.selector_record_lock_off);
-                }
+                updateRecordCtrlBtn(mCurCameraDev);
                 break;
 
             case R.id.rll_behind:
@@ -296,18 +290,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                 mRecordCtrlLly.setVisibility(View.VISIBLE);
                 mCurCameraId = AppConfig.BEHIND_CAMERA;
                 mCurCameraDev = dvrSurfaceTextureBehindListener.cameraDev;
-                if (mCurCameraDev.isRecording()) {
-                    mRecordCtrlBtn.setBackgroundResource(R.drawable.selector_record_started);
-                    //TODO 判断该文件是否被标记 锁定
-                    if (mCurCameraDev.isLocked()) {
-                        mRecordFileLockBtn.setBackgroundResource(R.drawable.selector_record_lock_on);
-                    } else {
-                        mRecordFileLockBtn.setBackgroundResource(R.drawable.selector_record_lock_off);
-                    }
-                } else {
-                    mRecordCtrlBtn.setBackgroundResource(R.drawable.selector_record_closed);
-                    mRecordFileLockBtn.setBackgroundResource(R.drawable.selector_record_lock_off);
-                }
+                updateRecordCtrlBtn(mCurCameraDev);
                 break;
 
             case R.id.btn_record_switch:
@@ -372,6 +355,21 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
 
             default:
                 break;
+        }
+    }
+
+    private void updateRecordCtrlBtn(CameraDev cameraDev) {
+        if (cameraDev.isRecording()) {
+            mRecordCtrlBtn.setBackgroundResource(R.drawable.selector_record_started);
+            //TODO 判断该文件是否被标记 锁定
+            if (cameraDev.isLocked()) {
+                mRecordFileLockBtn.setBackgroundResource(R.drawable.selector_record_lock_on);
+            } else {
+                mRecordFileLockBtn.setBackgroundResource(R.drawable.selector_record_lock_off);
+            }
+        } else {
+            mRecordCtrlBtn.setBackgroundResource(R.drawable.selector_record_closed);
+            mRecordFileLockBtn.setBackgroundResource(R.drawable.selector_record_lock_off);
         }
     }
 
