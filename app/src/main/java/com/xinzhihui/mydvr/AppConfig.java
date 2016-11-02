@@ -10,6 +10,7 @@ public class AppConfig {
     //默认两路
     public static final int CAMERA_AMOUNT = 2;
 
+    /*************** 名义 id ************/
     //前路设备（数组下标-0）
     public static final int FRONT_CAMERA = 0;
     //后路设备
@@ -19,6 +20,7 @@ public class AppConfig {
     //右路设备
     public static final int RIGHT_CAMERA = 30;
 
+    /*************** 真实 id ****************/
     public static int FRONT_CAMERA_INDEX = 0;
     public static int BEHIND_CAMERA_INDEX = 1;
     public static int LEFT_CAMERA_INDEX = 20;

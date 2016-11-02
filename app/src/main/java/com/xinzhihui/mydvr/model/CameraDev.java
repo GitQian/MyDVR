@@ -9,7 +9,6 @@ import android.os.Message;
 import com.xinzhihui.mydvr.AppConfig;
 import com.xinzhihui.mydvr.MyApplication;
 import com.xinzhihui.mydvr.asynctask.SavePictureTask;
-import com.xinzhihui.mydvr.utils.ACache;
 import com.xinzhihui.mydvr.utils.LogUtil;
 import com.xinzhihui.mydvr.utils.SPUtils;
 
@@ -17,7 +16,6 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -27,7 +25,8 @@ import java.util.TimerTask;
 public abstract class CameraDev {
     private final String TAG = getClass().getName();
 
-    public int cameraid;
+    public int cameraIndexId;
+    public int cameraId;
 
     public Camera camera;
     public MediaRecorder mediaRecorder;
@@ -55,10 +54,10 @@ public abstract class CameraDev {
             camera = null;
         }
         try {
-            camera = Camera.open(cameraid);
-            LogUtil.d(TAG, "open -------> cameraId:" + cameraid);
+            camera = Camera.open(cameraIndexId);
+            LogUtil.d(TAG, "open -------> cameraId:" + cameraIndexId);
         } catch (Exception e) {
-            LogUtil.e(TAG, "open -------> cameraId:" + cameraid + "error!!!!");
+            LogUtil.e(TAG, "open -------> cameraId:" + cameraIndexId + "error!!!!");
             e.printStackTrace();
         }
         return camera;
@@ -85,14 +84,14 @@ public abstract class CameraDev {
                 LogUtil.d(TAG, "startPreview -------> have started");
 
                 //水印
-                if (cameraid == AppConfig.FRONT_CAMERA) {
+                if (cameraIndexId == AppConfig.FRONT_CAMERA_INDEX) {
                     if ((Boolean) SPUtils.get(MyApplication.getContext(), AppConfig.KEY_IS_FRONT_WATER, true)) {
                         Class<?> c = camera.getClass();
                         Method startRender = c.getMethod("startWaterMark");
                         startRender.invoke(camera);
                         setPreviewing(true);
                     }
-                } else if (cameraid == AppConfig.BEHIND_CAMERA) {
+                } else if (cameraIndexId == AppConfig.BEHIND_CAMERA_INDEX) {
                     if ((Boolean) SPUtils.get(MyApplication.getContext(), AppConfig.KEY_IS_BEHIND_WATER, true)) {
                         Class<?> c = camera.getClass();
                         Method startRender = c.getMethod("startWaterMark");
@@ -125,7 +124,7 @@ public abstract class CameraDev {
             setPreviewing(false);
             LogUtil.d(TAG, "stopPreView ------->have stoped");
         } else {
-            LogUtil.e(TAG, "stopPreView ----------->camera:" + cameraid + "is null");
+            LogUtil.e(TAG, "stopPreView ----------->camera:" + cameraIndexId + "is null");
         }
     }
 
@@ -179,20 +178,20 @@ public abstract class CameraDev {
         try {
             mediaRecorder.prepare();
             mediaRecorder.start();
-            LogUtil.e(TAG, "startRecord ------> cameraDev:" + cameraid + " " + "startRecord!!!");
+            LogUtil.e(TAG, "startRecord ------> cameraDev:" + cameraIndexId + " " + "startRecord!!!");
         } catch (IOException e) {
-            LogUtil.e(TAG, "startRecord ------> cameraDev:" + cameraid + " " + "startRecord error!!!");
+            LogUtil.e(TAG, "startRecord ------> cameraDev:" + cameraIndexId + " " + "startRecord error!!!");
             e.printStackTrace();
         }
 
 
         setRecording(true);
 
-        sendMessage(mHandler, cameraid, 1, 0);
+        sendMessage(mHandler, cameraId, 1, 0);
         mTimerTask = new TimerTask() {
             @Override
             public void run() {
-                sendMessage(mHandler, cameraid, 2, mTimeCount);
+                sendMessage(mHandler, cameraId, 2, mTimeCount);
                 mTimeCount++;
             }
         };
@@ -234,7 +233,7 @@ public abstract class CameraDev {
             setLocked(false);
             mTimerTask.cancel();
             mTimeCount = 0;
-            sendMessage(mHandler, cameraid, 0, 0);
+            sendMessage(mHandler, cameraId, 0, 0);
         } else {
             setRecording(false);
             LogUtil.i(TAG, "stopRecord --------->mediaRecorder is null!");

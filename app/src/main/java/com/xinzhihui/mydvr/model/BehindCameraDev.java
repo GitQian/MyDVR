@@ -17,8 +17,9 @@ import java.util.ArrayList;
  */
 public class BehindCameraDev extends CameraDev {
 
-    public BehindCameraDev(int cameraId) {
-        this.cameraid = cameraId;
+    public BehindCameraDev(int cameraIndexId) {
+        this.cameraIndexId = cameraIndexId;
+        this.cameraId = AppConfig.BEHIND_CAMERA;
     }
 
     @Override

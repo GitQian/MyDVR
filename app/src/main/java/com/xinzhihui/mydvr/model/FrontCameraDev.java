@@ -18,8 +18,9 @@ import java.util.ArrayList;
  */
 public class FrontCameraDev extends CameraDev {
 
-    public FrontCameraDev(int cameraId) {
-        this.cameraid = cameraId;
+    public FrontCameraDev(int cameraIndexId) {
+        this.cameraIndexId = cameraIndexId;
+        this.cameraId = AppConfig.FRONT_CAMERA;
     }
 
     @Override
