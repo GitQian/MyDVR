@@ -7,7 +7,11 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.Spinner;
+import android.widget.Switch;
+
+import com.xinzhihui.mydvr.utils.SPUtils;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -15,6 +19,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private Spinner mSpinnerFront;
     private Spinner mSPinnerBehind;
+
+    private Switch mAppAutoSwitch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +32,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         mSpinnerFront = (Spinner) findViewById(R.id.spinner_front);
         mSPinnerBehind = (Spinner) findViewById(R.id.spinner_behind);
+        mAppAutoSwitch = (Switch) findViewById(R.id.switch_app_auto);
+        mAppAutoSwitch.setChecked((Boolean) SPUtils.get(MyApplication.getContext(), AppConfig.KEY_APP_AUTO_RUN, true));
+        mAppAutoSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    SPUtils.put(MyApplication.getContext(), AppConfig.KEY_APP_AUTO_RUN, true);
+                } else {
+                    SPUtils.put(MyApplication.getContext(), AppConfig.KEY_APP_AUTO_RUN, false);
+                }
+            }
+        });
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, new String[]{"0", "1", "2", "3", "4", "5", "6", "7", "8"});

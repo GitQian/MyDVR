@@ -64,8 +64,10 @@ public class MyApplication extends Application {
             SPUtils.put(mContext, AppConfig.KEY_IS_FRONT_WATER, true);
             SPUtils.put(mContext, AppConfig.KEY_IS_BEHIND_WATER, true);
 
-            SPUtils.put(mContext, AppConfig.KEY_IS_FRONT_AUTO, true);
+            SPUtils.put(mContext, AppConfig.KEY_IS_FRONT_AUTO, false);
             SPUtils.put(mContext, AppConfig.KEY_IS_BEHIND_AUTO, false);
+
+            SPUtils.put(mContext, AppConfig.KEY_APP_AUTO_RUN, true);
         }
     }
 

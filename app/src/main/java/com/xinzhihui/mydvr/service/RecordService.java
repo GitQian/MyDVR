@@ -108,6 +108,7 @@ public class RecordService extends Service {
         } catch (IOException e) {
             e.printStackTrace();
         } catch (NoSuchMethodException e) {
+            LogUtil.e(TAG, "No strartRender() method!!!");
             e.printStackTrace();
         } catch (IllegalAccessException e) {
             e.printStackTrace();
@@ -125,6 +126,7 @@ public class RecordService extends Service {
             startRender = c.getMethod("stopRender");
             startRender.invoke(cameraDev.camera);
         } catch (NoSuchMethodException e) {
+            LogUtil.e(TAG, "No stopRender() method!!!");
             e.printStackTrace();
         } catch (InvocationTargetException e) {
             e.printStackTrace();
