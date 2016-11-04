@@ -111,20 +111,22 @@ public class SettingFrontFragment extends Fragment implements CompoundButton.OnC
             case R.id.rly_setting_front_solution:
                 ACache aCache = ACache.get(MyApplication.getContext());
                 ArrayList<String> sizeList = (ArrayList<String>) aCache.getAsObject("FrontSolution");
-                int size = sizeList.size();
-                String[] array = (String[]) sizeList.toArray(new String[size]);  //list转换为数组
-                int soluWhere = (Integer) SPUtils.get(MyApplication.getContext(), AppConfig.KEY_FRONT_SOLUTION_WHERE, Integer.valueOf(0));  //已选编号
+                if (sizeList != null) {
+                    int size = sizeList.size();
+                    String[] array = (String[]) sizeList.toArray(new String[size]);  //list转换为数组
+                    int soluWhere = (Integer) SPUtils.get(MyApplication.getContext(), AppConfig.KEY_FRONT_SOLUTION_WHERE, Integer.valueOf(0));  //已选编号
 
-                Dialog alertDialog = new AlertDialog.Builder(getActivity())
-                        .setTitle("前摄像头分辨率")
-                        .setSingleChoiceItems(array, soluWhere, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                SPUtils.put(MyApplication.getContext(), AppConfig.KEY_FRONT_SOLUTION_WHERE, which);
-                            }
-                        })
-                        .create();
-                alertDialog.show();
+                    Dialog alertDialog = new AlertDialog.Builder(getActivity())
+                            .setTitle("前摄像头分辨率")
+                            .setSingleChoiceItems(array, soluWhere, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    SPUtils.put(MyApplication.getContext(), AppConfig.KEY_FRONT_SOLUTION_WHERE, which);
+                                }
+                            })
+                            .create();
+                    alertDialog.show();
+                }
                 break;
 
             case R.id.rly_setting_front_time:
