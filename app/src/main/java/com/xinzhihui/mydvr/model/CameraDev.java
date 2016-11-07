@@ -28,7 +28,7 @@ public abstract class CameraDev {
     public int cameraIndexId;
     public int cameraId;
 
-    public Camera camera;
+    public Camera camera = null;
     public MediaRecorder mediaRecorder;
 
     public File mVideoFile;
@@ -157,17 +157,27 @@ public abstract class CameraDev {
             public void onInfo(MediaRecorder mr, int what, int extra) {
                 switch (what) {
                     case MediaRecorder.MEDIA_RECORDER_INFO_MAX_DURATION_REACHED:
-//                        Class<?> c = mediaRecorder.getClass();
-//                        Method startRender = null;
-//                        try {
-//                            startRender = c.getMethod("setNextSaveFile", String.class);
-//                            startRender.invoke(mediaRecorder,mVideoFile.getAbsolutePath());
-//                        } catch (Exception e) {
-//                            e.printStackTrace();
-//                            LogUtil.e("qiansheng", "setNextSaveFile Error!!!");
-//                        }
-                        stopRecord();
-                        startRecord();
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Class<?> c = mediaRecorder.getClass();
+                                Method startRender = null;
+                                try {
+                                    startRender = c.getMethod("setNextSaveFile", String.class);
+                                    startRender.invoke(mediaRecorder,makeFile().getAbsolutePath());
+
+//                            mTimerTask.cancel();
+                                    mTimeCount = 1;
+                                    sendMessage(mHandler, cameraId, 2, mTimeCount);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                    LogUtil.e("qiansheng", "setNextSaveFile Error!!!");
+                                }
+                            }
+                        }).start();
+                        LogUtil.e("qiansheng", "OnInfo thread id:" + Thread.currentThread().getId());
+//                        stopRecord();
+//                        startRecord();
                         break;
                     default:
                         break;
@@ -182,6 +192,7 @@ public abstract class CameraDev {
         } catch (IOException e) {
             LogUtil.e(TAG, "startRecord ------> cameraDev:" + cameraIndexId + " " + "startRecord error!!!");
             e.printStackTrace();
+            return;
         }
 
 
@@ -191,8 +202,32 @@ public abstract class CameraDev {
         mTimerTask = new TimerTask() {
             @Override
             public void run() {
+//                LogUtil.e("qiansheng", "TimerTask thread id:" + Thread.currentThread().getId());
                 sendMessage(mHandler, cameraId, 2, mTimeCount);
                 mTimeCount++;
+//                if (mTimeCount >= 60) {
+//                    mTimeCount = 0;
+//                    mHandler.post(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            LogUtil.e("qiansheng", "Runnable thread id:" + Thread.currentThread().getId());
+//                            Class<?> c = mediaRecorder.getClass();
+//                            Method startRender = null;
+//                            try {
+//                                startRender = c.getMethod("setNextSaveFile", String.class);
+//                                startRender.invoke(mediaRecorder,makeFile().getAbsolutePath());
+//
+////                            mTimerTask.cancel();
+////                                mTimeCount = 0;
+////                            sendMessage(mHandler, cameraId, 2, mTimeCount);
+//                            } catch (Exception e) {
+//                                e.printStackTrace();
+//                                LogUtil.e("qiansheng", "setNextSaveFile Error!!!");
+//                            }
+//                        }
+//                    });
+//
+//                }
             }
         };
         mTimer.schedule(mTimerTask, 0, 1000);
@@ -232,7 +267,7 @@ public abstract class CameraDev {
 
             setLocked(false);
             mTimerTask.cancel();
-            mTimeCount = 0;
+            mTimeCount = 1;
             sendMessage(mHandler, cameraId, 0, 0);
         } else {
             setRecording(false);
