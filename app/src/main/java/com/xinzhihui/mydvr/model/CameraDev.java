@@ -157,27 +157,27 @@ public abstract class CameraDev {
             public void onInfo(MediaRecorder mr, int what, int extra) {
                 switch (what) {
                     case MediaRecorder.MEDIA_RECORDER_INFO_MAX_DURATION_REACHED:
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Class<?> c = mediaRecorder.getClass();
-                                Method startRender = null;
-                                try {
-                                    startRender = c.getMethod("setNextSaveFile", String.class);
-                                    startRender.invoke(mediaRecorder,makeFile().getAbsolutePath());
-
-//                            mTimerTask.cancel();
-                                    mTimeCount = 1;
-                                    sendMessage(mHandler, cameraId, 2, mTimeCount);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                    LogUtil.e("qiansheng", "setNextSaveFile Error!!!");
-                                }
-                            }
-                        }).start();
-                        LogUtil.e("qiansheng", "OnInfo thread id:" + Thread.currentThread().getId());
-//                        stopRecord();
-//                        startRecord();
+//                        new Thread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                Class<?> c = mediaRecorder.getClass();
+//                                Method startRender = null;
+//                                try {
+//                                    startRender = c.getMethod("setNextSaveFile", String.class);
+//                                    startRender.invoke(mediaRecorder,makeFile().getAbsolutePath());
+//
+////                            mTimerTask.cancel();
+//                                    mTimeCount = 1;
+//                                    sendMessage(mHandler, cameraId, 2, mTimeCount);
+//                                } catch (Exception e) {
+//                                    e.printStackTrace();
+//                                    LogUtil.e("qiansheng", "setNextSaveFile Error!!!");
+//                                }
+//                            }
+//                        }).start();
+//                        LogUtil.e("qiansheng", "OnInfo thread id:" + Thread.currentThread().getId());
+                        stopRecord();
+                        startRecord();
                         break;
                     default:
                         break;
