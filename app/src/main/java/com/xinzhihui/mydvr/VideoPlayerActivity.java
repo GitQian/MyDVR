@@ -82,12 +82,12 @@ public class VideoPlayerActivity extends Activity implements OnClickListener {
                         int progress = (int) (mVideoView.getCurrentPosition() * 100L / mVideoView.getDuration());
                         mProgress.setProgress(progress);
                         if (mVideoView.getCurrentPosition() > mVideoView.getDuration() - 100) {
-                            mCurrentTime.setText("00:00");
+                            mCurrentTime.setText("00:00:00");
                             mProgress.setProgress(0);
                         }
                         mProgress.setSecondaryProgress(mVideoView.getBufferPercentage());
                     } else {
-                        mCurrentTime.setText("00:00");
+                        mCurrentTime.setText("00:00:00");
                         mProgress.setProgress(0);
                     }
                     break;
@@ -154,8 +154,8 @@ public class VideoPlayerActivity extends Activity implements OnClickListener {
 //				 play();
 
                 mProgress.setProgress(0);
-                mCurrentTime.setText("00:00");
-                mTotalTime.setText("00:00");
+                mCurrentTime.setText("00:00:00");
+                mTotalTime.setText("00:00:00");
                 finish();
             }
         });
@@ -165,7 +165,7 @@ public class VideoPlayerActivity extends Activity implements OnClickListener {
             public void onPrepared(MediaPlayer mp) {
 
                 mProgress.setProgress(0);
-                mCurrentTime.setText("00:00");
+                mCurrentTime.setText("00:00:00");
                 mTotalTime.setText(DateTimeUtil.formatLongToTimeStr(mVideoView.getDuration()));
 
                 mHandler.removeCallbacks(hideRunnable);
