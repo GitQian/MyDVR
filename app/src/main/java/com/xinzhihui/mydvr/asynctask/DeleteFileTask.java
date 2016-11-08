@@ -21,7 +21,7 @@ public class DeleteFileTask extends AsyncTask<String[], String, String> {
     @Override
     protected String doInBackground(String[]... params) {
         //TODO 在DVR根目录，对文件进行排序
-        while (SDCardUtils.getFreeBytes(AppConfig.DVR_PATH) < 1931 * 1024 * 1024) {
+        while (SDCardUtils.getFreeBytes(AppConfig.DVR_PATH) < 300 * 1024 * 1024) {
             List<File> listFile = FileOrderUtils.orderByDate(params[0]);
 
             LockVideoDAL lockVideoDAL = new LockVideoDAL(MyApplication.getContext());

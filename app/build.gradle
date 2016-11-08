@@ -8,8 +8,8 @@ android {
         applicationId "com.xinzhihui.mydvr"
         minSdkVersion 15
         targetSdkVersion 19
-        versionCode 1
-        versionName "1.0"
+        versionCode 20161108
+        versionName "1.1"
     }
     buildTypes {
         release {

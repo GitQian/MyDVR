@@ -89,15 +89,15 @@ public abstract class CameraDev {
                 if (cameraIndexId == AppConfig.FRONT_CAMERA_INDEX) {
                     if ((Boolean) SPUtils.get(MyApplication.getContext(), AppConfig.KEY_IS_FRONT_WATER, true)) {
                         Class<?> c = camera.getClass();
-                        Method startRender = c.getMethod("startWaterMark");
-                        startRender.invoke(camera);
+                        Method startWaterMark = c.getMethod("startWaterMark");
+                        startWaterMark.invoke(camera);
                         setPreviewing(true);
                     }
                 } else if (cameraIndexId == AppConfig.BEHIND_CAMERA_INDEX) {
                     if ((Boolean) SPUtils.get(MyApplication.getContext(), AppConfig.KEY_IS_BEHIND_WATER, true)) {
                         Class<?> c = camera.getClass();
-                        Method startRender = c.getMethod("startWaterMark");
-                        startRender.invoke(camera);
+                        Method startWaterMark = c.getMethod("startWaterMark");
+                        startWaterMark.invoke(camera);
                         setPreviewing(true);
                     }
                 }
@@ -148,7 +148,7 @@ public abstract class CameraDev {
             return;
         }
         //TODO 漏秒情况下，可统一在startRecord处检测存储空间是否充足---低于30M触发
-        if (SDCardUtils.getFreeBytes(AppConfig.DVR_PATH) < 1931 * 1024 * 1024) {
+        if (SDCardUtils.getFreeBytes(AppConfig.DVR_PATH) < 300 * 1024 * 1024) {
             new DeleteFileTask().execute(new String[]{AppConfig.FRONT_VIDEO_PATH, AppConfig.BEHIND_VIDEO_PATH});
         } else {
             LogUtil.d(TAG, "Free storge enough! Size byte:" + SDCardUtils.getFreeBytes(AppConfig.DVR_PATH));
