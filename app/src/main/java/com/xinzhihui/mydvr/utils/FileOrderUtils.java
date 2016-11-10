@@ -61,11 +61,19 @@ public class FileOrderUtils {
         List<File> files2 = Arrays.asList(new File(filePath[1]).listFiles());
         List<File> fileList2 = new ArrayList(files2);
 
-        fileList1.addAll(fileList2);
+        if (fileList2 != null && fileList2.size() != 0) {
+            if (fileList1 != null) {
+                fileList1.addAll(fileList2);
+            } else {
+                fileList1 = fileList2;
+            }
 
-        Collections.sort(fileList1, new Comparator<File>() {
-            @Override
-            public int compare(File o1, File o2) {
+        }
+
+        if (fileList1 != null) {
+            Collections.sort(fileList1, new Comparator<File>() {
+                @Override
+                public int compare(File o1, File o2) {
 //                long diff = o1.lastModified() - o2.lastModified();
 //                if (diff > 0)
 //                    return 1;
@@ -73,11 +81,12 @@ public class FileOrderUtils {
 //                    return 0;
 //                else
 //                    return -1;
-                String time1 = o1.getName().split("_", 2)[1];
-                String time2 = o2.getName().split("_", 2)[1];
-                return time1.compareTo(time2);
-            }
-        });
+                    String time1 = o1.getName().split("_", 2)[1];
+                    String time2 = o2.getName().split("_", 2)[1];
+                    return time1.compareTo(time2);
+                }
+            });
+        }
         return fileList1;
     }
 }
