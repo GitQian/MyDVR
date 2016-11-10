@@ -67,9 +67,9 @@ public class FrontCameraDev extends CameraDev {
         boolean isSound = false;
         isSound = (Boolean) SPUtils.get(MyApplication.getContext(), AppConfig.KEY_IS_FRONT_SOUND, true);
         if (isSound) {
-            mediaRecorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
+            mediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
         }
-        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4); //先设置输出格式
+        mediaRecorder.setOutputFormat(8); //先设置输出格式
         mediaRecorder.setVideoFrameRate(30);
 
         //获取已选择的分辨率
@@ -109,7 +109,7 @@ public class FrontCameraDev extends CameraDev {
                 duration = AppConfig.FIVE_MINUTE_DURATION;
                 break;
         }
-        mediaRecorder.setMaxDuration(duration);
+//        mediaRecorder.setMaxDuration(duration);
         return mediaRecorder;
     }
 }

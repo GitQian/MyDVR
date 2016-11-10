@@ -125,7 +125,6 @@ public class DateTimeUtil {
     /**
      * Date转换为日期 yyyy年MM月dd日
      *
-     * @param seconds 秒数
      * @return
      */
     public static String parseDateToChineseDate(Date date) {

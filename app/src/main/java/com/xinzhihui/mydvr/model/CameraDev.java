@@ -3,6 +3,7 @@ package com.xinzhihui.mydvr.model;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.media.MediaRecorder;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 
@@ -16,6 +17,7 @@ import com.xinzhihui.mydvr.utils.SPUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Timer;
@@ -156,7 +158,23 @@ public abstract class CameraDev {
 
         mVideoFile = makeFile();
 
-        mediaRecorder = new MediaRecorder();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            //TODO android 6.0
+            Class<?> c = null;
+            try {
+                c = Class.forName("android.media.MediaRecorder");
+                Constructor<?> con = c.getConstructor(int.class);
+                mediaRecorder = (MediaRecorder) con.newInstance(1);
+            } catch (Exception e) {
+                e.printStackTrace();
+                LogUtil.e(TAG, "new MediaRecorder(int type) error!!!");
+            }
+
+        } else {
+            //android 4.4
+            mediaRecorder = new MediaRecorder();
+        }
+
         camera.unlock();
 
         initRecorderParameters(camera, mediaRecorder, mVideoFile);
@@ -222,30 +240,29 @@ public abstract class CameraDev {
             public void run() {
 //                LogUtil.e("qiansheng", "TimerTask thread id:" + Thread.currentThread().getId());
                 sendMessage(mHandler, cameraId, 2, mTimeCount);
+
+                if (mTimeCount >= 60) {
+                    mTimeCount = 0;
+                    sendMessage(mHandler, cameraId, 2, mTimeCount);
+                    LogUtil.e("qiansheng", "Runnable thread id:" + Thread.currentThread().getId());
+                    Class<?> c = mediaRecorder.getClass();
+                    Method setNextSaveFile = null;
+                    try {
+                        setNextSaveFile = c.getMethod("setNextSaveFile", String.class);
+                        setNextSaveFile.invoke(mediaRecorder,makeFile().getAbsolutePath());
+
+//                      mTimerTask.cancel();
+//                      mTimeCount = 0;
+//                      endMessage(mHandler, cameraId, 2, mTimeCount);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        LogUtil.e("qiansheng", "setNextSaveFile Error!!!");
+                    }
+                }else {
+                    sendMessage(mHandler, cameraId, 2, mTimeCount);
+                }
                 mTimeCount++;
-//                if (mTimeCount >= 60) {
-//                    mTimeCount = 0;
-//                    mHandler.post(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            LogUtil.e("qiansheng", "Runnable thread id:" + Thread.currentThread().getId());
-//                            Class<?> c = mediaRecorder.getClass();
-//                            Method setNextSaveFile = null;
-//                            try {
-//                                setNextSaveFile = c.getMethod("setNextSaveFile", String.class);
-//                                setNextSaveFile.invoke(mediaRecorder,makeFile().getAbsolutePath());
-//
-////                            mTimerTask.cancel();
-////                                mTimeCount = 0;
-////                            sendMessage(mHandler, cameraId, 2, mTimeCount);
-//                            } catch (Exception e) {
-//                                e.printStackTrace();
-//                                LogUtil.e("qiansheng", "setNextSaveFile Error!!!");
-//                            }
-//                        }
-//                    });
-//
-//                }
+
             }
         };
         mTimer.schedule(mTimerTask, 0, 1000);
