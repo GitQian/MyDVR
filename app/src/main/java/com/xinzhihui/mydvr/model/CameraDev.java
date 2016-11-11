@@ -149,12 +149,7 @@ public abstract class CameraDev {
             LogUtil.d(TAG, "startRecord ------>camera is null!!!!!");
             return;
         }
-        //TODO 漏秒情况下，可统一在startRecord处检测存储空间是否充足---低于30M触发
-        if (SDCardUtils.getFreeBytes(AppConfig.DVR_PATH) < 300 * 1024 * 1024) {
-            new DeleteFileTask().execute(new String[]{AppConfig.FRONT_VIDEO_PATH, AppConfig.BEHIND_VIDEO_PATH});
-        } else {
-            LogUtil.d(TAG, "Free storge enough! Size byte:" + SDCardUtils.getFreeBytes(AppConfig.DVR_PATH));
-        }
+        checkStorageSpace();
 
         mVideoFile = makeFile();
 
@@ -199,12 +194,7 @@ public abstract class CameraDev {
                                     sendMessage(mHandler, cameraId, 1, 0);  //start
                                     mTimeCount = 1;
 
-                                    //TODO 漏秒情况下，可统一在startRecord处检测存储空间是否充足---低于30M触发
-                                    if (SDCardUtils.getFreeBytes(AppConfig.DVR_PATH) < 300 * 1024 * 1024) {
-                                        new DeleteFileTask().execute(new String[]{AppConfig.FRONT_VIDEO_PATH, AppConfig.BEHIND_VIDEO_PATH});
-                                    } else {
-                                        LogUtil.d(TAG, "Free storge enough! Size byte:" + SDCardUtils.getFreeBytes(AppConfig.DVR_PATH));
-                                    }
+                                    checkStorageSpace();
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                     LogUtil.e("qiansheng", "setNextSaveFile Error!!!");
@@ -268,12 +258,8 @@ public abstract class CameraDev {
                                     setNextSaveFile = c.getMethod("setNextSaveFile", String.class);
                                     setNextSaveFile.invoke(mediaRecorder, makeFile().getAbsolutePath());
 
-                                    //TODO 漏秒情况下，可统一在startRecord处检测存储空间是否充足---低于30M触发
-                                    if (SDCardUtils.getFreeBytes(AppConfig.DVR_PATH) < 300 * 1024 * 1024) {
-                                        new DeleteFileTask().execute(new String[]{AppConfig.FRONT_VIDEO_PATH, AppConfig.BEHIND_VIDEO_PATH});
-                                    } else {
-                                        LogUtil.d(TAG, "Free storge enough! Size byte:" + SDCardUtils.getFreeBytes(AppConfig.DVR_PATH));
-                                    }
+                                    checkStorageSpace();
+
                                     setRecording(true);
                                     setLocked(false);
                                     sendMessage(mHandler, cameraId, 0, 0);  //stop
@@ -366,6 +352,16 @@ public abstract class CameraDev {
 //                    startRecord();
                 }
             });
+        }
+    }
+
+
+    public void checkStorageSpace() {
+        //TODO 漏秒情况下，可统一在startRecord处检测存储空间是否充足---低于30M触发
+        if (SDCardUtils.getFreeBytes(AppConfig.DVR_PATH) < 300 * 1024 * 1024) {
+            new DeleteFileTask().execute(new String[]{AppConfig.FRONT_VIDEO_PATH, AppConfig.BEHIND_VIDEO_PATH});
+        } else {
+            LogUtil.d(TAG, "Free storge enough! Size byte:" + SDCardUtils.getFreeBytes(AppConfig.DVR_PATH));
         }
     }
 
