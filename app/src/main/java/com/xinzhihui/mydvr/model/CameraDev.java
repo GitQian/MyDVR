@@ -64,6 +64,16 @@ public abstract class CameraDev {
             LogUtil.e(TAG, "open -------> cameraId:" + cameraIndexId + "error!!!!");
             e.printStackTrace();
         }
+        if (camera != null && cameraIndexId >= 4 && cameraIndexId <= 7) {
+//            camera.setAnalogInputColor(67, 50, 100);
+            Class<?> c = camera.getClass();
+            try {
+                Method setAnalogInputColor = c.getMethod("setAnalogInputColor", int.class, int.class, int.class);
+                setAnalogInputColor.invoke(camera, 67, 50, 100);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
         return camera;
     }
 
