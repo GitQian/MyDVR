@@ -191,7 +191,7 @@ public abstract class CameraDev {
                                 Method setNextSaveFile = null;
                                 try {
                                     setNextSaveFile = c.getMethod("setNextSaveFile", String.class);
-                                    setNextSaveFile.invoke(mediaRecorder,makeFile().getAbsolutePath());
+                                    setNextSaveFile.invoke(mediaRecorder, makeFile().getAbsolutePath());
 
                                     setRecording(true);
                                     setLocked(false);
@@ -235,36 +235,73 @@ public abstract class CameraDev {
         setRecording(true);
 
         sendMessage(mHandler, cameraId, 1, 0);
-        mTimerTask = new TimerTask() {
-            @Override
-            public void run() {
-//                LogUtil.e("qiansheng", "TimerTask thread id:" + Thread.currentThread().getId());
-                sendMessage(mHandler, cameraId, 2, mTimeCount);
-
-                if (mTimeCount >= 60) {
-                    mTimeCount = 0;
-                    sendMessage(mHandler, cameraId, 2, mTimeCount);
-                    LogUtil.e("qiansheng", "Runnable thread id:" + Thread.currentThread().getId());
-                    Class<?> c = mediaRecorder.getClass();
-                    Method setNextSaveFile = null;
-                    try {
-                        setNextSaveFile = c.getMethod("setNextSaveFile", String.class);
-                        setNextSaveFile.invoke(mediaRecorder,makeFile().getAbsolutePath());
-
-//                      mTimerTask.cancel();
-//                      mTimeCount = 0;
-//                      endMessage(mHandler, cameraId, 2, mTimeCount);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        LogUtil.e("qiansheng", "setNextSaveFile Error!!!");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            //TODO only android 6.0能在这有效调用setNextSaveFile，so 需要判断下api level
+            mTimerTask = new TimerTask() {
+                @Override
+                public void run() {
+                    //判断所选视频时长
+                    int where = (Integer) SPUtils.get(MyApplication.getContext(), "FrontTimeSize", 0);
+                    int duration = AppConfig.DEFAULT_MAX_DURATION;
+                    switch (where) {
+                        case 0:
+                            duration = AppConfig.DEFAULT_MAX_DURATION;
+                            break;
+                        case 1:
+                            duration = AppConfig.THREE_MINUTE_DURATION;
+                            break;
+                        case 2:
+                            duration = AppConfig.FIVE_MINUTE_DURATION;
+                            break;
                     }
-                }else {
-                    sendMessage(mHandler, cameraId, 2, mTimeCount);
-                }
-                mTimeCount++;
 
-            }
-        };
+                    if (mTimeCount >= (duration / 1000)) {
+                        mTimeCount = 0;
+                        sendMessage(mHandler, cameraId, 2, mTimeCount);
+                        LogUtil.e("qiansheng", "Runnable thread id:" + Thread.currentThread().getId());
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Class<?> c = mediaRecorder.getClass();
+                                Method setNextSaveFile = null;
+                                try {
+                                    setNextSaveFile = c.getMethod("setNextSaveFile", String.class);
+                                    setNextSaveFile.invoke(mediaRecorder, makeFile().getAbsolutePath());
+
+                                    //TODO 漏秒情况下，可统一在startRecord处检测存储空间是否充足---低于30M触发
+                                    if (SDCardUtils.getFreeBytes(AppConfig.DVR_PATH) < 300 * 1024 * 1024) {
+                                        new DeleteFileTask().execute(new String[]{AppConfig.FRONT_VIDEO_PATH, AppConfig.BEHIND_VIDEO_PATH});
+                                    } else {
+                                        LogUtil.d(TAG, "Free storge enough! Size byte:" + SDCardUtils.getFreeBytes(AppConfig.DVR_PATH));
+                                    }
+                                    setRecording(true);
+                                    setLocked(false);
+                                    sendMessage(mHandler, cameraId, 0, 0);  //stop
+                                    sendMessage(mHandler, cameraId, 1, 0);  //start
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                    LogUtil.e("qiansheng", "setNextSaveFile Error!!!");
+                                }
+                            }
+                        }).start();
+
+                    } else {
+                        sendMessage(mHandler, cameraId, 2, mTimeCount);
+                    }
+                    mTimeCount++;
+
+                }
+            };
+        } else {
+            //android 4.4需要在onInfo()中setNextSaveFile
+            mTimerTask = new TimerTask() {
+                @Override
+                public void run() {
+                    sendMessage(mHandler, cameraId, 2, mTimeCount);
+                    mTimeCount++;
+                }
+            };
+        }
         mTimer.schedule(mTimerTask, 0, 1000);
 
     }
@@ -302,7 +339,7 @@ public abstract class CameraDev {
 
             setLocked(false);
             mTimerTask.cancel();
-            mTimeCount = 1;
+            mTimeCount = 0;
             sendMessage(mHandler, cameraId, 0, 0);
         } else {
             setRecording(false);

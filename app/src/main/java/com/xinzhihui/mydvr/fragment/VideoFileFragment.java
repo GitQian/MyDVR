@@ -154,7 +154,7 @@ public class VideoFileFragment extends Fragment {
                 map.put("path", files[i].getPath());  //path
                 if (files[i].isDirectory()) {
                     map.put("img", R.drawable.icon_file);
-                } else if (files[i].isFile() & ".mp4".equalsIgnoreCase(StringUtils.getPathSuffix(files[i].getName()))) {
+                } else if (files[i].isFile() & ".ts".equalsIgnoreCase(StringUtils.getPathSuffix(files[i].getName())) || ".mp4".equalsIgnoreCase(StringUtils.getPathSuffix(files[i].getName()))) {
                     //TODO 视屏文件
                     map.put("img", R.drawable.icon_file_normalvideo);
 

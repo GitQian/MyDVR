@@ -2,6 +2,7 @@ package com.xinzhihui.mydvr.model;
 
 import android.hardware.Camera;
 import android.media.MediaRecorder;
+import android.os.Build;
 
 import com.xinzhihui.mydvr.AppConfig;
 import com.xinzhihui.mydvr.MyApplication;
@@ -37,7 +38,7 @@ public class BehindCameraDev extends CameraDev {
 
         //设置已选Preview分辨率
         int soluWhere = (Integer) SPUtils.get(MyApplication.getContext(), AppConfig.KEY_BEHIND_SOLUTION_WHERE, Integer.valueOf(0));
-        if (soluWhere >=  parameters.getSupportedPreviewSizes().size()) {
+        if (soluWhere >= parameters.getSupportedPreviewSizes().size()) {
             soluWhere = 0;
             SPUtils.put(MyApplication.getContext(), AppConfig.KEY_BEHIND_SOLUTION_WHERE, soluWhere);
         }
@@ -51,7 +52,12 @@ public class BehindCameraDev extends CameraDev {
         if (!dir.exists()) {
             dir.mkdir();
         }
-        File file = new File(AppConfig.BEHIND_VIDEO_PATH + "Behind_" + DateTimeUtil.getCurrentDateTimeReplaceSpace() + ".mp4");
+        File file;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            file = new File(AppConfig.BEHIND_VIDEO_PATH + "Behind_" + DateTimeUtil.getCurrentDateTimeReplaceSpace() + ".ts");
+        } else {
+            file = new File(AppConfig.BEHIND_VIDEO_PATH + "Behind_" + DateTimeUtil.getCurrentDateTimeReplaceSpace() + ".mp4");
+        }
         return file;
     }
 
@@ -68,14 +74,18 @@ public class BehindCameraDev extends CameraDev {
         if (isSound) {
             mediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
         }
-        mediaRecorder.setOutputFormat(8); //先设置输出格式
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            mediaRecorder.setOutputFormat(8); //先设置输出格式 MediaRecorder.OutputFormat.OUTPUT_FORMAT_MPEG2TS
+        } else {
+            mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4); //先设置输出格式
+        }
         mediaRecorder.setVideoFrameRate(30);
 
         //获取已选择的分辨率
         int soluWhere = (Integer) SPUtils.get(MyApplication.getContext(), AppConfig.KEY_BEHIND_SOLUTION_WHERE, Integer.valueOf(0));
         ACache aCache = ACache.get(MyApplication.getContext());
         ArrayList<String> sizeList = (ArrayList<String>) aCache.getAsObject("BehindSolution");
-        if (soluWhere >=  sizeList.size()) {
+        if (soluWhere >= sizeList.size()) {
             soluWhere = 0;
             SPUtils.put(MyApplication.getContext(), AppConfig.KEY_BEHIND_SOLUTION_WHERE, soluWhere);
         }
@@ -107,7 +117,9 @@ public class BehindCameraDev extends CameraDev {
                 duration = AppConfig.FIVE_MINUTE_DURATION;
                 break;
         }
-//        mediaRecorder.setMaxDuration(duration);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            mediaRecorder.setMaxDuration(duration);
+        }
         return mediaRecorder;
     }
 }
