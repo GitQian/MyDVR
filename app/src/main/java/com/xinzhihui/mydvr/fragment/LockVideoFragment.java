@@ -51,19 +51,26 @@ public class LockVideoFragment extends Fragment {
         mListView = (ListView) view.findViewById(R.id.listview_file);
 
         mPathList = getData();
-        mAdapter = new LockVideoAdapter(mPathList, getActivity());
+        if (mPathList != null && mPathList.size() != 0) {
+            view.findViewById(R.id.tv_filelist_emty).setVisibility(View.GONE);
 
-        mListView.setAdapter(mAdapter);
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(getActivity(), VideoPlayerActivity.class);
-                intent.putStringArrayListExtra("extra_play_list", (ArrayList<String>) mPathList);
-                intent.putExtra("extra_play_index", position);
-                startActivity(intent);
-            }
-        });
-        return view;
+            mAdapter = new LockVideoAdapter(mPathList, getActivity());
+            mListView.setAdapter(mAdapter);
+            mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Intent intent = new Intent(getActivity(), VideoPlayerActivity.class);
+                    intent.putStringArrayListExtra("extra_play_list", (ArrayList<String>) mPathList);
+                    intent.putExtra("extra_play_index", position);
+                    startActivity(intent);
+                }
+            });
+            return view;
+        } else {
+            view.findViewById(R.id.tv_filelist_emty).setVisibility(View.VISIBLE);
+            mListView.setVisibility(View.GONE);
+            return view;
+        }
     }
 
     private List<String> getData() {

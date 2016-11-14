@@ -10,4 +10,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"></ListView>
 
+    <TextView
+        android:id="@+id/tv_filelist_emty"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="没有文件"
+        android:textColor="#ffffff"
+        android:textSize="20sp"
+        android:visibility="gone" />
+
 </FrameLayout>

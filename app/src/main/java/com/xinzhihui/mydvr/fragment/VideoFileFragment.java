@@ -84,48 +84,55 @@ public class VideoFileFragment extends Fragment {
 
         mFileList = getData();
 
-        mFileListAdapter = new FileListAdapter(mFileList, getActivity());
+        if (mFileList != null && mFileList.size() != 0) {
+            view.findViewById(R.id.tv_filelist_emty).setVisibility(View.GONE);
 
-        mFileListView.setAdapter(mFileListAdapter);
+            mFileListAdapter = new FileListAdapter(mFileList, getActivity());
+            mFileListView.setAdapter(mFileListAdapter);
 
-        mFileListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if ((int) mFileList.get(position).get("img") == R.drawable.icon_file) {
-                    //目录
-                    mCurDirPath = (String) mFileList.get(position).get("path");
-                    mFileList = getData();
-                    mFileListAdapter = new FileListAdapter(mFileList, getActivity());
-                    mFileListView.setAdapter(mFileListAdapter);
-                } else if ((int) mFileList.get(position).get("img") == R.drawable.icon_file_normalvideo) {
-                    //TODO 视屏文件
-                    Intent intent = new Intent(getActivity(), VideoPlayerActivity.class);
-                    intent.putStringArrayListExtra("extra_play_list", mVideopathList);
-                    mFileList.get(position).get("path");
-                    if (mVideopathList.contains((String) mFileList.get(position).get("path"))) {
-                        int index = mVideopathList.indexOf((String) mFileList.get(position).get("path"));
-                        intent.putExtra("extra_play_index", index);
-                        startActivity(intent);
+            mFileListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    if ((int) mFileList.get(position).get("img") == R.drawable.icon_file) {
+                        //目录
+                        mCurDirPath = (String) mFileList.get(position).get("path");
+                        mFileList = getData();
+                        mFileListAdapter = new FileListAdapter(mFileList, getActivity());
+                        mFileListView.setAdapter(mFileListAdapter);
+                    } else if ((int) mFileList.get(position).get("img") == R.drawable.icon_file_normalvideo) {
+                        //TODO 视屏文件
+                        Intent intent = new Intent(getActivity(), VideoPlayerActivity.class);
+                        intent.putStringArrayListExtra("extra_play_list", mVideopathList);
+                        mFileList.get(position).get("path");
+                        if (mVideopathList.contains((String) mFileList.get(position).get("path"))) {
+                            int index = mVideopathList.indexOf((String) mFileList.get(position).get("path"));
+                            intent.putExtra("extra_play_index", index);
+                            startActivity(intent);
+                        }
+
+                    } else {
+                        //其他普通文件
+                        //TODO 图片文件使用图片浏览器
+                        File file = new File((String) mFileList.get(position).get("path"));
+                        Intent picIntent = new Intent(Intent.ACTION_VIEW);
+                        picIntent.setDataAndType(Uri.fromFile(file), "image/*");
+                        try {
+                            startActivity(picIntent);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            Toast.makeText(getActivity(), "找不到应用程序打开该文件", Toast.LENGTH_SHORT).show();
+                        }
+
                     }
-
-                } else {
-                    //其他普通文件
-                    //TODO 图片文件使用图片浏览器
-                    File file = new File((String) mFileList.get(position).get("path"));
-                    Intent picIntent = new Intent(Intent.ACTION_VIEW);
-                    picIntent.setDataAndType(Uri.fromFile(file), "image/*");
-                    try {
-                        startActivity(picIntent);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        Toast.makeText(getActivity(), "找不到应用程序打开该文件", Toast.LENGTH_SHORT).show();
-                    }
-
                 }
-            }
-        });
+            });
 
-        return view;
+            return view;
+        } else {
+            view.findViewById(R.id.tv_filelist_emty).setVisibility(View.VISIBLE);
+            mFileListView.setVisibility(View.GONE);
+            return view;
+        }
     }
 
     private void findView(View view) {

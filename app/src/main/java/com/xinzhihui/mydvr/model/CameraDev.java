@@ -72,6 +72,7 @@ public abstract class CameraDev {
                 setAnalogInputColor.invoke(camera, 67, 50, 100);
             } catch (Exception e) {
                 e.printStackTrace();
+                LogUtil.e(TAG, "Camera setAnalogInputColor error!!!");
             }
         }
         return camera;
