@@ -1,6 +1,9 @@
 package com.xinzhihui.mydvr;
 
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -11,7 +14,11 @@ import android.widget.CompoundButton;
 import android.widget.Spinner;
 import android.widget.Switch;
 
+import com.xinzhihui.mydvr.utils.LogUtil;
+import com.xinzhihui.mydvr.utils.SDCardUtils;
 import com.xinzhihui.mydvr.utils.SPUtils;
+
+import java.io.File;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -135,6 +142,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             }
         });
+
+        long allSize = SDCardUtils.getFolderSize(new File(AppConfig.DVR_PATH)) + SDCardUtils.getFreeBytes(AppConfig.DVR_PATH);
+        if (allSize < 300 * 1024 * 1024) {
+            //能给DVR使用的空间 < 300M 则不让App运行（/DVR空间 + free空间）
+            //TODO < 300M 则会循环删除，这里可以避免无限循环（怎么删都小于300M）
+            Dialog alertDialog = new AlertDialog.Builder(this)
+                    .setCancelable(false)
+                    .setTitle("提示")
+                    .setMessage("存储空间不足，请及时清理文件！")
+                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    })
+                    .create();
+            alertDialog.show();
+        } else {
+            LogUtil.d("qiansheng", "DVR can use size:" + allSize);
+        }
     }
 
     @Override

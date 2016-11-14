@@ -80,4 +80,32 @@ public class SDCardUtils {
     }
 
 
+    /**
+     * 获取文件夹大小 单位byte
+     *
+     * @param file File实例
+     * @return long
+     */
+    public static long getFolderSize(java.io.File file) {
+
+        long size = 0;
+        try {
+            java.io.File[] fileList = file.listFiles();
+            for (int i = 0; i < fileList.length; i++) {
+                if (fileList[i].isDirectory()) {
+                    size = size + getFolderSize(fileList[i]);
+
+                } else {
+                    size = size + fileList[i].length();
+
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        //return size/1048576;
+        return size;
+    }
+
+
 }
