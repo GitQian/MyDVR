@@ -74,6 +74,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     private boolean isBehindAuto;
 
     Handler mHandler = new MyHandler(this);
+
     private static class MyHandler extends Handler {
         private final WeakReference<CameraActivity> mActivity;
 
@@ -243,10 +244,9 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         switch (v.getId()) {
             case R.id.btn_record_ctrl:
 //                new DeleteFileTask().execute(new String[] {AppConfig.FRONT_VIDEO_PATH, AppConfig.BEHIND_VIDEO_PATH});
-
-                if (!SDCardUtils.isSDCardEnable()) {
-                    LogUtil.i(TAG, "SDCard can't use!");
-                    Toast.makeText(CameraActivity.this, "SD卡不可用！", Toast.LENGTH_LONG).show();
+                if (!SDCardUtils.isPathEnable(AppConfig.DVR_PATH)) {
+                    Toast.makeText(CameraActivity.this, "存储路径不存在！", Toast.LENGTH_SHORT).show();
+                    break;
                 }
                 if (mService.getCameraDev(mCurCameraId).camera == null) {
                     Toast.makeText(CameraActivity.this, "设备不能使用", Toast.LENGTH_SHORT).show();
@@ -266,6 +266,10 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                 break;
 
             case R.id.btn_camera_takephoto:
+                if (!SDCardUtils.isPathEnable(AppConfig.DVR_PATH)) {
+                    Toast.makeText(CameraActivity.this, "存储路径不存在！", Toast.LENGTH_SHORT).show();
+                    break;
+                }
                 //先停止录像
                 if (mService.getCameraDev(mCurCameraId).camera == null) {
                     Toast.makeText(CameraActivity.this, "设备不能使用", Toast.LENGTH_SHORT).show();
@@ -326,6 +330,9 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
             case R.id.btn_video_dir:
                 //先停止录像
 //                dvrSurfaceTextureFrontListener.cameraDev.stopRecord();
+                if (!SDCardUtils.isPathEnable(AppConfig.DVR_PATH)) {
+                    Toast.makeText(CameraActivity.this, "存储路径不存在！", Toast.LENGTH_SHORT).show();
+                }
                 Intent intent = new Intent(CameraActivity.this, FileList2Activity.class);
                 startActivity(intent);
                 break;

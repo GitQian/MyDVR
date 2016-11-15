@@ -156,4 +156,19 @@ public class SDCardUtils {
         }
         return null;
     }
+
+    /**
+     * 判断路径是否可用
+     *
+     * @param path
+     * @return
+     */
+    public static boolean isPathEnable(String path) {
+        File dir = new File(path);
+        if (!dir.exists()) {
+            return dir.mkdir();
+        } else {
+            return true;
+        }
+    }
 }
