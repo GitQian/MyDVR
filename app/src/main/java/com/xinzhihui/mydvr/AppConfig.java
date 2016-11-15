@@ -41,12 +41,12 @@ public class AppConfig {
 
 
     //文件路径
-    public static final String DVR_PATH = SDCardUtils.getSDCardPath() + "DVR";
-    public static final String FRONT_VIDEO_PATH = SDCardUtils.getSDCardPath() + "DVR/front/";
-    public static final String BEHIND_VIDEO_PATH = SDCardUtils.getSDCardPath() + "DVR/behind/";
-    public static final String LEFT_VIDEO_PATH = SDCardUtils.getSDCardPath() + "DVR/left/";
-    public static final String RIGHT_VIDEO_PATH = SDCardUtils.getSDCardPath() + "DVR/right/";
-    public static final String PICTURE_PATH = SDCardUtils.getSDCardPath() + "DVR/picture/";
+    public static final String DVR_PATH = SDCardUtils.getSDCardPath() + "DVR/";
+    public static final String FRONT_VIDEO_PATH = DVR_PATH + "front/";
+    public static final String BEHIND_VIDEO_PATH = DVR_PATH + "behind/";
+    public static final String LEFT_VIDEO_PATH = DVR_PATH + "left/";
+    public static final String RIGHT_VIDEO_PATH = DVR_PATH + "right/";
+    public static final String PICTURE_PATH = DVR_PATH + "picture/";
 
     //录制时长
     public static final int DEFAULT_MAX_DURATION = 1 * 60 * 1000;

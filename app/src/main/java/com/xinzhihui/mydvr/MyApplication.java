@@ -58,16 +58,16 @@ public class MyApplication extends Application {
         if ((Boolean) SPUtils.get(mContext, "isFirstApp", true)) {
             SPUtils.put(mContext, "isFirstApp", false);
             //TODO 初始化设置
-            SPUtils.put(mContext, AppConfig.KEY_IS_FRONT_SOUND, true);   //默认录制声音
-            SPUtils.put(mContext, AppConfig.KEY_IS_BEHIND_SOUND, true);
+            SPUtils.put(mContext, AppConfig.KEY_IS_FRONT_SOUND, false);   //默认录制声音
+            SPUtils.put(mContext, AppConfig.KEY_IS_BEHIND_SOUND, false);
 
-            SPUtils.put(mContext, AppConfig.KEY_IS_FRONT_WATER, true);
+            SPUtils.put(mContext, AppConfig.KEY_IS_FRONT_WATER, true);   //水印
             SPUtils.put(mContext, AppConfig.KEY_IS_BEHIND_WATER, true);
 
-            SPUtils.put(mContext, AppConfig.KEY_IS_FRONT_AUTO, false);
+            SPUtils.put(mContext, AppConfig.KEY_IS_FRONT_AUTO, false);   //录制自启动
             SPUtils.put(mContext, AppConfig.KEY_IS_BEHIND_AUTO, false);
 
-            SPUtils.put(mContext, AppConfig.KEY_APP_AUTO_RUN, true);
+            SPUtils.put(mContext, AppConfig.KEY_APP_AUTO_RUN, true);     //开机自启动
         }
     }
 

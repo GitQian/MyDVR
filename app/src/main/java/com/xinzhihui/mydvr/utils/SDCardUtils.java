@@ -1,9 +1,14 @@
 package com.xinzhihui.mydvr.utils;
 
 import java.io.File;
+import java.lang.reflect.Array;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
+import android.content.Context;
 import android.os.Environment;
 import android.os.StatFs;
+import android.os.storage.StorageManager;
 
 /**
  * SD卡相关的辅助类
@@ -107,5 +112,48 @@ public class SDCardUtils {
         return size;
     }
 
+    /**
+     * 反射获取内、外存储设备路径
+     *
+     * @param mContext
+     * @param is_removale
+     * @return
+     */
+    public static String[] getStoragePath(Context mContext, boolean is_removale) {
 
+        StorageManager mStorageManager = (StorageManager) mContext.getSystemService(Context.STORAGE_SERVICE);
+        Class<?> storageVolumeClazz = null;
+        try {
+            storageVolumeClazz = Class.forName("android.os.storage.StorageVolume");
+            Method getVolumeList = mStorageManager.getClass().getMethod("getVolumeList");
+            Method getPath = storageVolumeClazz.getMethod("getPath");
+            Method isRemovable = storageVolumeClazz.getMethod("isRemovable");
+            Object result = getVolumeList.invoke(mStorageManager);
+            final int length = Array.getLength(result);
+
+            String paths[] = new String[length];
+
+            for (int i = 0; i < length; i++) {
+                Object storageVolumeElement = Array.get(result, i);
+                String path = (String) getPath.invoke(storageVolumeElement);
+
+                paths[i] = path;
+
+//                boolean removable = (Boolean) isRemovable.invoke(storageVolumeElement);
+//                if (is_removale == removable) {
+//                    return path;
+//                }
+            }
+            return paths;
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }
