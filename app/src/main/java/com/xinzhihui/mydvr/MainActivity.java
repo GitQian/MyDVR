@@ -26,6 +26,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private Spinner mSpinnerFront;
     private Spinner mSPinnerBehind;
+    private Spinner mSpinnerStorage;
+    private String[] mPaths;
 
     private Switch mAppAutoSwitch;
 
@@ -39,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         mSpinnerFront = (Spinner) findViewById(R.id.spinner_front);
         mSPinnerBehind = (Spinner) findViewById(R.id.spinner_behind);
+        mSpinnerStorage = (Spinner) findViewById(R.id.spinner_storage_path);
         mAppAutoSwitch = (Switch) findViewById(R.id.switch_app_auto);
         mAppAutoSwitch.setChecked((Boolean) SPUtils.get(MyApplication.getContext(), AppConfig.KEY_APP_AUTO_RUN, true));
         mAppAutoSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -58,6 +61,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         mSpinnerFront.setAdapter(adapter);
         mSPinnerBehind.setAdapter(adapter);
+
+        mPaths = SDCardUtils.getStoragePath(MainActivity.this, true);
+        ArrayAdapter<String> adapterStorage = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item, mPaths);
+        adapterStorage.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mSpinnerStorage.setAdapter(adapterStorage);
+        mSpinnerStorage.setSelection(0);
 
         switch (AppConfig.FRONT_CAMERA_INDEX) {
             case 0:
@@ -135,6 +145,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 AppConfig.BEHIND_CAMERA_INDEX = position;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        mSpinnerStorage.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                AppConfig.DVR_PATH = mPaths[position] + "/DVR";
+                AppConfig.FRONT_VIDEO_PATH = AppConfig.DVR_PATH + "/front/";
+                AppConfig.BEHIND_VIDEO_PATH = AppConfig.DVR_PATH + "/behind/";
+                AppConfig.LEFT_VIDEO_PATH = AppConfig.DVR_PATH + "/left/";
+                AppConfig.RIGHT_VIDEO_PATH = AppConfig.DVR_PATH + "/right/";
+                AppConfig.PICTURE_PATH = AppConfig.DVR_PATH + "/picture/";
             }
 
             @Override
