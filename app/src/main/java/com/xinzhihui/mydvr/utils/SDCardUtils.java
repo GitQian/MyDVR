@@ -1,14 +1,14 @@
 package com.xinzhihui.mydvr.utils;
 
-import java.io.File;
-import java.lang.reflect.Array;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
 import android.content.Context;
 import android.os.Environment;
 import android.os.StatFs;
 import android.os.storage.StorageManager;
+
+import java.io.File;
+import java.lang.reflect.Array;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 /**
  * SD卡相关的辅助类
@@ -68,10 +68,17 @@ public class SDCardUtils {
         if (filePath.startsWith(getSDCardPath())) {
             filePath = getSDCardPath();
         } else {// 如果是内部存储的路径，则获取内存存储的可用容量
-            filePath = Environment.getDataDirectory().getAbsolutePath();
+//            filePath = Environment.getDataDirectory().getAbsolutePath();
         }
-        StatFs stat = new StatFs(filePath);
-        long availableBlocks = (long) stat.getAvailableBlocks() - 4;
+        StatFs stat = null;
+        long availableBlocks = 0;
+        try {
+            stat = new StatFs(filePath);
+            availableBlocks = (long) stat.getAvailableBlocks() - 4;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
         return stat.getBlockSize() * availableBlocks;
     }
 

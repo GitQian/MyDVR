@@ -5,6 +5,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.graphics.SurfaceTexture;
 import android.graphics.drawable.AnimationDrawable;
@@ -23,6 +24,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.xinzhihui.mydvr.Receiver.UsbStateReceiver;
 import com.xinzhihui.mydvr.db.LockVideoDAL;
 import com.xinzhihui.mydvr.model.CameraDev;
 import com.xinzhihui.mydvr.model.CameraFactory;
@@ -72,6 +74,8 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
 
     private boolean isFrontAuto;
     private boolean isBehindAuto;
+
+    private UsbStateReceiver usbStateReceiver;
 
     Handler mHandler = new MyHandler(this);
 
@@ -158,7 +162,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-    private RecordService mService = null;
+    public RecordService mService = null;
     private ServiceConnection myServiceConnection = new ServiceConnection() {
 
         @Override
@@ -212,6 +216,15 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         bindService(intent, myServiceConnection, Context.BIND_AUTO_CREATE);
 
         mCurCameraDev = dvrSurfaceTextureFrontListener.cameraDev;  //当做初始化
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(Intent.ACTION_MEDIA_MOUNTED);
+        filter.addAction(Intent.ACTION_MEDIA_CHECKING);
+        filter.addAction(Intent.ACTION_MEDIA_EJECT);
+        filter.addAction(Intent.ACTION_MEDIA_REMOVED);
+        filter.addDataScheme("file");
+        usbStateReceiver = new UsbStateReceiver();
+        registerReceiver(usbStateReceiver, filter);
     }
 
     private void initView() {
@@ -408,6 +421,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
             mService = null;
         }
 
+        unregisterReceiver(usbStateReceiver);
         mHandler.removeCallbacksAndMessages(null);
 
     }

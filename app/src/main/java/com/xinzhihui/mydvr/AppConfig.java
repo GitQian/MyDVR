@@ -41,6 +41,7 @@ public class AppConfig {
 
 
     //文件路径
+    public static String ROOT_DIR = SDCardUtils.getSDCardPath();
     public static String DVR_PATH = SDCardUtils.getSDCardPath() + "DVR";
     public static String FRONT_VIDEO_PATH = DVR_PATH + "/front/";
     public static String BEHIND_VIDEO_PATH = DVR_PATH + "/behind/";
