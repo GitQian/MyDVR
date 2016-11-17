@@ -34,6 +34,7 @@ import com.xinzhihui.mydvr.utils.LogUtil;
 import com.xinzhihui.mydvr.utils.SDCardUtils;
 import com.xinzhihui.mydvr.utils.SPUtils;
 
+import java.io.File;
 import java.lang.ref.WeakReference;
 
 public class CameraActivity extends AppCompatActivity implements View.OnClickListener {
@@ -260,6 +261,11 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                 if (!SDCardUtils.isPathEnable(AppConfig.DVR_PATH)) {
                     Toast.makeText(CameraActivity.this, "存储路径不存在！", Toast.LENGTH_SHORT).show();
                     break;
+                } else {
+                    if (!isStorageEnough()) {
+                        Toast.makeText(CameraActivity.this, "存储空间不足，请及时清理！", Toast.LENGTH_SHORT).show();
+                        break;
+                    }
                 }
                 if (mService.getCameraDev(mCurCameraId).camera == null) {
                     Toast.makeText(CameraActivity.this, "设备不能使用", Toast.LENGTH_SHORT).show();
@@ -282,6 +288,11 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                 if (!SDCardUtils.isPathEnable(AppConfig.DVR_PATH)) {
                     Toast.makeText(CameraActivity.this, "存储路径不存在！", Toast.LENGTH_SHORT).show();
                     break;
+                } else {
+                    if (!isStorageEnough()) {
+                        Toast.makeText(CameraActivity.this, "存储空间不足，请及时清理！", Toast.LENGTH_SHORT).show();
+                        break;
+                    }
                 }
                 //先停止录像
                 if (mService.getCameraDev(mCurCameraId).camera == null) {
@@ -521,6 +532,18 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         @Override
         public void onSurfaceTextureUpdated(SurfaceTexture surface) {
 
+        }
+    }
+
+    private boolean isStorageEnough() {
+        long allSize = SDCardUtils.getFolderSize(new File(AppConfig.DVR_PATH)) + SDCardUtils.getFreeBytes(AppConfig.ROOT_DIR);
+        //给DVR预留400M，否则不让录制
+        if (allSize < 400 * 1024 * 1024) {
+            LogUtil.d("qiansheng", "DVR can use size:" + allSize);
+            return false;
+        } else {
+            LogUtil.d("qiansheng", "DVR can use size:" + allSize);
+            return true;
         }
     }
 }
