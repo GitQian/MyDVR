@@ -9,13 +9,16 @@ import android.widget.RadioButton;
 
 import com.xinzhihui.mydvr.fragment.SettingBehindFragment;
 import com.xinzhihui.mydvr.fragment.SettingFrontFragment;
+import com.xinzhihui.mydvr.fragment.SettingGeneralFragment;
 
-public class Setting2Activity extends AppCompatActivity implements CompoundButton.OnCheckedChangeListener{
+public class Setting2Activity extends AppCompatActivity implements CompoundButton.OnCheckedChangeListener {
 
+    private RadioButton mGeneralBtn;
     private RadioButton mFrontBtn;
     private RadioButton mBehindBtn;
 
     FragmentTransaction mFragmentTransaction = null;
+    private Fragment mSetGeneralFragment;
     private Fragment mSetFrontFragment;
     private Fragment mSetBehindFragment;
 
@@ -27,20 +30,27 @@ public class Setting2Activity extends AppCompatActivity implements CompoundButto
         initView();
     }
 
-    private void initView(){
+    private void initView() {
+        mGeneralBtn = (RadioButton) findViewById(R.id.rbtn_setting_general);
         mFrontBtn = (RadioButton) findViewById(R.id.rbtn_setting_front);
         mBehindBtn = (RadioButton) findViewById(R.id.rbtn_setting_behind);
 
+        mGeneralBtn.setOnCheckedChangeListener(this);
         mFrontBtn.setOnCheckedChangeListener(this);
         mBehindBtn.setOnCheckedChangeListener(this);
 
-        mSetFrontFragment = SettingFrontFragment.newInstance();
+//        mSetFrontFragment = SettingFrontFragment.newInstance();
+        mSetGeneralFragment = SettingGeneralFragment.newInstance();
         mFragmentTransaction = getSupportFragmentManager().beginTransaction();
-        mFragmentTransaction.add(R.id.fragment_setting_container, mSetFrontFragment);
+        mFragmentTransaction.add(R.id.fragment_setting_container, mSetGeneralFragment);
         mFragmentTransaction.commitAllowingStateLoss();
     }
 
     public void hideFragments(FragmentTransaction fragmentTransaction) {
+
+        if (mSetGeneralFragment != null) {
+            fragmentTransaction.hide(mSetGeneralFragment);
+        }
 
         if (mSetFrontFragment != null) {
             fragmentTransaction.hide(mSetFrontFragment);
@@ -60,11 +70,20 @@ public class Setting2Activity extends AppCompatActivity implements CompoundButto
         hideFragments(mFragmentTransaction);
 
         switch (buttonView.getId()) {
+            case R.id.rbtn_setting_general:
+                if (mSetGeneralFragment == null) {
+                    mSetGeneralFragment = SettingFrontFragment.newInstance();
+                    mFragmentTransaction.add(R.id.fragment_setting_container, mSetGeneralFragment);
+                } else {
+                    mFragmentTransaction.show(mSetGeneralFragment);
+                }
+                break;
+
             case R.id.rbtn_setting_front:
                 if (mSetFrontFragment == null) {
                     mSetFrontFragment = SettingFrontFragment.newInstance();
                     mFragmentTransaction.add(R.id.fragment_setting_container, mSetFrontFragment);
-                }else {
+                } else {
                     mFragmentTransaction.show(mSetFrontFragment);
                 }
 
@@ -74,7 +93,7 @@ public class Setting2Activity extends AppCompatActivity implements CompoundButto
                 if (mSetBehindFragment == null) {
                     mSetBehindFragment = SettingBehindFragment.newInstance();
                     mFragmentTransaction.add(R.id.fragment_setting_container, mSetBehindFragment);
-                }else {
+                } else {
                     mFragmentTransaction.show(mSetBehindFragment);
                 }
                 break;

@@ -19,7 +19,7 @@
         android:orientation="vertical">
 
         <RadioButton
-            android:id="@+id/rbtn_setting_front"
+            android:id="@+id/rbtn_setting_general"
             android:layout_width="100dp"
             android:layout_height="0dp"
             android:layout_margin="10dp"
@@ -27,6 +27,19 @@
             android:background="@drawable/selector_filelist_lock"
             android:button="@null"
             android:checked="true"
+            android:gravity="center"
+            android:text="通用设置"
+            android:textColor="#ffffff"
+            android:textSize="18sp" />
+
+        <RadioButton
+            android:id="@+id/rbtn_setting_front"
+            android:layout_width="100dp"
+            android:layout_height="0dp"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/selector_filelist_lock"
+            android:button="@null"
             android:gravity="center"
             android:text="前摄像头"
             android:textColor="#ffffff"
