@@ -1,6 +1,9 @@
 package com.xinzhihui.mydvr;
 
+import com.xinzhihui.mydvr.utils.CommonUtils;
 import com.xinzhihui.mydvr.utils.SDCardUtils;
+
+import java.io.File;
 
 /**
  * Created by Administrator on 2016/9/28.
@@ -41,8 +44,8 @@ public class AppConfig {
 
 
     //文件路径
-    public static String ROOT_DIR = SDCardUtils.getSDCardPath();
-    public static String DVR_PATH = SDCardUtils.getSDCardPath() + "DVR";
+    public static String ROOT_DIR = CommonUtils.getStoragePath();
+    public static String DVR_PATH = CommonUtils.getStoragePath() + File.separator + "DVR";
     public static String FRONT_VIDEO_PATH = DVR_PATH + "/front/";
     public static String BEHIND_VIDEO_PATH = DVR_PATH + "/behind/";
     public static String LEFT_VIDEO_PATH = DVR_PATH + "/left/";
@@ -65,6 +68,9 @@ public class AppConfig {
 
     public static final String KEY_FRONT_SOLUTION_WHERE = "FrontSolutionWhere";
     public static final String KEY_BEHIND_SOLUTION_WHERE = "BehindSolutionWhere";
+
+    public static final String KEY_STORAGE_WHERE = "StorageWhere";
+    public static final String KEY_STORAGE_PATH = "StoragePath";
 
     public static final String KEY_APP_AUTO_RUN = "isAppAutoRun";
 }

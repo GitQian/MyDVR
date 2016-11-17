@@ -120,58 +120,58 @@ public class SDCardUtils {
         return size;
     }
 
-    /**
-     * 反射获取内、外存储设备路径
-     *
-     * @param mContext
-     * @param is_removale
-     * @return
-     */
-    public static String[] getStoragePath(Context mContext, boolean is_removale) {
-
-        StorageManager mStorageManager = (StorageManager) mContext.getSystemService(Context.STORAGE_SERVICE);
-        Class<?> storageVolumeClazz = null;
-        try {
-            storageVolumeClazz = Class.forName("android.os.storage.StorageVolume");
-            Method getVolumeList = mStorageManager.getClass().getMethod("getVolumeList");
-            Method getPath = storageVolumeClazz.getMethod("getPath");
-            Method isRemovable = storageVolumeClazz.getMethod("isRemovable");
-            Method getState = storageVolumeClazz.getMethod("getState");
-            Object result = getVolumeList.invoke(mStorageManager);
-            final int length = Array.getLength(result);
-
-            ArrayList<String> pathList = new ArrayList<String>();
-
-            for (int i = 0; i < length; i++) {
-                Object storageVolumeElement = Array.get(result, i);
-                String path = (String) getPath.invoke(storageVolumeElement);
-
-                String state = (String) getState.invoke(storageVolumeElement);
-                if ("mounted".equals(state)) {
-                    pathList.add(path);
-                }
-//                boolean removable = (Boolean) isRemovable.invoke(storageVolumeElement);
-//                if (is_removale == removable) {
-//                    return path;
+//    /**
+//     * 反射获取内、外存储设备路径
+//     *
+//     * @param mContext
+//     * @param is_removale
+//     * @return
+//     */
+//    public static String[] getStoragePath(Context mContext, boolean is_removale) {
+//
+//        StorageManager mStorageManager = (StorageManager) mContext.getSystemService(Context.STORAGE_SERVICE);
+//        Class<?> storageVolumeClazz = null;
+//        try {
+//            storageVolumeClazz = Class.forName("android.os.storage.StorageVolume");
+//            Method getVolumeList = mStorageManager.getClass().getMethod("getVolumeList");
+//            Method getPath = storageVolumeClazz.getMethod("getPath");
+//            Method isRemovable = storageVolumeClazz.getMethod("isRemovable");
+//            Method getState = storageVolumeClazz.getMethod("getState");
+//            Object result = getVolumeList.invoke(mStorageManager);
+//            final int length = Array.getLength(result);
+//
+//            ArrayList<String> pathList = new ArrayList<String>();
+//
+//            for (int i = 0; i < length; i++) {
+//                Object storageVolumeElement = Array.get(result, i);
+//                String path = (String) getPath.invoke(storageVolumeElement);
+//
+//                String state = (String) getState.invoke(storageVolumeElement);
+//                if ("mounted".equals(state)) {
+//                    pathList.add(path);
 //                }
-            }
-            if (pathList != null && pathList.size() > 0) {
-                String paths[] = new String[pathList.size()];
-                pathList.toArray(paths);
-                return paths;
-            }
-            return null;
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
+////                boolean removable = (Boolean) isRemovable.invoke(storageVolumeElement);
+////                if (is_removale == removable) {
+////                    return path;
+////                }
+//            }
+//            if (pathList != null && pathList.size() > 0) {
+//                String paths[] = new String[pathList.size()];
+//                pathList.toArray(paths);
+//                return paths;
+//            }
+//            return null;
+//        } catch (ClassNotFoundException e) {
+//            e.printStackTrace();
+//        } catch (InvocationTargetException e) {
+//            e.printStackTrace();
+//        } catch (NoSuchMethodException e) {
+//            e.printStackTrace();
+//        } catch (IllegalAccessException e) {
+//            e.printStackTrace();
+//        }
+//        return null;
+//    }
 
     /**
      * 判断路径是否可用

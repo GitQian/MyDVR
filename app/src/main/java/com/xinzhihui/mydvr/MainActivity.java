@@ -14,6 +14,7 @@ import android.widget.CompoundButton;
 import android.widget.Spinner;
 import android.widget.Switch;
 
+import com.xinzhihui.mydvr.utils.CommonUtils;
 import com.xinzhihui.mydvr.utils.LogUtil;
 import com.xinzhihui.mydvr.utils.SDCardUtils;
 import com.xinzhihui.mydvr.utils.SPUtils;
@@ -62,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mSpinnerFront.setAdapter(adapter);
         mSPinnerBehind.setAdapter(adapter);
 
-        mPaths = SDCardUtils.getStoragePath(MainActivity.this, true);
+        mPaths = CommonUtils.getStoragePaths(MainActivity.this, true);
         ArrayAdapter<String> adapterStorage = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, mPaths);
         adapterStorage.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -153,30 +154,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
-        mSpinnerStorage.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                AppConfig.ROOT_DIR = mPaths[position];
-
-                AppConfig.DVR_PATH = mPaths[position] + "/DVR";
-                AppConfig.FRONT_VIDEO_PATH = AppConfig.DVR_PATH + "/front/";
-                AppConfig.BEHIND_VIDEO_PATH = AppConfig.DVR_PATH + "/behind/";
-                AppConfig.LEFT_VIDEO_PATH = AppConfig.DVR_PATH + "/left/";
-                AppConfig.RIGHT_VIDEO_PATH = AppConfig.DVR_PATH + "/right/";
-                AppConfig.PICTURE_PATH = AppConfig.DVR_PATH + "/picture/";
-                makeDir(AppConfig.DVR_PATH);
-                makeDir(AppConfig.FRONT_VIDEO_PATH);
-                makeDir(AppConfig.BEHIND_VIDEO_PATH);
-                makeDir(AppConfig.LEFT_VIDEO_PATH);
-                makeDir(AppConfig.RIGHT_VIDEO_PATH);
-                makeDir(AppConfig.PICTURE_PATH);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
+//        mSpinnerStorage.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//                AppConfig.ROOT_DIR = mPaths[position];
+//
+//                AppConfig.DVR_PATH = mPaths[position] + "/DVR";
+//                AppConfig.FRONT_VIDEO_PATH = AppConfig.DVR_PATH + "/front/";
+//                AppConfig.BEHIND_VIDEO_PATH = AppConfig.DVR_PATH + "/behind/";
+//                AppConfig.LEFT_VIDEO_PATH = AppConfig.DVR_PATH + "/left/";
+//                AppConfig.RIGHT_VIDEO_PATH = AppConfig.DVR_PATH + "/right/";
+//                AppConfig.PICTURE_PATH = AppConfig.DVR_PATH + "/picture/";
+//                makeDir(AppConfig.DVR_PATH);
+//                makeDir(AppConfig.FRONT_VIDEO_PATH);
+//                makeDir(AppConfig.BEHIND_VIDEO_PATH);
+//                makeDir(AppConfig.LEFT_VIDEO_PATH);
+//                makeDir(AppConfig.RIGHT_VIDEO_PATH);
+//                makeDir(AppConfig.PICTURE_PATH);
+//            }
+//
+//            @Override
+//            public void onNothingSelected(AdapterView<?> parent) {
+//
+//            }
+//        });
 
     }
 
@@ -184,27 +185,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_camera:
-                long allSize = SDCardUtils.getFolderSize(new File(AppConfig.DVR_PATH)) + SDCardUtils.getFreeBytes(AppConfig.ROOT_DIR);
-                if (allSize < 300 * 1024 * 1024) {
-                    LogUtil.d("qiansheng", "DVR can use size:" + allSize);
-                    //能给DVR使用的空间 < 300M 则不让App运行（/DVR空间 + free空间）
-                    //TODO < 300M 则会循环删除，这里可以避免无限循环（怎么删都小于300M）
-                    Dialog alertDialog = new AlertDialog.Builder(MainActivity.this)
-                            .setCancelable(false)
-                            .setTitle("提示")
-                            .setMessage("存储空间不足，请及时清理文件！")
-                            .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    finish();
-                                }
-                            })
-                            .create();
-                    alertDialog.show();
-                    break;
-                } else {
-                    LogUtil.d("qiansheng", "DVR can use size:" + allSize);
-                }
+//                long allSize = SDCardUtils.getFolderSize(new File(AppConfig.DVR_PATH)) + SDCardUtils.getFreeBytes(AppConfig.ROOT_DIR);
+//                if (allSize < 300 * 1024 * 1024) {
+//                    LogUtil.d("qiansheng", "DVR can use size:" + allSize);
+//                    //能给DVR使用的空间 < 300M 则不让App运行（/DVR空间 + free空间）
+//                    //TODO < 300M 则会循环删除，这里可以避免无限循环（怎么删都小于300M）
+//                    Dialog alertDialog = new AlertDialog.Builder(MainActivity.this)
+//                            .setCancelable(false)
+//                            .setTitle("提示")
+//                            .setMessage("存储空间不足，请及时清理文件！")
+//                            .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+//                                @Override
+//                                public void onClick(DialogInterface dialog, int which) {
+//                                    finish();
+//                                }
+//                            })
+//                            .create();
+//                    alertDialog.show();
+//                    break;
+//                } else {
+//                    LogUtil.d("qiansheng", "DVR can use size:" + allSize);
+//                }
                 Intent intent = new Intent(MainActivity.this, CameraActivity.class);
                 startActivity(intent);
                 break;
