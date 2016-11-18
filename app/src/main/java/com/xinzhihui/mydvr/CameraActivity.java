@@ -275,12 +275,12 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                     //通过mService获取到的是已经更新过的，安全！
                     mRecordCtrlBtn.setBackgroundResource(R.drawable.selector_record_closed);
 //                    mCurCameraDev.stopRecord();
-                    mService.getCameraDev(mCurCameraId).stopRecord();
+                    mService.stopRecord(mCurCameraId);
                 } else {
                     mRecordCtrlBtn.setBackgroundResource(R.drawable.selector_record_started);
 //                    mCurCameraDev.startRecord();
                     //通过mService获取到的当前CameraDev是最新的（已更新过），mCurCameraDev没有及时更新
-                    mService.getCameraDev(mCurCameraId).startRecord();
+                    mService.startRecord(mCurCameraId);
                 }
                 break;
 
@@ -299,7 +299,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                     Toast.makeText(CameraActivity.this, "设备不能使用", Toast.LENGTH_SHORT).show();
                     break;
                 }
-                mService.getCameraDev(mCurCameraId).takePhoto();
+                mService.takePhoto(mCurCameraId);
                 break;
 
 
@@ -425,7 +425,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     protected void onDestroy() {
         super.onDestroy();
         LogUtil.d(TAG, "CameraActivity onDestroy ------>");
-        if (mService != null && !dvrSurfaceTextureFrontListener.cameraDev.isRecording() && !dvrSurfaceTextureBehindListener.cameraDev.isRecording()) {
+        if (mService != null && !mService.isRecording()) {
             //TODO 检查所有设备是否有正在录像的
             Intent intent = new Intent(CameraActivity.this, RecordService.class);
             stopService(intent);

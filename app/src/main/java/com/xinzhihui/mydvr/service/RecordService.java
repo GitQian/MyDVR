@@ -166,6 +166,25 @@ public class RecordService extends Service {
         cameraDevList.set(cameraId, cameraDev);
     }
 
+
+    /**
+     * 检查所有设备是否有设备正在录制
+     * @return
+     */
+    public boolean isRecording(){
+        for (CameraDev cameraDev : cameraDevList) {
+            if (cameraDev != null && cameraDev.isRecording()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 判断某个设备是否正在录制
+     * @param cameraId
+     * @return
+     */
     public boolean isRecording(int cameraId) {
         if (cameraDevList.get(cameraId) == null) {
             return false;

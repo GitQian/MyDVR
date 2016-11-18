@@ -94,7 +94,13 @@ public abstract class CameraDev {
 
                 camera.setParameters(parameters);
 
-                camera.setPreviewTexture(surface);
+                if (surface != null) {
+                    //TODO 无预览录制，无需设置setPreviewTexture()
+                    camera.setPreviewTexture(surface);
+                } else {
+
+                }
+
                 camera.startPreview();
                 LogUtil.d(TAG, "startPreview -------> have started");
 
