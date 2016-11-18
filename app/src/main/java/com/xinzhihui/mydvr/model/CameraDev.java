@@ -85,7 +85,7 @@ public abstract class CameraDev {
      *
      * @param surface
      */
-    public void startPreview(SurfaceTexture surface) {
+    public boolean startPreview(SurfaceTexture surface) {
         if (camera != null) {
             try {
                 Camera.Parameters parameters = camera.getParameters();
@@ -120,17 +120,20 @@ public abstract class CameraDev {
                         setPreviewing(true);
                     }
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (NoSuchMethodException e) {
-                LogUtil.e(TAG, "startPreview -------> not have startWaterMark method!!!");
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
+            } catch (Exception e) {
+                setPreviewing(false);
+                if (e instanceof NoSuchMethodException) {
+                    LogUtil.e(TAG, "startPreview -------> not have startWaterMark method!!!");
+                } else if (e instanceof IllegalAccessException) {
+                    LogUtil.e(TAG, "startPreview -------> IllegalAccessException!!!");
+                } else {
+                    LogUtil.e(TAG, "startPreview -------> startPreview error!!!");
+                    return false;
+                }
                 e.printStackTrace();
             }
         }
+        return true;
     }
 
     /**
@@ -232,7 +235,8 @@ public abstract class CameraDev {
             mediaRecorder.prepare();
             mediaRecorder.start();
             LogUtil.e(TAG, "startRecord ------> cameraDev:" + cameraIndexId + " " + "startRecord!!!");
-        } catch (IOException e) {
+        } catch (Exception e) {
+            setRecording(false);
             LogUtil.e(TAG, "startRecord ------> cameraDev:" + cameraIndexId + " " + "startRecord error!!!");
             e.printStackTrace();
             return;
