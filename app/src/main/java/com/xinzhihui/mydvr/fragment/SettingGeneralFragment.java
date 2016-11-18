@@ -12,11 +12,13 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.xinzhihui.mydvr.AppConfig;
 import com.xinzhihui.mydvr.MyApplication;
 import com.xinzhihui.mydvr.R;
+import com.xinzhihui.mydvr.utils.AppUtils;
 import com.xinzhihui.mydvr.utils.CommonUtils;
 import com.xinzhihui.mydvr.utils.SPUtils;
 
@@ -33,6 +35,8 @@ public class SettingGeneralFragment extends Fragment implements CompoundButton.O
     private Switch mSetAutoRunSwitch;
     private RelativeLayout mSetStorageRly;
     private String[] mPaths;
+
+    private TextView mVersionsTv;
 
     public SettingGeneralFragment() {
         // Required empty public constructor
@@ -60,6 +64,8 @@ public class SettingGeneralFragment extends Fragment implements CompoundButton.O
     private void initView(View view) {
         mSetAutoRunSwitch = (Switch) view.findViewById(R.id.switch_setting_general_auto);
         mSetStorageRly = (RelativeLayout) view.findViewById(R.id.rly_setting_general_storage);
+        mVersionsTv = (TextView) view.findViewById(R.id.tv_app_versions);
+        mVersionsTv.setText("版本信息：V_" + AppUtils.getVersionName(MyApplication.getContext()));
 
         mPaths = CommonUtils.getStoragePaths(this.getActivity(), true);
         mSetAutoRunSwitch.setChecked((Boolean) SPUtils.get(MyApplication.getContext(), AppConfig.KEY_APP_AUTO_RUN, true));

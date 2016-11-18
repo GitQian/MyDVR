@@ -79,6 +79,16 @@
             android:background="#a9a9a9" />
     </RelativeLayout>
 
+    <TextView
+        android:id="@+id/tv_app_versions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:text="版本信息：V_1.0"
+        android:textColor="#ffffff"
+        android:textSize="18sp" />
+
 </LinearLayout>
 
 
