@@ -477,11 +477,11 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
 
                     mService.addCameraDev(mCameraId, cameraDev);  //service和cameraDev关联
                     cameraDev.mHandler = mHandler;   //更新设置handler
-                    if (mCameraId == AppConfig.FRONT_CAMERA && isFrontAuto) {
-                        cameraDev.startRecord();  //自启动录像
-                    } else if (mCameraId == AppConfig.BEHIND_CAMERA && isBehindAuto) {
-                        cameraDev.startRecord();
-                    }
+//                    if (mCameraId == AppConfig.FRONT_CAMERA && isFrontAuto) {
+//                        cameraDev.startRecord();  //自启动录像
+//                    } else if (mCameraId == AppConfig.BEHIND_CAMERA && isBehindAuto) {
+//                        cameraDev.startRecord();
+//                    }
                 }
             } else {
                 //第一次进入(与绑定服务有同步问题，可能会进入)----第一次进入情况1（绑定在后）
@@ -491,11 +491,11 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                 cameraDev.startPreview(surface);
 
                 cameraDev.mHandler = mHandler;     //设置handler
-                if (mCameraId == AppConfig.FRONT_CAMERA && isFrontAuto) {
-                    cameraDev.startRecord();  //自启动录像
-                } else if (mCameraId == AppConfig.BEHIND_CAMERA && isBehindAuto) {
-                    cameraDev.startRecord();
-                }
+//                if (mCameraId == AppConfig.FRONT_CAMERA && isFrontAuto) {
+//                    cameraDev.startRecord();  //自启动录像
+//                } else if (mCameraId == AppConfig.BEHIND_CAMERA && isBehindAuto) {
+//                    cameraDev.startRecord();
+//                }
             }
         }
 

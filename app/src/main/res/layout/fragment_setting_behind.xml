@@ -92,7 +92,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
-            android:text="录制启动设置"
+            android:text="是否开机自动后台录制"
             android:textColor="#ffffff"
             android:textSize="18sp" />
 

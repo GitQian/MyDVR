@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mSpinnerStorage.setAdapter(adapterStorage);
         mSpinnerStorage.setSelection(0);
 
-        switch (AppConfig.FRONT_CAMERA_INDEX) {
+        switch ((int)SPUtils.get(MyApplication.getContext(), "KEY_FRONT_CAMERA_INDEX", 0)) {
             case 0:
                 mSpinnerFront.setSelection(0);
                 break;
@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
         }
 
-        switch (AppConfig.BEHIND_CAMERA_INDEX) {
+        switch ((int)SPUtils.get(MyApplication.getContext(), "KEY_BEHIND_CAMERA_INDEX", 4)) {
             case 0:
                 mSPinnerBehind.setSelection(0);
                 break;
@@ -134,6 +134,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 AppConfig.FRONT_CAMERA_INDEX = position;
+                SPUtils.put(MyApplication.getContext(), "KEY_FRONT_CAMERA_INDEX", position);
             }
 
             @Override
@@ -146,6 +147,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 AppConfig.BEHIND_CAMERA_INDEX = position;
+                SPUtils.put(MyApplication.getContext(), "KEY_BEHIND_CAMERA_INDEX", position);
             }
 
             @Override
