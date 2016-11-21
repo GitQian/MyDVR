@@ -2,6 +2,7 @@ package com.xinzhihui.mydvr;
 
 import com.xinzhihui.mydvr.utils.CommonUtils;
 import com.xinzhihui.mydvr.utils.SDCardUtils;
+import com.xinzhihui.mydvr.utils.SPUtils;
 
 import java.io.File;
 
@@ -28,8 +29,8 @@ public class AppConfig {
     /***************
      * 真实 id
      ****************/
-    public static int FRONT_CAMERA_INDEX = 0;
-    public static int BEHIND_CAMERA_INDEX = 1;
+    public static int FRONT_CAMERA_INDEX = (int)SPUtils.get(MyApplication.getContext(), "KEY_FRONT_CAMERA_INDEX", 0);
+    public static int BEHIND_CAMERA_INDEX = (int)SPUtils.get(MyApplication.getContext(), "KEY_BEHIND_CAMERA_INDEX", 4);;
     public static int LEFT_CAMERA_INDEX = 20;
     public static int RIGHT_CAMERA_INDEX = 30;
 
