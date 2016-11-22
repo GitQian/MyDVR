@@ -108,10 +108,13 @@ public class RecordService extends Service {
         cameraDevList.get(cameraId).stopPreview();
     }
 
-    public void startRecord(int cameraId) {
+    public boolean startRecord(int cameraId) {
+        boolean isSuccess = cameraDevList.get(cameraId).startRecord();
         // 参数一：唯一的通知标识；参数二：通知消息。
-        startForeground(110, notification);// 开始前台服务
-        cameraDevList.get(cameraId).startRecord();
+        if (isSuccess) {
+            startForeground(110, notification);// 开始前台服务
+        }
+        return isSuccess;
     }
 
     public void stopRecord(int cameraId) {

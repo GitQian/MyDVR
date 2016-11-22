@@ -257,48 +257,20 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_record_ctrl:
-//                new DeleteFileTask().execute(new String[] {AppConfig.FRONT_VIDEO_PATH, AppConfig.BEHIND_VIDEO_PATH});
-                if (!SDCardUtils.isPathEnable(AppConfig.DVR_PATH)) {
-                    Toast.makeText(CameraActivity.this, "存储路径不存在！", Toast.LENGTH_SHORT).show();
-                    break;
-                } else {
-                    if (!isStorageEnough()) {
-                        Toast.makeText(CameraActivity.this, "存储空间不足，请及时清理！", Toast.LENGTH_SHORT).show();
-                        break;
-                    }
-                }
-                if (mService.getCameraDev(mCurCameraId).camera == null) {
-                    Toast.makeText(CameraActivity.this, "设备不能使用", Toast.LENGTH_SHORT).show();
-                    break;
-                }
                 if (mService.getCameraDev(mCurCameraId).isRecording()) {
                     //通过mService获取到的是已经更新过的，安全！
                     mRecordCtrlBtn.setBackgroundResource(R.drawable.selector_record_closed);
 //                    mCurCameraDev.stopRecord();
                     mService.stopRecord(mCurCameraId);
                 } else {
-                    mRecordCtrlBtn.setBackgroundResource(R.drawable.selector_record_started);
-//                    mCurCameraDev.startRecord();
                     //通过mService获取到的当前CameraDev是最新的（已更新过），mCurCameraDev没有及时更新
-                    mService.startRecord(mCurCameraId);
+                    if (mService.startRecord(mCurCameraId)) {
+                        mRecordCtrlBtn.setBackgroundResource(R.drawable.selector_record_started);
+                    }
                 }
                 break;
 
             case R.id.btn_camera_takephoto:
-                if (!SDCardUtils.isPathEnable(AppConfig.DVR_PATH)) {
-                    Toast.makeText(CameraActivity.this, "存储路径不存在！", Toast.LENGTH_SHORT).show();
-                    break;
-                } else {
-                    if (!isStorageEnough()) {
-                        Toast.makeText(CameraActivity.this, "存储空间不足，请及时清理！", Toast.LENGTH_SHORT).show();
-                        break;
-                    }
-                }
-                //先停止录像
-                if (mService.getCameraDev(mCurCameraId).camera == null) {
-                    Toast.makeText(CameraActivity.this, "设备不能使用", Toast.LENGTH_SHORT).show();
-                    break;
-                }
                 mService.takePhoto(mCurCameraId);
                 break;
 

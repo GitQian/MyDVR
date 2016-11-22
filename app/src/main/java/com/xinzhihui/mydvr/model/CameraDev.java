@@ -6,6 +6,7 @@ import android.media.MediaRecorder;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
+import android.widget.Toast;
 
 import com.xinzhihui.mydvr.AppConfig;
 import com.xinzhihui.mydvr.MyApplication;
@@ -16,9 +17,7 @@ import com.xinzhihui.mydvr.utils.SDCardUtils;
 import com.xinzhihui.mydvr.utils.SPUtils;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -161,15 +160,14 @@ public abstract class CameraDev {
      *
      * @param
      */
-    public void startRecord() {
+    public boolean startRecord() {
         if (isRecording()) {
-            return;
+            return false;
         }
-        if (camera == null) {
-            LogUtil.d(TAG, "startRecord ------>camera is null!!!!!");
-            return;
+
+        if (!checkStorageSpace()) {
+            return false;
         }
-        checkStorageSpace();
 
         mVideoFile = makeFile();
 
@@ -205,16 +203,20 @@ public abstract class CameraDev {
                                 Class<?> c = mediaRecorder.getClass();
                                 Method setNextSaveFile = null;
                                 try {
-                                    setNextSaveFile = c.getMethod("setNextSaveFile", String.class);
-                                    setNextSaveFile.invoke(mediaRecorder, makeFile().getAbsolutePath());
+                                    if (checkStorageSpace()) {
+                                        setNextSaveFile = c.getMethod("setNextSaveFile", String.class);
+                                        setNextSaveFile.invoke(mediaRecorder, makeFile().getAbsolutePath());
 
-                                    setRecording(true);
-                                    setLocked(false);
-                                    sendMessage(mHandler, cameraId, 0, 0);  //stop
-                                    sendMessage(mHandler, cameraId, 1, 0);  //start
-                                    mTimeCount = 1;
-
-                                    checkStorageSpace();
+                                        setRecording(true);
+                                        setLocked(false);
+                                        sendMessage(mHandler, cameraId, 0, 0);  //stop
+                                        sendMessage(mHandler, cameraId, 1, 0);  //start
+                                        mTimeCount = 1;
+                                    } else {
+                                        //录制时外部因素导致留给DVR的空间不足
+                                        Toast.makeText(MyApplication.getContext(), "存储空间不足，停止录制！", Toast.LENGTH_LONG).show();
+                                        stopRecord();
+                                    }
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                     LogUtil.e("qiansheng", "setNextSaveFile Error!!!");
@@ -239,7 +241,7 @@ public abstract class CameraDev {
             setRecording(false);
             LogUtil.e(TAG, "startRecord ------> cameraDev:" + cameraIndexId + " " + "startRecord error!!!");
             e.printStackTrace();
-            return;
+            return false;
         }
 
 
@@ -276,15 +278,18 @@ public abstract class CameraDev {
                                 Class<?> c = mediaRecorder.getClass();
                                 Method setNextSaveFile = null;
                                 try {
-                                    setNextSaveFile = c.getMethod("setNextSaveFile", String.class);
-                                    setNextSaveFile.invoke(mediaRecorder, makeFile().getAbsolutePath());
-
-                                    checkStorageSpace();
-
-                                    setRecording(true);
-                                    setLocked(false);
-                                    sendMessage(mHandler, cameraId, 0, 0);  //stop
-                                    sendMessage(mHandler, cameraId, 1, 0);  //start
+                                    if (checkStorageSpace()) {
+                                        setNextSaveFile = c.getMethod("setNextSaveFile", String.class);
+                                        setNextSaveFile.invoke(mediaRecorder, makeFile().getAbsolutePath());
+                                        setRecording(true);
+                                        setLocked(false);
+                                        sendMessage(mHandler, cameraId, 0, 0);  //stop
+                                        sendMessage(mHandler, cameraId, 1, 0);  //start
+                                    } else {
+                                        //录制时外部因素导致留给DVR的空间不足
+                                        Toast.makeText(MyApplication.getContext(), "存储空间不足，停止录制！", Toast.LENGTH_LONG).show();
+                                        stopRecord();
+                                    }
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                     LogUtil.e("qiansheng", "setNextSaveFile Error!!!");
@@ -311,6 +316,7 @@ public abstract class CameraDev {
         }
         mTimer.schedule(mTimerTask, 0, 1000);
 
+        return true;
     }
 
     private void sendMessage(Handler handler, int msgWhat, int msgArg1, int msgArg2) {
@@ -362,6 +368,7 @@ public abstract class CameraDev {
     }
 
     public void takePhoto() {
+        checkStorageSpace();
         //TODO 可以设置一个参数，通过参数确定拍照完毕之后是否录像！
         if (camera != null) {
             camera.autoFocus(null);
@@ -377,14 +384,43 @@ public abstract class CameraDev {
     }
 
 
-    public void checkStorageSpace() {
-        //TODO 漏秒情况下，可统一在startRecord处检测存储空间是否充足---低于30M触发
+    public boolean checkStorageSpace() {
+        if (!SDCardUtils.isPathEnable(AppConfig.DVR_PATH)) {
+            Toast.makeText(MyApplication.getContext(), "存储路径不存在！", Toast.LENGTH_SHORT).show();
+            return false;
+        } else {
+            if (!isStorageEnough()) {
+                Toast.makeText(MyApplication.getContext(), "存储空间不足，请及时清理！", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        }
+        if (camera == null) {
+            Toast.makeText(MyApplication.getContext(), "设备不能使用", Toast.LENGTH_SHORT).show();
+            LogUtil.d(TAG, "startRecord ------>camera is null!!!!!");
+            return false;
+        }
+
+        //TODO 漏秒情况下，可统一在startRecord处检测存储空间是否充足---低于300M触发
         if (SDCardUtils.getFreeBytes(AppConfig.DVR_PATH) < 300 * 1024 * 1024) {
             new DeleteFileTask().execute(new String[]{AppConfig.FRONT_VIDEO_PATH, AppConfig.BEHIND_VIDEO_PATH});
         } else {
             LogUtil.d(TAG, "Free storge enough! Size byte:" + SDCardUtils.getFreeBytes(AppConfig.DVR_PATH));
         }
+        return true;
     }
+
+    private boolean isStorageEnough() {
+        long allSize = SDCardUtils.getFolderSize(new File(AppConfig.DVR_PATH)) + SDCardUtils.getFreeBytes(AppConfig.ROOT_DIR);
+        //给DVR预留400M，否则不让录制
+        if (allSize < 400 * 1024 * 1024) {
+            LogUtil.d("qiansheng", "DVR can use size:" + allSize);
+            return false;
+        } else {
+            LogUtil.d("qiansheng", "DVR can use size:" + allSize);
+            return true;
+        }
+    }
+
 
     public void setPreviewing(boolean previewing) {
         isPreviewing = previewing;
