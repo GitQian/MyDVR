@@ -176,6 +176,7 @@ public class RecordService extends Service {
                 }
             }
         }
+        stopForeground(true);// 停止前台服务--参数：表示是否移除之前的通知
     }
 
     public CameraDev getCameraDev(int cameraId) {

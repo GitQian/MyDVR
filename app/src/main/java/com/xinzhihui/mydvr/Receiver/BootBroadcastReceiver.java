@@ -41,19 +41,27 @@ public class BootBroadcastReceiver extends BroadcastReceiver {
             mService = ((RecordService.LocalBinder) service).getService();
 
             if ((Boolean) SPUtils.get(MyApplication.getContext(), AppConfig.KEY_IS_FRONT_AUTO, false)) {
-                cameraDev = factory.createCameraDev(AppConfig.FRONT_CAMERA);
-                mService.addCameraDev(AppConfig.FRONT_CAMERA, cameraDev);
-                mService.open(AppConfig.FRONT_CAMERA);
-                mService.startPreView(AppConfig.FRONT_CAMERA, null);
-                mService.startRecord(AppConfig.FRONT_CAMERA);
+                if (mService.getCameraDev(AppConfig.FRONT_CAMERA) == null) {
+                    cameraDev = factory.createCameraDev(AppConfig.FRONT_CAMERA);
+                    mService.addCameraDev(AppConfig.FRONT_CAMERA, cameraDev);
+                }
+                if (!mService.isRecording(AppConfig.FRONT_CAMERA)) {
+                    mService.open(AppConfig.FRONT_CAMERA);
+                    mService.startPreView(AppConfig.FRONT_CAMERA, null);
+                    mService.startRecord(AppConfig.FRONT_CAMERA);
+                }
             }
 
             if ((Boolean) SPUtils.get(MyApplication.getContext(), AppConfig.KEY_IS_BEHIND_AUTO, false)) {
                 cameraDev = factory.createCameraDev(AppConfig.BEHIND_CAMERA);
-                mService.addCameraDev(AppConfig.BEHIND_CAMERA, cameraDev);
-                mService.open(AppConfig.BEHIND_CAMERA);
-                mService.startPreView(AppConfig.BEHIND_CAMERA, null);
-                mService.startRecord(AppConfig.BEHIND_CAMERA);
+                if (mService.getCameraDev(AppConfig.BEHIND_CAMERA) == null) {
+                    mService.addCameraDev(AppConfig.BEHIND_CAMERA, cameraDev);
+                }
+                if (!mService.isRecording(AppConfig.BEHIND_CAMERA)) {
+                    mService.open(AppConfig.BEHIND_CAMERA);
+                    mService.startPreView(AppConfig.BEHIND_CAMERA, null);
+                    mService.startRecord(AppConfig.BEHIND_CAMERA);
+                }
             }
         }
     };
