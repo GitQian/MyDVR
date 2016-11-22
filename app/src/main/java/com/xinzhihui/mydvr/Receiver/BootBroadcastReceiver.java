@@ -69,10 +69,14 @@ public class BootBroadcastReceiver extends BroadcastReceiver {
                 context.startActivity(startIntent);
             }
 
-            Intent intent1 = new Intent(context, RecordService.class);
-            context.startService(intent1);
+            if ((Boolean) SPUtils.get(MyApplication.getContext(), AppConfig.KEY_IS_FRONT_AUTO, false)
+                    || (Boolean) SPUtils.get(MyApplication.getContext(), AppConfig.KEY_IS_BEHIND_AUTO, false)) {
 
-            MyApplication.getContext().bindService(intent1, myServiceConnection, Context.BIND_AUTO_CREATE);
+                Intent intent1 = new Intent(context, RecordService.class);
+                context.startService(intent1);
+
+                MyApplication.getContext().bindService(intent1, myServiceConnection, Context.BIND_AUTO_CREATE);
+            }
         }
 
     }
