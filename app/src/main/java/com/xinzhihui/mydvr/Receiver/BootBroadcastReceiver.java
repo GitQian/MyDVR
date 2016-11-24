@@ -8,7 +8,7 @@ import android.content.ServiceConnection;
 import android.os.IBinder;
 
 import com.xinzhihui.mydvr.AppConfig;
-import com.xinzhihui.mydvr.CameraActivity;
+import com.xinzhihui.mydvr.ICameraManager;
 import com.xinzhihui.mydvr.MainActivity;
 import com.xinzhihui.mydvr.MyApplication;
 import com.xinzhihui.mydvr.model.CameraDev;
@@ -38,7 +38,9 @@ public class BootBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             LogUtil.d(TAG, "onServiceConnected ------->");
-            mService = ((RecordService.LocalBinder) service).getService();
+            RecordService.LoBinder manager = (RecordService.LoBinder) ICameraManager.Stub.asInterface(service);
+            mService = manager.getService();
+//            mService = ((RecordService.LocalBinder) service).getService();
 
             if ((Boolean) SPUtils.get(MyApplication.getContext(), AppConfig.KEY_IS_FRONT_AUTO, false)) {
                 if (mService.getCameraDev(AppConfig.FRONT_CAMERA) == null) {

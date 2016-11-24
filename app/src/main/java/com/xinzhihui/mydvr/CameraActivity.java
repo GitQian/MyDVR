@@ -174,7 +174,9 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             LogUtil.d(TAG, "onServiceConnected ------->");
-            mService = ((RecordService.LocalBinder) service).getService();
+            RecordService.LoBinder manager = (RecordService.LoBinder) ICameraManager.Stub.asInterface(service);
+            mService = manager.getService();
+//            mService = ((RecordService.LocalBinder) service).getService();
             if (null == mService.getCameraDev(AppConfig.FRONT_CAMERA) && null == mService.getCameraDev(AppConfig.BEHIND_CAMERA)) {
                 //TODO 先得到服务，则为制空，待界面起来置入实例；先得到界面，则为置入实例(各路多要判断)
                 LogUtil.d(TAG, "onServiceConnected ---------> addCameraDev");

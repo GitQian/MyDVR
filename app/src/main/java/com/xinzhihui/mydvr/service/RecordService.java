@@ -8,8 +8,10 @@ import android.graphics.BitmapFactory;
 import android.graphics.SurfaceTexture;
 import android.os.Binder;
 import android.os.IBinder;
+import android.os.RemoteException;
 
 import com.xinzhihui.mydvr.CameraActivity;
+import com.xinzhihui.mydvr.ICameraManager;
 import com.xinzhihui.mydvr.R;
 import com.xinzhihui.mydvr.model.CameraDev;
 import com.xinzhihui.mydvr.utils.LogUtil;
@@ -25,7 +27,53 @@ public class RecordService extends Service {
 
     private List<CameraDev> cameraDevList;
 
-    private final IBinder mBinder = new LocalBinder();
+//    private final IBinder mBinder = new LocalBinder();
+
+    public class LoBinder extends ICameraManager.Stub{
+
+        @Override
+        public void basicTypes(int anInt, long aLong, boolean aBoolean, float aFloat, double aDouble, String aString) throws RemoteException {
+
+        }
+
+        @Override
+        public void open(int cameraId) throws RemoteException {
+            LogUtil.d("qiansheng", "Remote Open!!!");
+            RecordService.this.open(cameraId);
+        }
+
+        @Override
+        public void startPreView(int cameraId) throws RemoteException {
+            LogUtil.d("qiansheng", "Remote StartPreView!!!");
+            RecordService.this.startPreView(cameraId, null);
+        }
+
+        @Override
+        public void stopPreView(int cameraId) throws RemoteException {
+            LogUtil.d("qiansheng", "Remote StopPreView!!!");
+            RecordService.this.stopPreView(cameraId);
+        }
+
+        @Override
+        public boolean startRecord(int cameraId) throws RemoteException {
+            LogUtil.d("qiansheng", "Remote StartRecord!!!");
+            RecordService.this.startRecord(cameraId);
+            return false;
+        }
+
+        @Override
+        public void stopRecord(int cameraId) throws RemoteException {
+            LogUtil.d("qiansheng", "Remote StopRecord!!!");
+            RecordService.this.stopRecord(cameraId);
+        }
+
+        public RecordService getService() {
+            return RecordService.this;
+        }
+    }
+
+    private Binder mBinder = new LoBinder();
+
 
     Notification notification;
 
