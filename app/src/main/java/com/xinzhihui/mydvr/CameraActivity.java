@@ -227,7 +227,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         filter.addAction(Intent.ACTION_MEDIA_REMOVED);
         filter.addDataScheme("file");
         usbStateReceiver = new UsbStateReceiver();
-        registerReceiver(usbStateReceiver, filter);
+//        registerReceiver(usbStateReceiver, filter);
     }
 
     private void initView() {
@@ -406,7 +406,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
             mService = null;
         }
 
-        unregisterReceiver(usbStateReceiver);
+//        unregisterReceiver(usbStateReceiver);
         mHandler.removeCallbacksAndMessages(null);
 
     }
