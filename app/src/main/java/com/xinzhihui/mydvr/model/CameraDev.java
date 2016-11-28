@@ -361,6 +361,14 @@ public abstract class CameraDev {
 
     }
 
+    public void releaseCameraAndPreview() {
+//        myCameraPreview.setCamera(null);
+        if (camera != null) {
+            camera.release();
+            camera = null;
+        }
+    }
+
     public void killRecord() {
         if (mediaRecorder != null) {
             mediaRecorder.release();
