@@ -27,6 +27,7 @@ import android.widget.Toast;
 import com.xinzhihui.mydvr.Receiver.UsbCameraStateReceiver;
 import com.xinzhihui.mydvr.Receiver.UsbStateReceiver;
 import com.xinzhihui.mydvr.db.LockVideoDAL;
+import com.xinzhihui.mydvr.listener.CameraStatusListener;
 import com.xinzhihui.mydvr.model.CameraDev;
 import com.xinzhihui.mydvr.model.CameraFactory;
 import com.xinzhihui.mydvr.service.RecordService;
@@ -38,7 +39,7 @@ import com.xinzhihui.mydvr.utils.SPUtils;
 import java.io.File;
 import java.lang.ref.WeakReference;
 
-public class CameraActivity extends AppCompatActivity implements View.OnClickListener {
+public class CameraActivity extends AppCompatActivity implements View.OnClickListener, CameraStatusListener {
 
     private final String TAG = this.getClass().getName();
 
@@ -189,6 +190,45 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     };
 
     @Override
+    public void onPlugIn(int cameraIndex) {
+        LogUtil.e(TAG, "onPlugIn() ---------->");
+        if (cameraIndex == AppConfig.FRONT_CAMERA) {
+            mCameraTtv.setVisibility(View.VISIBLE);
+            if (mCameraTtv.isAvailable()) {
+                LogUtil.e(TAG, "onPlugIn() -----------> isAvailable");
+                dvrSurfaceTextureFrontListener.onSurfaceTextureDestroyed(dvrSurfaceTextureFrontListener.surfaceTexture);
+                dvrSurfaceTextureFrontListener.onSurfaceTextureAvailable(mCameraTtv.getSurfaceTexture(), mCameraTtv.getWidth(), mCameraTtv.getHeight());
+            }
+        } else if (cameraIndex == AppConfig.BEHIND_CAMERA) {
+            mCameraFrontTtv.setVisibility(View.VISIBLE);
+            if (mCameraFrontTtv.isAvailable()) {
+                LogUtil.e(TAG, "onPlugIn() ----------> isAvailable");
+                dvrSurfaceTextureBehindListener.onSurfaceTextureDestroyed(dvrSurfaceTextureBehindListener.surfaceTexture);
+                dvrSurfaceTextureBehindListener.onSurfaceTextureAvailable(mCameraFrontTtv.getSurfaceTexture(), mCameraFrontTtv.getWidth(), mCameraFrontTtv.getHeight());
+//            mCameraTtv.setSurfaceTextureListener(dvrSurfaceTextureFrontListener);
+            }
+        }
+
+    }
+
+    @Override
+    public void onPlugOut(int cameraIndex) {
+        LogUtil.e(TAG, "onPlugOut() -------->");
+        if (cameraIndex == AppConfig.FRONT_CAMERA) {
+            mCameraTtv.setVisibility(View.INVISIBLE);
+            if (dvrSurfaceTextureFrontListener.cameraDev != null) {
+                dvrSurfaceTextureFrontListener.cameraDev.setRecording(false);
+            }
+        } else if (cameraIndex == AppConfig.BEHIND_CAMERA) {
+            mCameraFrontTtv.setVisibility(View.INVISIBLE);
+            if (dvrSurfaceTextureBehindListener.cameraDev != null) {
+                dvrSurfaceTextureBehindListener.cameraDev.setRecording(false);
+            }
+        }
+        updateRecordCtrlBtn(mCurCameraDev);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
@@ -220,7 +260,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         startService(intent);
         bindService(intent, myServiceConnection, Context.BIND_AUTO_CREATE);
 
-        mCurCameraDev = dvrSurfaceTextureFrontListener.cameraDev;  //当做初始化
+//        mCurCameraDev = dvrSurfaceTextureFrontListener.cameraDev;  //当做初始化
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(Intent.ACTION_MEDIA_MOUNTED);
@@ -232,7 +272,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
 //        registerReceiver(usbStateReceiver, filter);
 
         IntentFilter filterCamera = new IntentFilter("android.hardware.usb.action.USB_CAMERA_PLUG_IN_OUT");
-        mCameraStateReceiver = new UsbCameraStateReceiver();
+        mCameraStateReceiver = new UsbCameraStateReceiver(this);
         registerReceiver(mCameraStateReceiver, filterCamera);
     }
 
@@ -370,7 +410,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private void updateRecordCtrlBtn(CameraDev cameraDev) {
-        if (cameraDev.isRecording()) {
+        if (cameraDev != null && cameraDev.isRecording()) {
             mRecordCtrlBtn.setBackgroundResource(R.drawable.selector_record_started);
             //TODO 判断该文件是否被标记 锁定
             if (cameraDev.isLocked()) {
@@ -428,6 +468,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         private int mCameraId;
         //        private CameraStatusListener cameraStatusListener;
         public CameraDev cameraDev;
+        public SurfaceTexture surfaceTexture;
 
         public DvrSurfaceTextureListener(int cameraId) {
             mCameraId = cameraId;
@@ -437,6 +478,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         @Override
         public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
             LogUtil.d(TAG, "onSurfaceTextureAvailable ------->");
+            surfaceTexture = surface;
             if (mService != null) {
                 //服务还没绑定
                 if (mService.isRecording(mCameraId)) {
@@ -483,7 +525,8 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
 
         @Override
         public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
-
+            LogUtil.d(TAG, "onSurfaceTextureSizeChanged --------->");
+            surfaceTexture = surface;
         }
 
         @Override
@@ -513,7 +556,8 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
 
         @Override
         public void onSurfaceTextureUpdated(SurfaceTexture surface) {
-
+            LogUtil.d(TAG, "onSurfaceTextureUpdated --------->");
+            surfaceTexture = surface;
         }
     }
 
