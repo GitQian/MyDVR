@@ -24,6 +24,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.xinzhihui.mydvr.Receiver.UsbCameraStateReceiver;
 import com.xinzhihui.mydvr.Receiver.UsbStateReceiver;
 import com.xinzhihui.mydvr.db.LockVideoDAL;
 import com.xinzhihui.mydvr.model.CameraDev;
@@ -77,6 +78,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     private boolean isBehindAuto;
 
     private UsbStateReceiver usbStateReceiver;
+    private UsbCameraStateReceiver mCameraStateReceiver;
 
     Handler mHandler = new MyHandler(this);
 
@@ -228,6 +230,10 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         filter.addDataScheme("file");
         usbStateReceiver = new UsbStateReceiver();
 //        registerReceiver(usbStateReceiver, filter);
+
+        IntentFilter filterCamera = new IntentFilter("android.hardware.usb.action.USB_CAMERA_PLUG_IN_OUT");
+        mCameraStateReceiver = new UsbCameraStateReceiver();
+        registerReceiver(mCameraStateReceiver, filterCamera);
     }
 
     private void initView() {
@@ -408,6 +414,8 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
 
 //        unregisterReceiver(usbStateReceiver);
         mHandler.removeCallbacksAndMessages(null);
+
+        unregisterReceiver(mCameraStateReceiver);
 
     }
 

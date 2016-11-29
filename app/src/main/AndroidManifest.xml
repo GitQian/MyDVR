@@ -20,8 +20,6 @@
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-
-
     <uses-permission android:name="android.permission.GET_TASKS" />
 
     <application
@@ -57,27 +55,27 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
+
                 <category android:name="android.intent.category.HOME" />
             </intent-filter>
         </receiver>
-
         <receiver
             android:name=".Receiver.UsbStateReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.MEDIA_MOUNTED"></action>
-                <action android:name="android.intent.action.MEDIA_EJECT"></action>
-                <action android:name="android.intent.action.MEDIA_REMOVED"></action>
-                <action android:name="android.intent.action.MEDIA_CHECKING"></action>
+                <action android:name="android.intent.action.MEDIA_MOUNTED" />
+                <action android:name="android.intent.action.MEDIA_EJECT" />
+                <action android:name="android.intent.action.MEDIA_REMOVED" />
+                <action android:name="android.intent.action.MEDIA_CHECKING" />
 
-                <data android:scheme="file"></data>
+                <data android:scheme="file" />
             </intent-filter>
         </receiver>
         <receiver
             android:name=".Receiver.MyWakefulReceiver"
             android:enabled="true"
-            android:exported="true"></receiver>
+            android:exported="true" />
     </application>
 
 </manifest>
