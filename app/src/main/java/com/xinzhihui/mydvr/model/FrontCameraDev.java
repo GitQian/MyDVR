@@ -26,7 +26,7 @@ public class FrontCameraDev extends CameraDev {
 
     @Override
     public Camera.Parameters initRreviewParameters(Camera.Parameters parameters) {
-        //获取并存储摄像头支持的分辨率
+        //TODO 获取并存储摄像头支持的分辨率
         ACache aCache = ACache.get(MyApplication.getContext());
         ArrayList<String> sizeList = new ArrayList<String>();
         for (Camera.Size size : parameters.getSupportedPreviewSizes()) {
@@ -37,7 +37,7 @@ public class FrontCameraDev extends CameraDev {
         //设置Picture大小
         parameters.setPictureSize(parameters.getSupportedPictureSizes().get(0).width, parameters.getSupportedPictureSizes().get(0).height);
 
-        //设置已选Preview分辨率
+        //TODO 设置已选Preview分辨率
         int soluWhere = (Integer) SPUtils.get(MyApplication.getContext(), AppConfig.KEY_FRONT_SOLUTION_WHERE, Integer.valueOf(0));
         if (soluWhere >= parameters.getSupportedPreviewSizes().size()) {
             soluWhere = 0;
@@ -95,7 +95,7 @@ public class FrontCameraDev extends CameraDev {
         int width = Integer.valueOf(str.split("x")[0]);
         int height = Integer.valueOf(str.split("x")[1]);
         LogUtil.d("qiansheng", "recordWidth:" + width + " " + "recordHeight:" + height);
-
+        //TODO 设置录制分辨率
         mediaRecorder.setVideoSize(width, height);
 
         mediaRecorder.setVideoEncodingBitRate(6000000);  //6M

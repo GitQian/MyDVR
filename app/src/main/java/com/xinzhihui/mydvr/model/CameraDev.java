@@ -19,6 +19,7 @@ import com.xinzhihui.mydvr.utils.SPUtils;
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -105,33 +106,23 @@ public abstract class CameraDev {
                 camera.startPreview();
                 LogUtil.d(TAG, "startPreview -------> have started");
 
-                //水印
+                //TODO: 水印
                 if (cameraIndexId == AppConfig.FRONT_CAMERA_INDEX) {
                     if ((Boolean) SPUtils.get(MyApplication.getContext(), AppConfig.KEY_IS_FRONT_WATER, true)) {
-                        Class<?> c = camera.getClass();
-                        Method startWaterMark = c.getMethod("startWaterMark");
-                        startWaterMark.invoke(camera);
+                        setWaterMark(camera);
                         setPreviewing(true);
                     }
                 } else if (cameraIndexId == AppConfig.BEHIND_CAMERA_INDEX) {
                     if ((Boolean) SPUtils.get(MyApplication.getContext(), AppConfig.KEY_IS_BEHIND_WATER, true)) {
-                        Class<?> c = camera.getClass();
-                        Method startWaterMark = c.getMethod("startWaterMark");
-                        startWaterMark.invoke(camera);
+                        setWaterMark(camera);
                         setPreviewing(true);
                     }
                 }
             } catch (Exception e) {
                 setPreviewing(false);
-                if (e instanceof NoSuchMethodException) {
-                    LogUtil.e(TAG, "startPreview -------> not have startWaterMark method!!!");
-                } else if (e instanceof IllegalAccessException) {
-                    LogUtil.e(TAG, "startPreview -------> IllegalAccessException!!!");
-                } else {
-                    LogUtil.e(TAG, "startPreview -------> startPreview error!!!");
-                    return false;
-                }
+                LogUtil.e(TAG, "startPreview -------> startPreview error!!!");
                 e.printStackTrace();
+                return false;
             }
         }
         return true;
@@ -200,6 +191,16 @@ public abstract class CameraDev {
                 mRecordCamera = null;
             }
             mRecordCamera = Camera.open(isUVCCameraSonix(cameraIndexId));
+            //TODO 第二个节点加不了水印，加上之后视频绿屏！！！
+//            if (cameraIndexId == AppConfig.FRONT_CAMERA_INDEX) {
+//                if ((Boolean) SPUtils.get(MyApplication.getContext(), AppConfig.KEY_IS_FRONT_WATER, true)) {
+//                    setWaterMark(mRecordCamera);
+//                }
+//            } else if (cameraIndexId == AppConfig.BEHIND_CAMERA_INDEX) {
+//                if ((Boolean) SPUtils.get(MyApplication.getContext(), AppConfig.KEY_IS_BEHIND_WATER, true)) {
+//                    setWaterMark(mRecordCamera);
+//                }
+//            }
             mRecordCamera.unlock();
         } else {
             camera.unlock();
@@ -378,6 +379,9 @@ public abstract class CameraDev {
 
     }
 
+    /**
+     * 释放所有Camera
+     */
     public void releaseCameraAndPreview() {
 //        myCameraPreview.setCamera(null);
         if (camera != null) {
@@ -390,6 +394,9 @@ public abstract class CameraDev {
         }
     }
 
+    /**
+     * 释放mediaRecorder
+     */
     public void killRecord() {
         if (mediaRecorder != null) {
             mediaRecorder.release();
@@ -482,6 +489,28 @@ public abstract class CameraDev {
         }
         //mCameraUVC = index + 1;
         return realyIndex;
+    }
+
+    /**
+     * 设置水印-反射调用
+     *
+     * @param camera
+     */
+    public void setWaterMark(Camera camera) {
+        Class<?> c = camera.getClass();
+        Method startWaterMark = null;
+        try {
+            startWaterMark = c.getMethod("startWaterMark");
+            startWaterMark.invoke(camera);
+        } catch (NoSuchMethodException e) {
+            LogUtil.e(TAG, "setWaterMark -------> not have startWaterMark method!!!");
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            LogUtil.e(TAG, "setWaterMark -------> IllegalAccessException!!!");
+            e.printStackTrace();
+        }
     }
 
 
