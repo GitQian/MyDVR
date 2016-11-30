@@ -195,28 +195,22 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         if (cameraIndex == AppConfig.FRONT_CAMERA) {
             mCameraTtv.setVisibility(View.VISIBLE);
             if (mService != null && mService.getCameraDev(cameraIndex) != null) {
-                if (mService.getCameraDev(cameraIndex).isRecording()) {
-                    mService.getCameraDev(cameraIndex).setRecording(false);
+                if (!mService.getCameraDev(cameraIndex).isRecording() && mCameraTtv.isAvailable()) {
+                    LogUtil.e(TAG, "onPlugIn() -----------> isAvailable");
+                    dvrSurfaceTextureFrontListener.onSurfaceTextureDestroyed(dvrSurfaceTextureFrontListener.surfaceTexture);
+                    dvrSurfaceTextureFrontListener.onSurfaceTextureAvailable(mCameraTtv.getSurfaceTexture(), mCameraTtv.getWidth(), mCameraTtv.getHeight());
                 }
-            }
-            if (mCameraTtv.isAvailable()) {
-                LogUtil.e(TAG, "onPlugIn() -----------> isAvailable");
-                dvrSurfaceTextureFrontListener.onSurfaceTextureDestroyed(dvrSurfaceTextureFrontListener.surfaceTexture);
-                dvrSurfaceTextureFrontListener.onSurfaceTextureAvailable(mCameraTtv.getSurfaceTexture(), mCameraTtv.getWidth(), mCameraTtv.getHeight());
             }
             return;
         } else if (cameraIndex == AppConfig.BEHIND_CAMERA) {
             mCameraFrontTtv.setVisibility(View.VISIBLE);
             if (mService != null && mService.getCameraDev(cameraIndex) != null) {
-                if (mService.getCameraDev(cameraIndex).isRecording()) {
-                    mService.getCameraDev(cameraIndex).setRecording(false);
-                }
-            }
-            if (mCameraFrontTtv.isAvailable()) {
-                LogUtil.e(TAG, "onPlugIn() ----------> isAvailable");
-                dvrSurfaceTextureBehindListener.onSurfaceTextureDestroyed(dvrSurfaceTextureBehindListener.surfaceTexture);
-                dvrSurfaceTextureBehindListener.onSurfaceTextureAvailable(mCameraFrontTtv.getSurfaceTexture(), mCameraFrontTtv.getWidth(), mCameraFrontTtv.getHeight());
+                if (!mService.getCameraDev(cameraIndex).isRecording() && mCameraFrontTtv.isAvailable()) {
+                    LogUtil.e(TAG, "onPlugIn() ----------> isAvailable");
+                    dvrSurfaceTextureBehindListener.onSurfaceTextureDestroyed(dvrSurfaceTextureBehindListener.surfaceTexture);
+                    dvrSurfaceTextureBehindListener.onSurfaceTextureAvailable(mCameraFrontTtv.getSurfaceTexture(), mCameraFrontTtv.getWidth(), mCameraFrontTtv.getHeight());
 //            mCameraTtv.setSurfaceTextureListener(dvrSurfaceTextureFrontListener);
+                }
             }
         }
 
