@@ -535,6 +535,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
             if (mService == null) {
                 //activity onDestroy先执行
                 cameraDev.killRecord();
+                cameraDev.releaseCameraAndPreview();
                 cameraDev.stopPreview();
                 return true;
             }
@@ -549,6 +550,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                     //stopRecord后 mediaRecorder 置空了
                     cameraDev.killRecord();
                 }
+                cameraDev.releaseCameraAndPreview();
                 cameraDev.stopPreview();
             }
             return true;

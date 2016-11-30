@@ -18,6 +18,7 @@ import com.xinzhihui.mydvr.utils.SPUtils;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -31,7 +32,8 @@ public abstract class CameraDev {
     public int cameraIndexId;
     public int cameraId;
 
-    public Camera camera = null;
+    public Camera camera = null;  //预览Camera
+    public Camera mRecordCamera = null;  //录制Camera
     public MediaRecorder mediaRecorder;
 
     public File mVideoFile;
@@ -162,7 +164,7 @@ public abstract class CameraDev {
      */
     public boolean startRecord() {
         if (isRecording()) {
-            return false;
+            return true;
         }
 
         if (!checkStorageSpace()) {
@@ -170,6 +172,10 @@ public abstract class CameraDev {
         }
 
         mVideoFile = makeFile();
+
+        if (mediaRecorder != null) {
+            mediaRecorder.release();
+        }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             //TODO android 6.0
@@ -188,9 +194,20 @@ public abstract class CameraDev {
             mediaRecorder = new MediaRecorder();
         }
 
-        camera.unlock();
+        if (cameraIndexId != isUVCCameraSonix(cameraIndexId)) {
+            if (mRecordCamera != null) {
+                mRecordCamera.release();
+                mRecordCamera = null;
+            }
+            mRecordCamera = Camera.open(isUVCCameraSonix(cameraIndexId));
+            mRecordCamera.unlock();
+        } else {
+            camera.unlock();
+            mRecordCamera = camera;
+        }
 
-        initRecorderParameters(camera, mediaRecorder, mVideoFile);
+
+        initRecorderParameters(mRecordCamera, mediaRecorder, mVideoFile);
 
         mediaRecorder.setOnInfoListener(new MediaRecorder.OnInfoListener() {
             @Override
@@ -367,6 +384,10 @@ public abstract class CameraDev {
             camera.release();
             camera = null;
         }
+        if (mRecordCamera != null) {
+            mRecordCamera.release();
+            mRecordCamera = null;
+        }
     }
 
     public void killRecord() {
@@ -427,6 +448,40 @@ public abstract class CameraDev {
             LogUtil.d("qiansheng", "DVR can use size:" + allSize);
             return true;
         }
+    }
+
+    /*
+     *
+	 * 返回值和index一样表示 不是uvc
+	 * 返回值和index不一样 表示是uvccamera
+	 * 在camera open之后有效，表示状态不可用
+	 */
+    public int isUVCCameraSonix(int index) {
+        //TODO: Only android 6.0 have the field of cameraInfo.is_uvc!!!
+        int recordIndex = index;
+        Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
+        Camera.getCameraInfo(index, cameraInfo);
+        //Log.d(TAG,"camera:video" + index +" is_uvc:" + cameraInfo.is_uvc);
+        Class<?> c = cameraInfo.getClass();
+        int is_uvc_data = 0;
+        try {
+            Field is_uvc = c.getField("is_uvc");
+            is_uvc_data = (int) is_uvc.get(cameraInfo);
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+            LogUtil.e(TAG, "Not have the field of cameraInfo.is_uvc!!!");
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+            LogUtil.e(TAG, "cameraInfo.is_uvc IllegalAccessException!!!");
+        }
+        int realyIndex = index;
+        if (is_uvc_data > 0) {
+            realyIndex = index + 1;
+        } else {
+            realyIndex = index;
+        }
+        //mCameraUVC = index + 1;
+        return realyIndex;
     }
 
 
