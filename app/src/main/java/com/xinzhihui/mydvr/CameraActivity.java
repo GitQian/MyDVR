@@ -194,13 +194,24 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         LogUtil.e(TAG, "onPlugIn() ---------->");
         if (cameraIndex == AppConfig.FRONT_CAMERA) {
             mCameraTtv.setVisibility(View.VISIBLE);
+            if (mService != null && mService.getCameraDev(cameraIndex) != null) {
+                if (mService.getCameraDev(cameraIndex).isRecording()) {
+                    mService.getCameraDev(cameraIndex).setRecording(false);
+                }
+            }
             if (mCameraTtv.isAvailable()) {
                 LogUtil.e(TAG, "onPlugIn() -----------> isAvailable");
                 dvrSurfaceTextureFrontListener.onSurfaceTextureDestroyed(dvrSurfaceTextureFrontListener.surfaceTexture);
                 dvrSurfaceTextureFrontListener.onSurfaceTextureAvailable(mCameraTtv.getSurfaceTexture(), mCameraTtv.getWidth(), mCameraTtv.getHeight());
             }
+            return;
         } else if (cameraIndex == AppConfig.BEHIND_CAMERA) {
             mCameraFrontTtv.setVisibility(View.VISIBLE);
+            if (mService != null && mService.getCameraDev(cameraIndex) != null) {
+                if (mService.getCameraDev(cameraIndex).isRecording()) {
+                    mService.getCameraDev(cameraIndex).setRecording(false);
+                }
+            }
             if (mCameraFrontTtv.isAvailable()) {
                 LogUtil.e(TAG, "onPlugIn() ----------> isAvailable");
                 dvrSurfaceTextureBehindListener.onSurfaceTextureDestroyed(dvrSurfaceTextureBehindListener.surfaceTexture);
@@ -212,17 +223,27 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     @Override
-    public void onPlugOut(int cameraIndex) {
+    public void onPlugOut(int cameraId) {
         LogUtil.e(TAG, "onPlugOut() -------->");
-        if (cameraIndex == AppConfig.FRONT_CAMERA) {
+        if (cameraId == AppConfig.FRONT_CAMERA) {
             mCameraTtv.setVisibility(View.INVISIBLE);
-            if (dvrSurfaceTextureFrontListener.cameraDev != null) {
-                dvrSurfaceTextureFrontListener.cameraDev.setRecording(false);
+            if (mService != null) {
+                if (mService.getCameraDev(cameraId) != null) {
+                    if (mService.getCameraDev(cameraId).isRecording()) {
+                        mService.getCameraDev(cameraId).setRecording(false);
+                        System.exit(0);
+                    }
+                }
             }
-        } else if (cameraIndex == AppConfig.BEHIND_CAMERA) {
+        } else if (cameraId == AppConfig.BEHIND_CAMERA) {
             mCameraFrontTtv.setVisibility(View.INVISIBLE);
-            if (dvrSurfaceTextureBehindListener.cameraDev != null) {
-                dvrSurfaceTextureBehindListener.cameraDev.setRecording(false);
+            if (mService != null) {
+                if (mService.getCameraDev(cameraId) != null) {
+                    if (mService.getCameraDev(cameraId).isRecording()) {
+                        mService.getCameraDev(cameraId).setRecording(false);
+                        System.exit(0);
+                    }
+                }
             }
         }
         updateRecordCtrlBtn(mCurCameraDev);
@@ -305,6 +326,10 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_record_ctrl:
+                if (mService.getCameraDev(mCurCameraId) == null) {
+                    Toast.makeText(this, "无摄像设备！", Toast.LENGTH_SHORT);
+                    break;
+                }
                 if (mService.getCameraDev(mCurCameraId).isRecording()) {
                     //通过mService获取到的是已经更新过的，安全！
                     mRecordCtrlBtn.setBackgroundResource(R.drawable.selector_record_closed);
