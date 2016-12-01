@@ -93,7 +93,8 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            if (mActivity.get() == null) {
+            if (mActivity.get() == null || mActivity.get().mAnimFrontRec == null || mActivity.get().mAnimBehindRec == null
+                    || mActivity.get().mRecFrontImg == null || mActivity.get().mRecBehindImg == null || mActivity.get().mTimeFrontTv == null) {
                 return;
             }
             switch (msg.what) {
@@ -226,6 +227,8 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                     if (mService.getCameraDev(cameraId).isRecording()) {
                         mService.getCameraDev(cameraId).setRecording(false);
                         System.exit(0);
+                    } else {
+                        mService.getCameraDev(cameraId).releaseCameraAndPreview();
                     }
                 }
             }
@@ -236,6 +239,8 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                     if (mService.getCameraDev(cameraId).isRecording()) {
                         mService.getCameraDev(cameraId).setRecording(false);
                         System.exit(0);
+                    } else {
+                        mService.getCameraDev(cameraId).releaseCameraAndPreview();
                     }
                 }
             }
@@ -321,7 +326,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         switch (v.getId()) {
             case R.id.btn_record_ctrl:
                 if (mService.getCameraDev(mCurCameraId) == null) {
-                    Toast.makeText(this, "无摄像设备！", Toast.LENGTH_SHORT);
+                    Toast.makeText(this, "无摄像设备！", Toast.LENGTH_SHORT).show();
                     break;
                 }
                 if (mService.getCameraDev(mCurCameraId).isRecording()) {
@@ -368,6 +373,10 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                 break;
 
             case R.id.btn_record_lock:
+                if (mService.getCameraDev(mCurCameraId) == null) {
+                    Toast.makeText(this, "不在录制状态！", Toast.LENGTH_SHORT).show();
+                    break;
+                }
                 if (mService.getCameraDev(mCurCameraId).isRecording()) {
                     String path = mService.getCameraDev(mCurCameraId).getmVideoFile().getAbsolutePath();
                     if (mService.getCameraDev(mCurCameraId).isLocked()) {

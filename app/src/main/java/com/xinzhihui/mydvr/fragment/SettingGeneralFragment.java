@@ -104,6 +104,7 @@ public class SettingGeneralFragment extends Fragment implements CompoundButton.O
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.rly_setting_general_storage:
+                mPaths = CommonUtils.getStoragePaths(this.getActivity(), true);
                 int storageWhere = (Integer) SPUtils.get(MyApplication.getContext(), AppConfig.KEY_STORAGE_WHERE, Integer.valueOf(0));  //已选编号
 
                 Dialog sizeDialog = new AlertDialog.Builder(getActivity())

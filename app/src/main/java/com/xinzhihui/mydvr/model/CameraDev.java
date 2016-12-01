@@ -59,10 +59,19 @@ public abstract class CameraDev {
             camera.release();
             camera = null;
         }
+        File file = new File("/dev/video" + cameraIndexId);
+        if (file.exists()) {
+            LogUtil.e(TAG, "have video dev:" + cameraIndexId);
+        }else {
+            LogUtil.e(TAG, "Not have this video dev!!!" + cameraIndexId);
+            camera = null;
+            return camera;
+        }
         try {
             camera = Camera.open(cameraIndexId);
             LogUtil.d(TAG, "open -------> cameraId:" + cameraIndexId);
         } catch (Exception e) {
+            camera = null;
             LogUtil.e(TAG, "open -------> cameraId:" + cameraIndexId + "error!!!!");
             e.printStackTrace();
         }
@@ -488,7 +497,8 @@ public abstract class CameraDev {
             realyIndex = index;
         }
         //mCameraUVC = index + 1;
-        return realyIndex;
+        //直接返回原值
+        return index;
     }
 
     /**
