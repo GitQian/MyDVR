@@ -135,7 +135,7 @@ public class SettingBehindFragment extends Fragment implements CompoundButton.On
                 int where = (Integer) SPUtils.get(MyApplication.getContext(), "BehindTimeSize", Integer.valueOf(0));
                 Dialog sizeDialog = new AlertDialog.Builder(getActivity())
                         .setTitle("录制时长")
-                        .setSingleChoiceItems(new String[]{"一分钟", "三分钟", "五分钟"}, where, new DialogInterface.OnClickListener() {
+                        .setSingleChoiceItems(new String[]{"一分钟", "两分钟", "三分钟"}, where, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 SPUtils.put(MyApplication.getContext(), "BehindTimeSize", which);

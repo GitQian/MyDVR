@@ -29,25 +29,39 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".CameraActivity" />
-        <activity android:name=".FileListActivity" />
-        <activity android:name=".VideoPlayerActivity" />
+        <activity
+            android:name=".CameraActivity"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".FileListActivity"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".VideoPlayerActivity"
+            android:screenOrientation="landscape" />
 
         <service
             android:name=".service.RecordService"
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".FileList2Activity" />
-        <activity android:name=".SettingActivity" />
-        <activity android:name=".Setting2Activity" />
+        <activity
+            android:name=".FileList2Activity"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".SettingActivity"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".Setting2Activity"
+            android:screenOrientation="landscape" />
 
         <receiver
             android:name=".Receiver.BootBroadcastReceiver"

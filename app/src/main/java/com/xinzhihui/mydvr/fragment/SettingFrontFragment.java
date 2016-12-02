@@ -133,7 +133,7 @@ public class SettingFrontFragment extends Fragment implements CompoundButton.OnC
                 int where = (Integer) SPUtils.get(MyApplication.getContext(), "FrontTimeSize", Integer.valueOf(0));
                 Dialog sizeDialog = new AlertDialog.Builder(getActivity())
                         .setTitle("录制时长")
-                        .setSingleChoiceItems(new String[]{"一分钟", "三分钟", "五分钟"}, where, new DialogInterface.OnClickListener() {
+                        .setSingleChoiceItems(new String[]{"一分钟", "两分钟", "三分钟"}, where, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 SPUtils.put(MyApplication.getContext(), "FrontTimeSize", which);

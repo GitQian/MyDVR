@@ -56,8 +56,8 @@ public class AppConfig {
     //录制时长
     public static final int DEFAULT_MAX_DURATION = 1 * 60 * 1000;
     public static final int ONE_MINUTE_DURATION = 1 * 60 * 1000;
-    public static final int THREE_MINUTE_DURATION = 3 * 60 * 1000;
-    public static final int FIVE_MINUTE_DURATION = 5 * 60 * 1000;
+    public static final int THREE_MINUTE_DURATION = 2 * 60 * 1000;
+    public static final int FIVE_MINUTE_DURATION = 3 * 60 * 1000;
 
     //SharedPreferences Key
     public static final String KEY_IS_FRONT_SOUND = "isFrontSound";
