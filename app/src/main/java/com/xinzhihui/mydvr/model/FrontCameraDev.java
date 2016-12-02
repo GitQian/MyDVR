@@ -43,7 +43,7 @@ public class FrontCameraDev extends CameraDev {
             soluWhere = 0;
             SPUtils.put(MyApplication.getContext(), AppConfig.KEY_FRONT_SOLUTION_WHERE, soluWhere);
         }
-       // parameters.setPreviewSize(640, 480);   //后视镜分辨率1600*480，如果设为1920*1080会绿屏！
+//        parameters.setPreviewSize(parameters.getSupportedPictureSizes().get(soluWhere).width, parameters.getSupportedPictureSizes().get(soluWhere).height);   //后视镜分辨率1600*480，如果设为1920*1080会绿屏！
         return parameters;
     }
 
