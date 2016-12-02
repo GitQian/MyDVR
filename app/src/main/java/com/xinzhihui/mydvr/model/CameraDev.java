@@ -232,7 +232,8 @@ public abstract class CameraDev {
                                 try {
                                     if (checkStorageSpace()) {
                                         setNextSaveFile = c.getMethod("setNextSaveFile", String.class);
-                                        setNextSaveFile.invoke(mediaRecorder, makeFile().getAbsolutePath());
+                                        mVideoFile = makeFile();
+                                        setNextSaveFile.invoke(mediaRecorder, mVideoFile.getAbsolutePath());
 
                                         setRecording(true);
                                         setLocked(false);
@@ -307,7 +308,8 @@ public abstract class CameraDev {
                                 try {
                                     if (checkStorageSpace()) {
                                         setNextSaveFile = c.getMethod("setNextSaveFile", String.class);
-                                        setNextSaveFile.invoke(mediaRecorder, makeFile().getAbsolutePath());
+                                        mVideoFile = makeFile();
+                                        setNextSaveFile.invoke(mediaRecorder, mVideoFile.getAbsolutePath());
                                         setRecording(true);
                                         setLocked(false);
                                         sendMessage(mHandler, cameraId, 0, 0);  //stop
