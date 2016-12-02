@@ -62,7 +62,7 @@ public abstract class CameraDev {
         File file = new File("/dev/video" + cameraIndexId);
         if (file.exists()) {
             LogUtil.e(TAG, "have video dev:" + cameraIndexId);
-        }else {
+        } else {
             LogUtil.e(TAG, "Not have this video dev!!!" + cameraIndexId);
             camera = null;
             return camera;
@@ -195,11 +195,13 @@ public abstract class CameraDev {
         }
 
         if (cameraIndexId != isUVCCameraSonix(cameraIndexId)) {
+            LogUtil.d(TAG, "Realy RecordCameraIndex:" + isUVCCameraSonix(cameraIndexId));
             if (mRecordCamera != null) {
                 mRecordCamera.release();
                 mRecordCamera = null;
             }
             mRecordCamera = Camera.open(isUVCCameraSonix(cameraIndexId));
+//            mRecordCamera = camera;
             //TODO 第二个节点加不了水印，加上之后视频绿屏！！！
 //            if (cameraIndexId == AppConfig.FRONT_CAMERA_INDEX) {
 //                if ((Boolean) SPUtils.get(MyApplication.getContext(), AppConfig.KEY_IS_FRONT_WATER, true)) {
@@ -475,32 +477,50 @@ public abstract class CameraDev {
 	 * 在camera open之后有效，表示状态不可用
 	 */
     public int isUVCCameraSonix(int index) {
-        //TODO: Only android 6.0 have the field of cameraInfo.is_uvc!!!
-        int recordIndex = index;
-        Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
-        Camera.getCameraInfo(index, cameraInfo);
-        //Log.d(TAG,"camera:video" + index +" is_uvc:" + cameraInfo.is_uvc);
-        Class<?> c = cameraInfo.getClass();
-        int is_uvc_data = 0;
-        try {
-            Field is_uvc = c.getField("is_uvc");
-            is_uvc_data = (int) is_uvc.get(cameraInfo);
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-            LogUtil.e(TAG, "Not have the field of cameraInfo.is_uvc!!!");
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-            LogUtil.e(TAG, "cameraInfo.is_uvc IllegalAccessException!!!");
-        }
-        int realyIndex = index;
-        if (is_uvc_data > 0) {
-            realyIndex = index + 1;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            //TODO: Only android 6.0 have the field of cameraInfo.is_uvc!!!
+            int recordIndex = index;
+            Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
+            Camera.getCameraInfo(index, cameraInfo);
+            //Log.d(TAG,"camera:video" + index +" is_uvc:" + cameraInfo.is_uvc);
+            Class<?> c = cameraInfo.getClass();
+            int is_uvc_data = 0;
+            try {
+                Field is_uvc = c.getField("is_uvc");
+                is_uvc_data = (int) is_uvc.get(cameraInfo);
+            } catch (NoSuchFieldException e) {
+                e.printStackTrace();
+                LogUtil.e(TAG, "Not have the field of cameraInfo.is_uvc!!!");
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+                LogUtil.e(TAG, "cameraInfo.is_uvc IllegalAccessException!!!");
+            }
+            int realyIndex = index;
+            if (is_uvc_data > 0) {
+                realyIndex = index + 1;
+            } else {
+                realyIndex = index;
+            }
+            //mCameraUVC = index + 1;
+            //直接返回原值
+            return realyIndex;
         } else {
-            realyIndex = index;
+            //4.4平台
+            if (index == 0) {
+                File file = new File("/dev/video1");
+                if (file.exists()) {
+                    //打开0节点，如果1节点存在，在返回1录像
+                    LogUtil.e(TAG, "have video dev:video1");
+                    return 1;
+                } else {
+                    //只存在0，不存在1，则返回0
+                    return 0;
+                }
+            } else {
+                //打开其他节点，则返回原值；
+                return index;
+            }
         }
-        //mCameraUVC = index + 1;
-        //直接返回原值
-        return index;
     }
 
     /**
