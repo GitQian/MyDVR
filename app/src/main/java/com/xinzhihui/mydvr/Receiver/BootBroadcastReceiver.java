@@ -48,7 +48,9 @@ public class BootBroadcastReceiver extends BroadcastReceiver {
                     mService.addCameraDev(AppConfig.FRONT_CAMERA, cameraDev);
                 }
                 if (!mService.isRecording(AppConfig.FRONT_CAMERA)) {
-                    mService.open(AppConfig.FRONT_CAMERA);
+                    if (mService.getCameraDev(AppConfig.FRONT_CAMERA).camera == null) {
+                        mService.open(AppConfig.FRONT_CAMERA);
+                    }
                     mService.startPreView(AppConfig.FRONT_CAMERA, null);
                     mService.startRecord(AppConfig.FRONT_CAMERA);
                 }
@@ -60,7 +62,9 @@ public class BootBroadcastReceiver extends BroadcastReceiver {
                     mService.addCameraDev(AppConfig.BEHIND_CAMERA, cameraDev);
                 }
                 if (!mService.isRecording(AppConfig.BEHIND_CAMERA)) {
-                    mService.open(AppConfig.BEHIND_CAMERA);
+                    if (mService.getCameraDev(AppConfig.BEHIND_CAMERA).camera == null) {
+                        mService.open(AppConfig.BEHIND_CAMERA);
+                    }
                     mService.startPreView(AppConfig.BEHIND_CAMERA, null);
                     mService.startRecord(AppConfig.BEHIND_CAMERA);
                 }

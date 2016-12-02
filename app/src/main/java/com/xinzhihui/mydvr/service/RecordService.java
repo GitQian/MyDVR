@@ -29,7 +29,7 @@ public class RecordService extends Service {
 
 //    private final IBinder mBinder = new LocalBinder();
 
-    public class LoBinder extends ICameraManager.Stub{
+    public class LoBinder extends ICameraManager.Stub {
 
         @Override
         public void basicTypes(int anInt, long aLong, boolean aBoolean, float aFloat, double aDouble, String aString) throws RemoteException {
@@ -242,6 +242,14 @@ public class RecordService extends Service {
         cameraDevList.set(cameraId, cameraDev);
     }
 
+
+    public boolean isPreView(int cameraId) {
+        if (cameraDevList.get(cameraId) == null) {
+            return false;
+        } else {
+            return cameraDevList.get(cameraId).isPreviewing();
+        }
+    }
 
     /**
      * 检查所有设备是否有设备正在录制
