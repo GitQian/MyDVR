@@ -562,9 +562,9 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
             LogUtil.d(TAG, "onSurfaceTextureDestroyed --------->");
             if (mService == null) {
                 //activity onDestroy先执行
+                cameraDev.stopPreview();
                 cameraDev.killRecord();
                 cameraDev.releaseCameraAndPreview();
-                cameraDev.stopPreview();
                 return true;
             }
 
@@ -572,6 +572,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                 LogUtil.d(TAG, "onSurfaceTextureDestroyed ---------> Camera:" + mCameraId + " is Recording to stopRender");
                 mService.stopRender(mCameraId);
             } else {
+                cameraDev.stopPreview();
                 if (cameraDev.mediaRecorder != null) {
                     //处理back返回卡死问题
 //                    cameraStatusListener.onStopRecord();
@@ -579,7 +580,6 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                     cameraDev.killRecord();
                 }
                 cameraDev.releaseCameraAndPreview();
-                cameraDev.stopPreview();
             }
             return true;
         }

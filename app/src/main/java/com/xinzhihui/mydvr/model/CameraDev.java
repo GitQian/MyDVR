@@ -201,6 +201,10 @@ public abstract class CameraDev {
                 mRecordCamera = null;
             }
             mRecordCamera = Camera.open(isUVCCameraSonix(cameraIndexId));
+//            Camera.Parameters parameters = mRecordCamera.getParameters();
+//            for (Camera.Size size : parameters.getSupportedPreviewSizes()) {
+//                LogUtil.e("qiansheng", "width:" + size.width +"height:" + size.height);
+//            }
 //            mRecordCamera = camera;
             //TODO 第二个节点加不了水印，加上之后视频绿屏！！！
 //            if (cameraIndexId == AppConfig.FRONT_CAMERA_INDEX) {
@@ -435,25 +439,28 @@ public abstract class CameraDev {
 
     public boolean checkStorageSpace() {
         if (!SDCardUtils.isPathEnable(AppConfig.DVR_PATH)) {
+            LogUtil.e(TAG, "checkStorageSpace ---------> this path not exist!!!");
             Toast.makeText(MyApplication.getContext(), "存储路径不存在！", Toast.LENGTH_SHORT).show();
             return false;
         } else {
             if (!isStorageEnough()) {
+                LogUtil.e(TAG, "checkStorageSpace -------> storage not enough!!!");
                 Toast.makeText(MyApplication.getContext(), "存储空间不足，请及时清理！", Toast.LENGTH_SHORT).show();
                 return false;
             }
         }
         if (camera == null) {
             Toast.makeText(MyApplication.getContext(), "设备不能使用", Toast.LENGTH_SHORT).show();
-            LogUtil.d(TAG, "startRecord ------>camera is null!!!!!");
+            LogUtil.e(TAG, "startRecord ------>camera is null!!!!!");
             return false;
         }
 
         //TODO 漏秒情况下，可统一在startRecord处检测存储空间是否充足---低于300M触发
         if (SDCardUtils.getFreeBytes(AppConfig.DVR_PATH) < 300 * 1024 * 1024) {
+            LogUtil.i(TAG, "checkStorageSpace -------> Run DeleteRileTask!");
             new DeleteFileTask().execute(new String[]{AppConfig.FRONT_VIDEO_PATH, AppConfig.BEHIND_VIDEO_PATH});
         } else {
-            LogUtil.d(TAG, "Free storge enough! Size byte:" + SDCardUtils.getFreeBytes(AppConfig.DVR_PATH));
+            LogUtil.d(TAG, "checkStorageSpace -------> Free storge enough! Size byte:" + SDCardUtils.getFreeBytes(AppConfig.DVR_PATH));
         }
         return true;
     }
@@ -462,10 +469,10 @@ public abstract class CameraDev {
         long allSize = SDCardUtils.getFolderSize(new File(AppConfig.DVR_PATH)) + SDCardUtils.getFreeBytes(AppConfig.ROOT_DIR);
         //给DVR预留400M，否则不让录制
         if (allSize < 400 * 1024 * 1024) {
-            LogUtil.d("qiansheng", "DVR can use size:" + allSize);
+            LogUtil.d(TAG, "DVR can use size:" + allSize);
             return false;
         } else {
-            LogUtil.d("qiansheng", "DVR can use size:" + allSize);
+            LogUtil.d(TAG, "DVR can use size:" + allSize);
             return true;
         }
     }
