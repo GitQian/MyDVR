@@ -433,6 +433,8 @@ public abstract class CameraDev {
 //                    startRecord();
                 }
             });
+        }else {
+            LogUtil.e(TAG, "takePhoto -------> camera is null!!!");
         }
     }
 

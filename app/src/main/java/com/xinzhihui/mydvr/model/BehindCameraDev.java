@@ -34,7 +34,7 @@ public class BehindCameraDev extends CameraDev {
         aCache.put("BehindSolution", sizeList);
 
         //设置Picture大小
-        parameters.setPictureSize(parameters.getSupportedPictureSizes().get(0).width, parameters.getSupportedPictureSizes().get(0).height);
+//        parameters.setPictureSize(parameters.getSupportedPictureSizes().get(0).width, parameters.getSupportedPictureSizes().get(0).height);
 
         //设置已选Preview分辨率
         int soluWhere = (Integer) SPUtils.get(MyApplication.getContext(), AppConfig.KEY_BEHIND_SOLUTION_WHERE, Integer.valueOf(0));

@@ -586,7 +586,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
 
         @Override
         public void onSurfaceTextureUpdated(SurfaceTexture surface) {
-            LogUtil.d(TAG, "onSurfaceTextureUpdated --------->");
+//            LogUtil.d(TAG, "onSurfaceTextureUpdated --------->");
             surfaceTexture = surface;
         }
     }

@@ -35,7 +35,8 @@ public class FrontCameraDev extends CameraDev {
         aCache.put("FrontSolution", sizeList);
 
         //设置Picture大小
-        parameters.setPictureSize(parameters.getSupportedPictureSizes().get(0).width, parameters.getSupportedPictureSizes().get(0).height);
+        //TODO: 6.0设置了PictureSize后，拍照时会卡住！！！
+//        parameters.setPictureSize(parameters.getSupportedPictureSizes().get(0).width, parameters.getSupportedPictureSizes().get(0).height);
 
         //TODO 设置已选Preview分辨率
         int soluWhere = (Integer) SPUtils.get(MyApplication.getContext(), AppConfig.KEY_FRONT_SOLUTION_WHERE, Integer.valueOf(0));
@@ -43,6 +44,7 @@ public class FrontCameraDev extends CameraDev {
             soluWhere = 0;
             SPUtils.put(MyApplication.getContext(), AppConfig.KEY_FRONT_SOLUTION_WHERE, soluWhere);
         }
+        //TODO: 6.0设置了PreviewSize后，使用第二个节点录制时会卡住！！！
 //        parameters.setPreviewSize(parameters.getSupportedPictureSizes().get(soluWhere).width, parameters.getSupportedPictureSizes().get(soluWhere).height);   //后视镜分辨率1600*480，如果设为1920*1080会绿屏！
         return parameters;
     }

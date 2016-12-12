@@ -9,6 +9,7 @@ import android.graphics.SurfaceTexture;
 import android.os.Binder;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.view.View;
 
 import com.xinzhihui.mydvr.CameraActivity;
 import com.xinzhihui.mydvr.ICameraManager;
@@ -227,7 +228,9 @@ public class RecordService extends Service {
                 }
             }
         }
-        stopForeground(true);// 停止前台服务--参数：表示是否移除之前的通知
+        if (notification.visibility == View.VISIBLE) {
+            stopForeground(true);// 停止前台服务--参数：表示是否移除之前的通知
+        }
     }
 
     public CameraDev getCameraDev(int cameraId) {
